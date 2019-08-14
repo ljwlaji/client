@@ -1,0 +1,15 @@
+frameworks/cocos2d-x/cocos/2d/Debug.win32/
+frameworks/cocos2d-x/cocos/2d/Release.win32/
+frameworks/cocos2d-x/cocos/editor-support/spine/proj.win32/Release.win32/
+frameworks/cocos2d-x/cocos/scripting/lua-bindings/proj.win32/Debug.win32/
+frameworks/runtime-src/proj.win32/Release.win32/
+frameworks/runtime-src/proj.win32/Debug.win32/
+frameworks/cocos2d-x/tools/simulator/libsimulator/proj.win32/
+frameworks/cocos2d-x/external/recast/proj.win32/
+*.tlog
+*.obj
+*.pdb
+*.log
+frameworks/runtime-src/proj.win32/.vs/framework/v15/
+*.idb
+*.ilk
