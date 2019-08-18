@@ -26,6 +26,7 @@
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "cocos2d.h"
 #include "scripting/lua-bindings/manual/lua_module_register.h"
+#include "UnitTest.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -111,6 +112,10 @@ bool AppDelegate::applicationDidFinishLaunching()
         return false;
     }
 
+
+	UnitTest _UnitTest;
+	//_UnitTest.TestZip();
+	_UnitTest.TestAssetsManger();
     return true;
 }
 

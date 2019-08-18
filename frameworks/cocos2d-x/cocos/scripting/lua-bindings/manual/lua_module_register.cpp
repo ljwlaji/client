@@ -36,6 +36,10 @@
 #include "scripting/lua-bindings/manual/physics3d/lua_cocos2dx_physics3d_manual.h"
 #include "scripting/lua-bindings/manual/navmesh/lua_cocos2dx_navmesh_manual.h"
 
+///For Custom Modules Issus
+#include "../runtime-src/Classes/CustomModule.h"
+///End Of Custom Modules
+
 
 int lua_module_register(lua_State* L)
 {
@@ -55,6 +59,10 @@ int lua_module_register(lua_State* L)
 #if CC_USE_NAVMESH
     register_navmesh_module(L);
 #endif
-    return 1;
+
+	///For Custom Modules Issus
+	register_fire_core_modules(L);
+	///End Of Custom Modules
+	return 1;
 }
 
