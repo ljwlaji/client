@@ -1,6 +1,7 @@
 #include "UnitTest.h"
 #include "AssetsManager.h"
 #include "Zipper.h"
+#include "SocketClient.h"
 #include "cocos2d.h"
 
 
@@ -16,10 +17,10 @@ static void onFinished(DownloadJob* ptr)
 
 void UnitTest::TestAssetsManger()
 {
-	std::string a = sAssetsMgr->GetFileHash("asdfasdfasdf");
-	std::string b = sAssetsMgr->GetFileHash("asdfasdfasdf");
-	std::string c = sAssetsMgr->GetFileHash("asdfasdfasdfaaa");
-	std::string d = sAssetsMgr->GetFileHash("asdfasdfasdfbbb");
+	uint32 a = sAssetsMgr->GetFileHash("asdfasdfasdf");
+	uint32 b = sAssetsMgr->GetFileHash("asdfasdfasdf");
+	uint32 c = sAssetsMgr->GetFileHash("asdfasdfasdfaaa");
+	uint32 d = sAssetsMgr->GetFileHash("asdfasdfasdfbbb");
 
 	/*
 		std::string s = "http://speedtest.fremont.linode.com/100MB-fremont.bin";
@@ -46,3 +47,9 @@ void UnitTest::TestZip()
 	ZipReader Reader(ZipExecute + "//Test.FCZip");
 	Reader.ExecuteAll(ZipExecut2);
 }
+
+void UnitTest::TestSocketClient()
+{
+	sSocket->TestSelfJoin();
+}
+

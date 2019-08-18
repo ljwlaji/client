@@ -47,6 +47,9 @@
     <ClInclude Include="..\Classes\SHA1.h">
       <Filter>Classes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\SocketClient.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
@@ -75,6 +78,9 @@
       <Filter>Classes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\SHA1.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\SocketClient.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
   </ItemGroup>

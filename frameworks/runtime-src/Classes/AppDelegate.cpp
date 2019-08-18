@@ -115,7 +115,8 @@ bool AppDelegate::applicationDidFinishLaunching()
 
 	UnitTest _UnitTest;
 	//_UnitTest.TestZip();
-	_UnitTest.TestAssetsManger();
+	//_UnitTest.TestAssetsManger();
+	_UnitTest.TestSocketClient();
     return true;
 }
 

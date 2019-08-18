@@ -11,6 +11,7 @@ public:
 	void TestAssetsManger();
 	void TestHash();
 	void TestZip();
+	void TestSocketClient();
 	
 private:
 
