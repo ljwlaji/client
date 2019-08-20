@@ -2,6 +2,7 @@
 #include "AssetsManager.h"
 #include "Zipper.h"
 #include "SocketClient.h"
+#include "Session.h"
 #include "cocos2d.h"
 
 
@@ -50,6 +51,19 @@ void UnitTest::TestZip()
 
 void UnitTest::TestSocketClient()
 {
-	sSocket->TestSelfJoin();
+}
+
+void UnitTest::TestSessionBuffer()
+{
+	Session s;
+	std::string input = "123";
+	s.PushBuffer(input.c_str(), strlen(input.c_str()));
+	s.TestOutPut();
+	s.PushBuffer(input.c_str(), strlen(input.c_str()));
+	s.TestOutPut();
+	s.PushBuffer(input.c_str(), strlen(input.c_str()));
+	s.TestOutPut();
+	s.PushBuffer("\0", 1);
+	s.TestOutPut();
 }
 

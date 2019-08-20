@@ -12,6 +12,7 @@ public:
 	void TestHash();
 	void TestZip();
 	void TestSocketClient();
+	void TestSessionBuffer();
 	
 private:
 

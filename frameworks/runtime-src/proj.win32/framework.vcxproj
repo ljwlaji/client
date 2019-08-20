@@ -196,7 +196,7 @@ xcopy "$(ProjectDir)..\..\..\src" "$(LocalDebuggerWorkingDirectory)\Resources\sr
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\AssetsManager.h" />
     <ClInclude Include="..\Classes\CustomModule.h" />
-    <ClInclude Include="..\Classes\SHA1.h" />
+    <ClInclude Include="..\Classes\Session.h" />
     <ClInclude Include="..\Classes\ShareDefine.h" />
     <ClInclude Include="..\Classes\SocketClient.h" />
     <ClInclude Include="..\Classes\UnitTest.h" />
@@ -212,7 +212,7 @@ xcopy "$(ProjectDir)..\..\..\src" "$(LocalDebuggerWorkingDirectory)\Resources\sr
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\AssetsManager.cpp" />
     <ClCompile Include="..\Classes\CustomModule.cpp" />
-    <ClCompile Include="..\Classes\SHA1.cpp" />
+    <ClCompile Include="..\Classes\Session.cpp" />
     <ClCompile Include="..\Classes\SocketClient.cpp" />
     <ClCompile Include="..\Classes\UnitTest.cpp" />
     <ClCompile Include="..\Classes\ZipHelper.cpp" />

@@ -44,10 +44,10 @@
     <ClInclude Include="..\Classes\Zipper.h">
       <Filter>Classes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\SHA1.h">
+    <ClInclude Include="..\Classes\SocketClient.h">
       <Filter>Classes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\SocketClient.h">
+    <ClInclude Include="..\Classes\Session.h">
       <Filter>Classes</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,10 +77,10 @@
     <ClCompile Include="..\Classes\Zipper.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\SHA1.cpp">
+    <ClCompile Include="..\Classes\SocketClient.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\SocketClient.cpp">
+    <ClCompile Include="..\Classes\Session.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
   </ItemGroup>
