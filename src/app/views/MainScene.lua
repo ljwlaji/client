@@ -2,8 +2,32 @@
 local MainScene = class("MainScene", cc.load("mvc").ViewBase)
 
 function MainScene:onCreate()
-	self:testShader()
-    self:onUpdate(handler(self, self.testting))
+	-- self:testShader()
+    -- self:onUpdate(handler(self, self.testting))
+    self:testCamera()
+end
+
+function MainScene:testCamera()
+    self.map = cc.Sprite:create("background.jpeg")
+                        :addTo(self)
+                        :setAnchorPoint(0, 0)
+                        :setContentSize(display.width, display.height)
+
+    self.unit = cc.Sprite:create("HelloWorld.png")
+                        :move(200, 200)
+                        :addTo(self.map)
+                        :setScale(1)
+                        :setAnchorPoint(0.5, 0.5)
+
+    dump(self.map:getPosition())
+    self.unit.getMap = function() return self.map end
+
+    self.camera = import("app.components.camera"):create(self.unit)
+
+    -- self.camera:onUpdate(diff)
+
+    self:onUpdate(function(this, diff) self.camera:onUpdate(diff) end)
+
 end
 
 function MainScene:testShader()
