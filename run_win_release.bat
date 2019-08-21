@@ -1,0 +1,1 @@
+start runtime/win32/release/framework.exe -workdir %CD%

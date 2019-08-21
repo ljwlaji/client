@@ -1,5 +1,4 @@
 ﻿#include "AssetsManager.h"
-#include "SHA1.h"
 #include "curl/curl.h"
 #include "cocos2d.h"
 

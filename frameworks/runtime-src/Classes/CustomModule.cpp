@@ -1,11 +1,13 @@
 #include "CustomModule.h"
 #include "scripting/lua-bindings/manual/lua_module_register.h"
-
 #include "scripting/lua-bindings/manual/cocostudio/lua_cocos2dx_coco_studio_manual.hpp"
-
 #include "curl/curl.h"
 
 
+int register_fire_timmer_module(lua_State* L)
+{
+	return 1;
+}
 
 int register_fire_core_curl_module(lua_State* L)
 {
