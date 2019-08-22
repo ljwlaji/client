@@ -14,3 +14,4 @@ frameworks/runtime-src/proj.win32/.vs/framework/v15/
 *.idb
 *.ilk
 simulator/
+runtime/mac

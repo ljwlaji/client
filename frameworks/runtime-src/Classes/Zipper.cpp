@@ -1,5 +1,4 @@
 #include "Zipper.h"
-#include <io.h>
 #include <fstream>
 #include <iostream>
 #include <algorithm>

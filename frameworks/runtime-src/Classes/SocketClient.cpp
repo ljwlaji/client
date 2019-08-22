@@ -22,7 +22,7 @@ bool SocketClient::Init()
 		return false;
 #endif
 	m_Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	return m_Socket != INVALID_SOCKET;
+	return m_Socket != 0;
 }
 
 void SocketClient::Run()
@@ -64,7 +64,7 @@ bool SocketClient::Connect(const char * IP, uint16 Port)
 		_sin.sin_addr.s_addr = inet_addr(IP);
 #endif
 		//sLog->OutLog(___F("SocketClientInited With PageFile <%d> \nServerIp <%s>\nPort<%d>", m_Socket, Ip, Port));
-		if (connect(m_Socket, (sockaddr*)&_sin, sizeof(sockaddr_in)) != SOCKET_ERROR)
+		if (connect(m_Socket, (sockaddr*)&_sin, sizeof(sockaddr_in)) != 0)
 		{
 			m_Stopped = false;
 			m_SessionThread = new std::thread(&SocketClient::Run, this);

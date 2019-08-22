@@ -39,7 +39,7 @@ private:
 
 private:
 	std::thread* m_SessionThread;
-	SOCKET m_Socket;
+	uint32 m_Socket;
 	std::atomic<bool> m_Stopped;
 };
 

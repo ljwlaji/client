@@ -41,6 +41,22 @@
 		50D7C96E17EBBEE6005D0B91 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50D7C96D17EBBEE6005D0B91 /* AppKit.framework */; };
 		50D7C97017EBBEEC005D0B91 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50D7C96F17EBBEEC005D0B91 /* IOKit.framework */; };
 		5200BECA1A53D9A500AC45E4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5200BEC91A53D9A500AC45E4 /* Security.framework */; };
+		720EB5F2230E58FC003ADE72 /* SocketClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5E4230E58FB003ADE72 /* SocketClient.cpp */; };
+		720EB5F3230E58FC003ADE72 /* SocketClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5E4230E58FB003ADE72 /* SocketClient.cpp */; };
+		720EB5F4230E58FC003ADE72 /* Timmer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5E7230E58FB003ADE72 /* Timmer.cpp */; };
+		720EB5F5230E58FC003ADE72 /* Timmer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5E7230E58FB003ADE72 /* Timmer.cpp */; };
+		720EB5F6230E58FC003ADE72 /* UnitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5E8230E58FB003ADE72 /* UnitTest.cpp */; };
+		720EB5F7230E58FC003ADE72 /* UnitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5E8230E58FB003ADE72 /* UnitTest.cpp */; };
+		720EB5F8230E58FC003ADE72 /* Zipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EA230E58FC003ADE72 /* Zipper.cpp */; };
+		720EB5F9230E58FC003ADE72 /* Zipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EA230E58FC003ADE72 /* Zipper.cpp */; };
+		720EB5FA230E58FC003ADE72 /* CustomModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EC230E58FC003ADE72 /* CustomModule.cpp */; };
+		720EB5FB230E58FC003ADE72 /* CustomModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EC230E58FC003ADE72 /* CustomModule.cpp */; };
+		720EB5FC230E58FC003ADE72 /* AssetsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5ED230E58FC003ADE72 /* AssetsManager.cpp */; };
+		720EB5FD230E58FC003ADE72 /* AssetsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5ED230E58FC003ADE72 /* AssetsManager.cpp */; };
+		720EB5FE230E58FC003ADE72 /* ZipHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */; };
+		720EB5FF230E58FC003ADE72 /* ZipHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */; };
+		720EB600230E58FC003ADE72 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5F1230E58FC003ADE72 /* Session.cpp */; };
+		720EB601230E58FC003ADE72 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5F1230E58FC003ADE72 /* Session.cpp */; };
 		9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */; };
 		9FF504841A5E87B100AFDA55 /* ConsoleWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */; };
 		9FF504851A5E87B100AFDA55 /* ConsoleWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF504831A5E87B100AFDA55 /* ConsoleWindowController.m */; };
@@ -193,6 +209,24 @@
 		50D7C96D17EBBEE6005D0B91 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		50D7C96F17EBBEEC005D0B91 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		5200BEC91A53D9A500AC45E4 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		720EB5E0230E58FB003ADE72 /* Zipper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Zipper.h; path = ../Classes/Zipper.h; sourceTree = "<group>"; };
+		720EB5E1230E58FB003ADE72 /* Timmer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Timmer.h; path = ../Classes/Timmer.h; sourceTree = "<group>"; };
+		720EB5E2230E58FB003ADE72 /* ZipHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipHelper.h; path = ../Classes/ZipHelper.h; sourceTree = "<group>"; };
+		720EB5E3230E58FB003ADE72 /* lua_module_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lua_module_register.h; path = ../Classes/lua_module_register.h; sourceTree = "<group>"; };
+		720EB5E4230E58FB003ADE72 /* SocketClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SocketClient.cpp; path = ../Classes/SocketClient.cpp; sourceTree = "<group>"; };
+		720EB5E5230E58FB003ADE72 /* ShareDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShareDefine.h; path = ../Classes/ShareDefine.h; sourceTree = "<group>"; };
+		720EB5E6230E58FB003ADE72 /* CustomModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomModule.h; path = ../Classes/CustomModule.h; sourceTree = "<group>"; };
+		720EB5E7230E58FB003ADE72 /* Timmer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Timmer.cpp; path = ../Classes/Timmer.cpp; sourceTree = "<group>"; };
+		720EB5E8230E58FB003ADE72 /* UnitTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnitTest.cpp; path = ../Classes/UnitTest.cpp; sourceTree = "<group>"; };
+		720EB5E9230E58FB003ADE72 /* UnitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnitTest.h; path = ../Classes/UnitTest.h; sourceTree = "<group>"; };
+		720EB5EA230E58FC003ADE72 /* Zipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Zipper.cpp; path = ../Classes/Zipper.cpp; sourceTree = "<group>"; };
+		720EB5EB230E58FC003ADE72 /* SocketClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocketClient.h; path = ../Classes/SocketClient.h; sourceTree = "<group>"; };
+		720EB5EC230E58FC003ADE72 /* CustomModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomModule.cpp; path = ../Classes/CustomModule.cpp; sourceTree = "<group>"; };
+		720EB5ED230E58FC003ADE72 /* AssetsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AssetsManager.cpp; path = ../Classes/AssetsManager.cpp; sourceTree = "<group>"; };
+		720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZipHelper.cpp; path = ../Classes/ZipHelper.cpp; sourceTree = "<group>"; };
+		720EB5EF230E58FC003ADE72 /* AssetsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AssetsManager.h; path = ../Classes/AssetsManager.h; sourceTree = "<group>"; };
+		720EB5F0230E58FC003ADE72 /* Session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Session.h; path = ../Classes/Session.h; sourceTree = "<group>"; };
+		720EB5F1230E58FC003ADE72 /* Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Session.cpp; path = ../Classes/Session.cpp; sourceTree = "<group>"; };
 		9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		9FF504781A5E86D600AFDA55 /* libsimulator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libsimulator.xcodeproj; path = "../../cocos2d-x/tools/simulator/libsimulator/proj.ios_mac/libsimulator.xcodeproj"; sourceTree = "<group>"; };
 		9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConsoleWindow.xib; sourceTree = "<group>"; };
@@ -403,6 +437,24 @@
 		F293BB7C15EB830F00256477 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				720EB5ED230E58FC003ADE72 /* AssetsManager.cpp */,
+				720EB5EF230E58FC003ADE72 /* AssetsManager.h */,
+				720EB5EC230E58FC003ADE72 /* CustomModule.cpp */,
+				720EB5E6230E58FB003ADE72 /* CustomModule.h */,
+				720EB5E3230E58FB003ADE72 /* lua_module_register.h */,
+				720EB5F1230E58FC003ADE72 /* Session.cpp */,
+				720EB5F0230E58FC003ADE72 /* Session.h */,
+				720EB5E5230E58FB003ADE72 /* ShareDefine.h */,
+				720EB5E4230E58FB003ADE72 /* SocketClient.cpp */,
+				720EB5EB230E58FC003ADE72 /* SocketClient.h */,
+				720EB5E7230E58FB003ADE72 /* Timmer.cpp */,
+				720EB5E1230E58FB003ADE72 /* Timmer.h */,
+				720EB5E8230E58FB003ADE72 /* UnitTest.cpp */,
+				720EB5E9230E58FB003ADE72 /* UnitTest.h */,
+				720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */,
+				720EB5E2230E58FB003ADE72 /* ZipHelper.h */,
+				720EB5EA230E58FC003ADE72 /* Zipper.cpp */,
+				720EB5E0230E58FB003ADE72 /* Zipper.h */,
 				F293BB7E15EB831F00256477 /* AppDelegate.cpp */,
 				F293BB7F15EB831F00256477 /* AppDelegate.h */,
 			);
@@ -461,12 +513,18 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
+				TargetAttributes = {
+					F293B3C715EB7BE500256477 = {
+						DevelopmentTeam = 6R735A8VJX;
+					};
+				};
 			};
 			buildConfigurationList = F293B3C215EB7BE500256477 /* Build configuration list for PBXProject "framework" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				"zh-Hans",
@@ -605,9 +663,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				720EB5F7230E58FC003ADE72 /* UnitTest.cpp in Sources */,
 				C07828FA18B4D72E00BD2287 /* SimulatorApp.mm in Sources */,
 				5023813317EBBCE400990C9B /* AppDelegate.cpp in Sources */,
+				720EB5FB230E58FC003ADE72 /* CustomModule.cpp in Sources */,
+				720EB601230E58FC003ADE72 /* Session.cpp in Sources */,
+				720EB5FF230E58FC003ADE72 /* ZipHelper.cpp in Sources */,
 				9FF504851A5E87B100AFDA55 /* ConsoleWindowController.m in Sources */,
+				720EB5F5230E58FC003ADE72 /* Timmer.cpp in Sources */,
+				720EB5F9230E58FC003ADE72 /* Zipper.cpp in Sources */,
+				720EB5F3230E58FC003ADE72 /* SocketClient.cpp in Sources */,
+				720EB5FD230E58FC003ADE72 /* AssetsManager.cpp in Sources */,
 				C07828F818B4D72E00BD2287 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -616,9 +682,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				720EB5F6230E58FC003ADE72 /* UnitTest.cpp in Sources */,
 				5023812517EBBCAC00990C9B /* RootViewController.mm in Sources */,
 				F293BB9C15EB831F00256477 /* AppDelegate.cpp in Sources */,
+				720EB5FA230E58FC003ADE72 /* CustomModule.cpp in Sources */,
+				720EB600230E58FC003ADE72 /* Session.cpp in Sources */,
+				720EB5FE230E58FC003ADE72 /* ZipHelper.cpp in Sources */,
 				5023812417EBBCAC00990C9B /* main.m in Sources */,
+				720EB5F4230E58FC003ADE72 /* Timmer.cpp in Sources */,
+				720EB5F8230E58FC003ADE72 /* Zipper.cpp in Sources */,
+				720EB5F2230E58FC003ADE72 /* SocketClient.cpp in Sources */,
+				720EB5FC230E58FC003ADE72 /* AssetsManager.cpp in Sources */,
 				5023811817EBBCAC00990C9B /* AppController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -802,6 +876,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
+				DEVELOPMENT_TEAM = 6R735A8VJX;
 				ENABLE_BITCODE = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -842,6 +917,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
+				DEVELOPMENT_TEAM = 6R735A8VJX;
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ios/Prefix.pch;

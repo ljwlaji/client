@@ -1,6 +1,10 @@
-﻿#include "AssetsManager.h"
-#include "curl/curl.h"
+#include "AssetsManager.h"
 #include "cocos2d.h"
+#if defined(__APPLE__)
+#include "../../cocos2d-x/external/curl/include/mac/curl/curl.h"
+#else
+#include "curl/curl.h"
+#endif
 
 static size_t write_func(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
