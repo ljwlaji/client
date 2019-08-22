@@ -57,6 +57,10 @@
 		720EB5FF230E58FC003ADE72 /* ZipHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */; };
 		720EB600230E58FC003ADE72 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5F1230E58FC003ADE72 /* Session.cpp */; };
 		720EB601230E58FC003ADE72 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5F1230E58FC003ADE72 /* Session.cpp */; };
+		720EB60D230E5B88003ADE72 /* lsqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 720EB608230E5B87003ADE72 /* lsqlite3.c */; };
+		720EB60E230E5B88003ADE72 /* lsqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 720EB608230E5B87003ADE72 /* lsqlite3.c */; };
+		720EB60F230E5B88003ADE72 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 720EB60B230E5B87003ADE72 /* sqlite3.c */; };
+		720EB610230E5B88003ADE72 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 720EB60B230E5B87003ADE72 /* sqlite3.c */; };
 		9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */; };
 		9FF504841A5E87B100AFDA55 /* ConsoleWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */; };
 		9FF504851A5E87B100AFDA55 /* ConsoleWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF504831A5E87B100AFDA55 /* ConsoleWindowController.m */; };
@@ -227,6 +231,10 @@
 		720EB5EF230E58FC003ADE72 /* AssetsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AssetsManager.h; path = ../Classes/AssetsManager.h; sourceTree = "<group>"; };
 		720EB5F0230E58FC003ADE72 /* Session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Session.h; path = ../Classes/Session.h; sourceTree = "<group>"; };
 		720EB5F1230E58FC003ADE72 /* Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Session.cpp; path = ../Classes/Session.cpp; sourceTree = "<group>"; };
+		720EB608230E5B87003ADE72 /* lsqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lsqlite3.c; path = ../Classes/lsqlite3.c; sourceTree = "<group>"; };
+		720EB60B230E5B87003ADE72 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ../Classes/sqlite3.c; sourceTree = "<group>"; };
+		720EB60C230E5B87003ADE72 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = ../Classes/sqlite3.h; sourceTree = "<group>"; };
+		720EB611230E5BDB003ADE72 /* lsqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lsqlite3.h; path = ../Classes/lsqlite3.h; sourceTree = "<group>"; };
 		9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		9FF504781A5E86D600AFDA55 /* libsimulator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libsimulator.xcodeproj; path = "../../cocos2d-x/tools/simulator/libsimulator/proj.ios_mac/libsimulator.xcodeproj"; sourceTree = "<group>"; };
 		9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConsoleWindow.xib; sourceTree = "<group>"; };
@@ -437,6 +445,10 @@
 		F293BB7C15EB830F00256477 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				720EB611230E5BDB003ADE72 /* lsqlite3.h */,
+				720EB608230E5B87003ADE72 /* lsqlite3.c */,
+				720EB60B230E5B87003ADE72 /* sqlite3.c */,
+				720EB60C230E5B87003ADE72 /* sqlite3.h */,
 				720EB5ED230E58FC003ADE72 /* AssetsManager.cpp */,
 				720EB5EF230E58FC003ADE72 /* AssetsManager.h */,
 				720EB5EC230E58FC003ADE72 /* CustomModule.cpp */,
@@ -668,8 +680,10 @@
 				5023813317EBBCE400990C9B /* AppDelegate.cpp in Sources */,
 				720EB5FB230E58FC003ADE72 /* CustomModule.cpp in Sources */,
 				720EB601230E58FC003ADE72 /* Session.cpp in Sources */,
+				720EB610230E5B88003ADE72 /* sqlite3.c in Sources */,
 				720EB5FF230E58FC003ADE72 /* ZipHelper.cpp in Sources */,
 				9FF504851A5E87B100AFDA55 /* ConsoleWindowController.m in Sources */,
+				720EB60E230E5B88003ADE72 /* lsqlite3.c in Sources */,
 				720EB5F5230E58FC003ADE72 /* Timmer.cpp in Sources */,
 				720EB5F9230E58FC003ADE72 /* Zipper.cpp in Sources */,
 				720EB5F3230E58FC003ADE72 /* SocketClient.cpp in Sources */,
@@ -687,8 +701,10 @@
 				F293BB9C15EB831F00256477 /* AppDelegate.cpp in Sources */,
 				720EB5FA230E58FC003ADE72 /* CustomModule.cpp in Sources */,
 				720EB600230E58FC003ADE72 /* Session.cpp in Sources */,
+				720EB60F230E5B88003ADE72 /* sqlite3.c in Sources */,
 				720EB5FE230E58FC003ADE72 /* ZipHelper.cpp in Sources */,
 				5023812417EBBCAC00990C9B /* main.m in Sources */,
+				720EB60D230E5B88003ADE72 /* lsqlite3.c in Sources */,
 				720EB5F4230E58FC003ADE72 /* Timmer.cpp in Sources */,
 				720EB5F8230E58FC003ADE72 /* Zipper.cpp in Sources */,
 				720EB5F2230E58FC003ADE72 /* SocketClient.cpp in Sources */,
@@ -902,6 +918,7 @@
 					"-image_base",
 					100000000,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.firecore.prj01;
 				SDKROOT = iphoneos;
 				STRIP_PNG_TEXT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -942,6 +959,7 @@
 					"-image_base",
 					100000000,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.firecore.prj01;
 				SDKROOT = iphoneos;
 				STRIP_PNG_TEXT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
