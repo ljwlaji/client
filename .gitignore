@@ -15,3 +15,6 @@ frameworks/runtime-src/proj.win32/.vs/framework/v15/
 *.ilk
 simulator/
 runtime/mac
+contents.xcworkspacedata
+IDEWorkspaceChecks.plist
+UserInterfaceState.xcuserstate
