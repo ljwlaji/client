@@ -14,7 +14,7 @@ function MainScene:testCamera()
                         :setContentSize(display.width, display.height)
 
     self.unit = cc.Sprite:create("HelloWorld.png")
-                        :move(200, 200)
+                        :move(300, 300)
                         :addTo(self.map)
                         :setScale(1)
                         :setAnchorPoint(0.5, 0.5)
@@ -26,7 +26,7 @@ function MainScene:testCamera()
 
     -- self.camera:onUpdate(diff)
 
-    self:onUpdate(function(this, diff) self.camera:onUpdate(diff) end)
+    self:onUpdate(function(this) self.camera:onUpdate() end)
 
 end
 
