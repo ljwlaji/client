@@ -3,8 +3,14 @@
   <SolutionFolder>
     <Group ctype="ResourceGroup">
       <RootFolder Name=".">
-        <Image Name="HelloWorld.png" />
-        <Project Name="MainScene.csd" Type="Scene" />
+        <Folder Name="csb">
+          <Folder Name="layer">
+            <Project Name="CSB_HUD_Layer.csd" Type="Layer" />
+          </Folder>
+          <Folder Name="scene" />
+          <Folder Name="node" />
+        </Folder>
+        <Folder Name="ui" />
       </RootFolder>
     </Group>
   </SolutionFolder>

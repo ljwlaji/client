@@ -1,7 +1,17 @@
 local Camera = class("Camera")
 
+Camera.instance = nil
+
+function Camera.getInstance()
+	if not Camera.instance then
+		Camera.instance = Camera:create()
+	end
+	return Camera.instance
+end
+
 function Camera:ctor(focusUnit, followBoxSize)
-	self.focusUnit = focusUnit
+	self.canUpdate = false
+	self.focusUnit = focusUnit or nil
 	self.followBoxSize = followBoxSize or {x = 5, y = 5}
 end
 
@@ -17,9 +27,18 @@ end
 	@skipAnim 是否跳过动画
 ]]
 function Camera:changeFocus(focusUnit, skipAnim)
-	assert(focusUnit)
 	self.focusUnit = focusUnit
+	if not self.focusUnit then return end
 	if skipAnim then self:move(self:getMoveOffset()) end
+	self.canUpdate = true
+end
+
+function Camera:getFocusdUnit()
+	return self.focusUnit
+end
+
+function Camera:stopFollow()
+	self.canUpdate = false
 end
 
 function Camera:getMoveOffset(seed)
@@ -48,4 +67,4 @@ function Camera:onUpdate()
 end
 
 
-return Camera
+return Camera.getInstance()

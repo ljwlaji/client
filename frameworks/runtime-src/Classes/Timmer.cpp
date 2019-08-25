@@ -1,5 +1,13 @@
 #include "Timmer.h"
 
+Timmer * Timmer::create()
+{
+	Timmer* timmer = nullptr;
+	timmer = new (std::nothrow) Timmer();
+	if (timmer) timmer->autorelease();
+	return timmer;
+}
+
 Timmer::Timmer()
 {
 	m_Begin = std::chrono::high_resolution_clock::now();

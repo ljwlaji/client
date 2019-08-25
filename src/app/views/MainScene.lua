@@ -1,33 +1,45 @@
 
-local MainScene = class("MainScene", cc.load("mvc").ViewBase)
+local MainScene     = class("MainScene", cc.load("mvc").ViewBase)
+local Map           = import("app.components.Map")
+local DataBase      = import("app.components.DataBase")
+local Camera        = import("app.components.Camera")
+
+local ZOrder_HUD = 100
 
 function MainScene:onCreate()
-	-- self:testShader()
-    -- self:onUpdate(handler(self, self.testting))
-    self:testCamera()
+    self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
+    self:startGame(1)
 end
 
-function MainScene:testCamera()
-    self.map = cc.Sprite:create("background.jpeg")
-                        :addTo(self)
-                        :setAnchorPoint(0, 0)
-                        :setContentSize(display.width, display.height)
+function MainScene:startGame(chosedCharacterID)
+    local MapEntry = DataBase:query(string.format("SELECT * FROM character WHERE character_id = %d", chosedCharacterID))[1]["curr_map_entry"]
+    self:tryEnterMap(MapEntry, chosedCharacterID)
+end
 
-    self.unit = cc.Sprite:create("HelloWorld.png")
-                        :move(300, 300)
-                        :addTo(self.map)
-                        :setScale(1)
-                        :setAnchorPoint(0.5, 0.5)
+function MainScene:tryEnterMap(mapEntry, chosedCharacterID)
+    if self.currentMap then
+        if self.currentMap:getEntry() == mapEntry then return end
+        Camera:changeFocus(nil)
+        self.currentMap:cleanUpBeforeDelete()
+        self.currentMap:removeFromParent()
+        self.currentMap = nil
+    end
 
-    dump(self.map:getPosition())
-    self.unit.getMap = function() return self.map end
+    self.currentMap = Map:create(mapEntry, chosedCharacterID):addTo(self)
 
-    self.camera = import("app.components.camera"):create(self.unit)
+    if not self.Timmer then
+        self.Timmer = cc.Timmer:create():addTo(self)
+        self:onUpdate(handler(self, self.onNativeUpdate))
+    end
+end
 
-    -- self.camera:onUpdate(diff)
-
-    self:onUpdate(function(this) self.camera:onUpdate() end)
-
+function MainScene:onNativeUpdate()
+    local diff = self.Timmer:getMSDiff()
+    if diff >= 16 then
+        self.Timmer:reset()
+        if self.currentMap then self.currentMap:onUpdate(diff) end
+        Camera:onUpdate(diff)
+    end
 end
 
 function MainScene:testShader()
