@@ -70,4 +70,8 @@ function Object:onUpdate(diff)
 	if self.AI then self.AI:update(diff) end
 end
 
+function Object:cleanUpBeforeDelete()
+	return self
+end
+
 return Object

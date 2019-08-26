@@ -10,7 +10,8 @@ public:
 	PixalData(uint8* data, uint32 width, uint32 height) : 
 		m_Data(data),
 		m_Height(height),
-		m_Width(width)
+		m_Width(width),
+		m_RefrenceCount(0)
 	{
 	}
 	~PixalData() 
@@ -38,6 +39,7 @@ public:
 	{
 		return m_Data;
 	}
+	uint32 m_RefrenceCount;
 private:
 	uint32 m_Height;
 	uint32 m_Width;
@@ -57,6 +59,10 @@ public:
 	void UnitTest();
 	bool GetAlpha(const char* url, uint32 x, uint32 y);
 
+	void link(const char* url);
+	void unLink(const char* url);
+
+	PixalData* GetData(const char* url);
 
 private:
 	PixalCollisionMgr();
@@ -68,6 +74,7 @@ private:
 
 private:
 	std::map<std::string, PixalData*> m_PixalTemplate;
+	std::map<std::string, PixalData*>::iterator m_Itr;
 };
 
 

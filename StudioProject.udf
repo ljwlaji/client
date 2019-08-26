@@ -7,13 +7,5 @@
         <LastRunType Value="Windows" />
       </Value>
     </Item>
-    <Item Key="TabsParamsKey">
-      <Value ctype="TabsInfo">
-        <OpenedDocuments>
-          <FilePathData Path="csb/layer/CSB_HUD_Layer.csd" />
-        </OpenedDocuments>
-        <ActiveDocument Path="csb/layer/CSB_HUD_Layer.csd" />
-      </Value>
-    </Item>
   </Properties>
 </UserData>

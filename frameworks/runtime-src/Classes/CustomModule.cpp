@@ -295,12 +295,112 @@ int tolua_firecore_PixalCollisionMgr_getInstance(lua_State* tolua_S)
     return 0;
 }
 
+int tolua_firecore_PixalCollisionMgr_link(lua_State* tolua_S)
+{
+    int argc = 0;
+    PixalCollisionMgr* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.PixalCollisionMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (PixalCollisionMgr*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_PixalCollisionMgr_link'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1)
+    {
+		std::string arg1 = "";
+		ok &= luaval_to_std_string(tolua_S, 2, &arg1, "cc.PixalCollisionMgr:link");
+		if(!ok)
+        {
+			tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_PixalCollisionMgr_link'", nullptr);
+            return 0;
+        }
+        cobj->link(arg1.c_str());
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.PixalCollisionMgr:link",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_PixalCollisionMgr_link'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int tolua_firecore_PixalCollisionMgr_unLink(lua_State* tolua_S)
+{
+    int argc = 0;
+    PixalCollisionMgr* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.PixalCollisionMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (PixalCollisionMgr*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_PixalCollisionMgr_unLink'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1)
+    {
+		std::string arg1 = "";
+		ok &= luaval_to_std_string(tolua_S, 2, &arg1, "cc.PixalCollisionMgr:unLink");
+		if(!ok)
+        {
+			tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_PixalCollisionMgr_unLink'", nullptr);
+            return 0;
+        }
+        cobj->unLink(arg1.c_str());
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.PixalCollisionMgr:unLink",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_PixalCollisionMgr_unLink'.",&tolua_err);
+#endif
+    return 0;
+}
+
 int register_fire_PixalCollisionMgr_module(lua_State* L)
 {
 	tolua_usertype(L, "cc.PixalCollisionMgr");
 	tolua_cclass(L, "PixalCollisionMgr", "cc.PixalCollisionMgr", "", nullptr);
 
 	tolua_beginmodule(L, "PixalCollisionMgr");
+		tolua_function(L, "link", tolua_firecore_PixalCollisionMgr_link);
+		tolua_function(L, "unLink", tolua_firecore_PixalCollisionMgr_unLink);
 		tolua_function(L, "getInstance", tolua_firecore_PixalCollisionMgr_getInstance);
 		tolua_function(L, "loadPNGData", tolua_firecore_PixalCollisionMgr_loadPNGData);
 		tolua_function(L, "getAlpha", tolua_firecore_PixalCollisionMgr_getAlpha);

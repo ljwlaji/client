@@ -31,6 +31,31 @@ bool PixalCollisionMgr::GetAlpha(const char * url, uint32 x, uint32 y)
 	return GetByteValue(data->getData()[currPos], offset);
 }
 
+void PixalCollisionMgr::link(const char* url)
+{
+	if (PixalData* data = GetData(url))
+		data->m_RefrenceCount++;
+}
+
+void PixalCollisionMgr::unLink(const char* url)
+{
+	if (PixalData* data = GetData(url))
+	{
+		if (--data->m_RefrenceCount <= 0)
+		{
+			delete data;
+			data = nullptr;
+			m_PixalTemplate.erase(m_PixalTemplate.find(url));
+		}
+	}
+}
+
+PixalData * PixalCollisionMgr::GetData(const char * url)
+{
+	m_Itr = m_PixalTemplate.find(url);
+	return m_Itr != m_PixalTemplate.end() ? m_Itr->second : nullptr;
+}
+
 void PixalCollisionMgr::SetByteValue(uint8& src, uint8 pos, bool value)
 {
 	uint8 p = 0x01;
@@ -80,6 +105,7 @@ bool PixalCollisionMgr::loadPNGData(const char * url)
 				bool isVisible = (*pixel >> 24) & 0xff == 255;
 				SetByteValue(buffer[currPos], offset, isVisible);
 			}
+		data->m_RefrenceCount++;
 		m_PixalTemplate[url] = data;
 	} while (0);
 	delete image;

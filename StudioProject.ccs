@@ -7,10 +7,19 @@
           <Folder Name="layer">
             <Project Name="CSB_HUD_Layer.csd" Type="Layer" />
           </Folder>
-          <Folder Name="scene" />
+          <Folder Name="maps">
+            <Folder Name="0">
+              <Project Name="0.csd" Type="Layer" />
+            </Folder>
+          </Folder>
           <Folder Name="node" />
+          <Folder Name="scene" />
         </Folder>
-        <Folder Name="ui" />
+        <Folder Name="ui">
+          <Folder Name="GameObject">
+            <Image Name="1.png" />
+          </Folder>
+        </Folder>
       </RootFolder>
     </Group>
   </SolutionFolder>

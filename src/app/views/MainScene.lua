@@ -3,29 +3,22 @@ local MainScene     = class("MainScene", cc.load("mvc").ViewBase)
 local Map           = import("app.components.Map")
 local DataBase      = import("app.components.DataBase")
 local Camera        = import("app.components.Camera")
-
+local GameObject    = import("app.components.Object.GameObject")
+local MapExtractor  = import("devTools.MapExtractor")
 local ZOrder_HUD = 100
 
 function MainScene:onCreate()
-    -- self:testPixalCollisionMgr()
-    local testpng = "res/image180.png"
 
-    local sp = cc.Sprite:create(testpng):addTo(self):setAnchorPoint(1, 0):move(display.center)
-    local width = sp:getContentSize().width
-    local height = sp:getContentSize().height
-    cc.PixalCollisionMgr:getInstance():loadPNGData(testpng)
-    local output = ""
-    local oldy = 0
-    for y=0,height do
-        for x=0,width do
-            local visible = cc.PixalCollisionMgr:getInstance():getAlpha(testpng, x, y)
-            cc.DrawNode:create():drawDot(cc.p(1,1), 1.0, cc.c4f(1,1,1, visible and 1 or 0)):addTo(self):move(display.cx + x, display.cy + y)
-        end
-    end
-
+    self:testMapExtractor()
     do return end
+    GameObject:create():cleanUpBeforeDelete():removeFromParent()
+
     self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     self:startGame(1)
+end
+
+function MainScene:testMapExtractor()
+    MapExtractor:create(self):run()
 end
 
 function MainScene:startGame(chosedCharacterID)
@@ -60,6 +53,21 @@ function MainScene:onNativeUpdate()
 end
 
 function MainScene:testPixalCollisionMgr()
+        -- self:testPixalCollisionMgr()
+    local testpng = "res/image180.png"
+
+    local sp = cc.Sprite:create(testpng):addTo(self):setAnchorPoint(1, 0):move(display.center)
+    local width = sp:getContentSize().width
+    local height = sp:getContentSize().height
+    cc.PixalCollisionMgr:getInstance():loadPNGData(testpng)
+    local output = ""
+    local oldy = 0
+    for y=0,height do
+        for x=0,width do
+            local visible = cc.PixalCollisionMgr:getInstance():getAlpha(testpng, x, y)
+            cc.DrawNode:create():drawDot(cc.p(1,1), 1.0, cc.c4f(1,1,1, visible and 1 or 0)):addTo(self):move(display.cx + x, display.cy + y)
+        end
+    end
 end
 
 function MainScene:testShader()
