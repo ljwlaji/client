@@ -1,6 +1,6 @@
 local Object 			= import("app.components.Object.Object")
-local Unit 				= class("Unit", Object)
 local StateMachine 		= import("app.components.StateMachine")
+local Unit 				= class("Unit", Object)
 
 local STATE_IDLE 			= 0
 local STATE_IDLE_RUN 		= 1
@@ -11,6 +11,7 @@ local STATE_JUMP_HIGH   	= 5
 local STATE_JUMP_FALL   	= 6
 local STATE_JUMP_FALL_LAND  = 7
 
+-- 关于攀爬 其实就是左右移动偏移值变成了上下移动偏移值
 function Unit:onCreate()
 	self:setupStateMechine()
 end

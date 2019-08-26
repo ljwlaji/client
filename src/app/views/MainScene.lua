@@ -7,6 +7,23 @@ local Camera        = import("app.components.Camera")
 local ZOrder_HUD = 100
 
 function MainScene:onCreate()
+    -- self:testPixalCollisionMgr()
+    local testpng = "res/image180.png"
+
+    local sp = cc.Sprite:create(testpng):addTo(self):setAnchorPoint(1, 0):move(display.center)
+    local width = sp:getContentSize().width
+    local height = sp:getContentSize().height
+    cc.PixalCollisionMgr:getInstance():loadPNGData(testpng)
+    local output = ""
+    local oldy = 0
+    for y=0,height do
+        for x=0,width do
+            local visible = cc.PixalCollisionMgr:getInstance():getAlpha(testpng, x, y)
+            cc.DrawNode:create():drawDot(cc.p(1,1), 1.0, cc.c4f(1,1,1, visible and 1 or 0)):addTo(self):move(display.cx + x, display.cy + y)
+        end
+    end
+
+    do return end
     self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     self:startGame(1)
 end
@@ -40,6 +57,9 @@ function MainScene:onNativeUpdate()
         if self.currentMap then self.currentMap:onUpdate(diff) end
         Camera:onUpdate(diff)
     end
+end
+
+function MainScene:testPixalCollisionMgr()
 end
 
 function MainScene:testShader()
