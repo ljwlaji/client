@@ -32,8 +32,8 @@ local LoadRect = {
 }
 
 local RemoveRect = {
-	width = display.width * 2.2,
-	height = display.height * 2.2,
+	width = display.width * 5,
+	height = display.height * 5,
 }
 
 
@@ -65,6 +65,7 @@ function Map:loadFromDB()
 			width 	= areaData.width,
 			height 	= areaData.height,
 		}
+		areaData.mapEntry = self.m_Entry
 		self.m_AreaTemplates[areaData.entry] = areaData
 	end
 end
@@ -92,18 +93,18 @@ function Map:tryLoadNewArea()
 	LoadRect.y = -self:getPositionY()
 	for k, currAreaData in pairs(self.m_AreaTemplates) do
 		if not self.m_Areas[currAreaData.entry] and self:isInLoadRange(currAreaData.rect) then
-				release_print("区域热加载: ", currAreaData.entry)
+			release_print("区域热加载: ", currAreaData.entry)
 			local area = Area:create(currAreaData)
 							 :addTo(self)
 							 :move(currAreaData.x, currAreaData.y)
 							 :setContentSize(currAreaData.width, currAreaData.height)
+			area:loadFromDB()
 			self.m_Areas[currAreaData.entry] = area
 		end
 	end
 end
 
 function Map:tryRemoveArea()
-	-- 移除的范围要稍微比加载的范围大一些
 	RemoveRect.x = -self:getPositionX()
 	RemoveRect.y = -self:getPositionY()
 	local continue = true
@@ -156,6 +157,52 @@ function Map:cleanUpBeforeDelete()
 		v:cleanUpBeforeDelete():removeFromParent()
 	end
 	self.m_Areas = {}
+end
+
+function Map:tryFixPosition(unit, offset)
+	local hitGround = false
+	local nowPosX, nowPosY = unit:getPosition()
+	local nextPos = {
+		x = nowPosX + offset.x,
+		y = nowPosY,
+	}
+	for k, v in pairs(self.m_ObjectList) do
+		if v:isGameObject() and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
+			if offset.x > 0 then
+				nextPos.x = v:getPositionX() - 1
+			elseif offset.x < 0 then
+				nextPos.x = v:getPositionX() + v:getContentSize().width + 1
+			end
+			break
+		end
+	end
+
+	nextPos.y = nextPos.y + offset.y
+	for k, v in pairs(self.m_ObjectList) do
+		if v:isGameObject() and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
+			nextPos.y = v:getPositionY() + v:getContentSize().height + 1
+			hitGround = true
+			break
+		end
+	end
+
+	return nextPos, hitGround
+end
+
+function Map:getStandingObject(nextPos)
+	local obj = nil
+	for k, v in pairs(self.m_ObjectList) do
+		if v:isGameObject() then
+			if cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
+				if v:hasPixalCollision() then
+				else
+					obj = v
+				end
+			end
+			if obj then break end
+		end
+	end
+	return obj
 end
 
 return Map

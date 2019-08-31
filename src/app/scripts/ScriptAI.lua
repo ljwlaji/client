@@ -1,11 +1,31 @@
 local ScriptAI = class("ScriptAI")
-local ScriptMgr = import("app.components.scripts.ScriptMgr")
 
 function ScriptAI:ctor(me)
 	self.me = me
+	self:onReset()
 end
 
-function ScriptAI:onUpdate()
+function ScriptAI:onGossipHello(pPlayer, pObject)
+	return false
+end
+
+function ScriptAI:onGossipSelect(pPlayer, pObject, pSender, pIndex)
+
+end
+
+function ScriptAI:moveInLineOfSight(who)
+	
+end
+
+function ScriptAI:onReset()
+
+end
+
+function ScriptAI:onDead()
+
+end
+
+function ScriptAI:onUpdate(diff)
 
 end
 

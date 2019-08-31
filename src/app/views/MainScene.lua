@@ -5,14 +5,9 @@ local DataBase      = import("app.components.DataBase")
 local Camera        = import("app.components.Camera")
 local GameObject    = import("app.components.Object.GameObject")
 local MapExtractor  = import("devTools.MapExtractor")
-local ZOrder_HUD = 100
+local ZOrder_HUD    = 100
 
 function MainScene:onCreate()
-
-    self:testMapExtractor()
-    do return end
-    GameObject:create():cleanUpBeforeDelete():removeFromParent()
-
     self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     self:startGame(1)
 end

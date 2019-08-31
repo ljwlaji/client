@@ -72,29 +72,30 @@ bool PixalCollisionMgr::GetByteValue(uint8& src, uint8 pos)
 bool PixalCollisionMgr::loadPNGData(const char * url)
 {
 	if (m_PixalTemplate.find(url) != m_PixalTemplate.end())
+	{
+		m_PixalTemplate.find(url)->second->m_RefrenceCount++;
 		return true;
-	cocos2d::Image* image = new cocos2d::Image();
-	image->initWithImageFile(url);
-
+	}
+	cocos2d::Image* image = nullptr;
+	bool ret = false;
 	do
 	{
-		CC_BREAK_IF(!(image->getRenderFormat() != cocos2d::Texture2D::PixelFormat::BGRA8888 &&
-			image->getRenderFormat() != cocos2d::Texture2D::PixelFormat::RGBA4444));
+		image = new cocos2d::Image();
+		CC_BREAK_IF(!image);
+		CC_BREAK_IF(!image->initWithImageFile(url));
+		CC_BREAK_IF(!(image->getRenderFormat() != cocos2d::Texture2D::PixelFormat::BGRA8888 && image->getRenderFormat() != cocos2d::Texture2D::PixelFormat::RGBA4444));
 
 		uint32 totalWidth = image->getWidth();
 		uint32 totalHeight = image->getHeight();
 		uint32 requireSize = ceil(totalWidth * totalHeight / SINGLE_STEP);
 		uint8* buffer = new (std::nothrow)uint8[requireSize]();
-		PixalData* data = new PixalData(buffer, totalWidth, totalHeight);
 		CC_BREAK_IF(!buffer);
 
+		PixalData* data = new PixalData(buffer, totalWidth, totalHeight);
 		uint8* imgData = image->getData();
 		uint32 step = 0;
 		uint32 currPos = 0;
 		uint8 offset = 0;
-
-		uint32 oldWidth = 0;
-		std::string ouput = "";
 		for (int x = 0; x < totalWidth; x++)
 			for (int y = 0; y < totalHeight; y++)
 			{
@@ -107,7 +108,9 @@ bool PixalCollisionMgr::loadPNGData(const char * url)
 			}
 		data->m_RefrenceCount++;
 		m_PixalTemplate[url] = data;
+		ret = true;
 	} while (0);
+
 	delete image;
 	return true;
 }

@@ -1,48 +1,31 @@
 local Object = class("Object", cc.Node)
 local DataBase = import("app.components.DataBase")
---[[
-	Virtual Class
-	Object分类:
-		1. Unit
-			Player
-			Creature
-		2. GameObject
-]]
-
-Object.TYPES = {
-	TYPE_GAMEOBJECT = 1,
-	TYPE_CREATURE 	= 2,
-	TYPE_PLAYER 	= 3,
-}
-
-Object.OBJECT_FLAGS = {
-
-}
+local ShareDefine = import("app.ShareDefine")
 
 function Object:ctor(context)
 	self.context = context
+	self.m_Type = 0
 	if self.onCreate then self:onCreate() end
 end
 
---[[
-	所有Object都必须添加到地图上
-	所有Object都必须在Area和Map内都保有一个指针
-]]
-function Object:loadFromDB()
-	if self.onLoadFromDB then self:onLoadFromDB(DBData) end
-end
-
-function Object:loadModelInfo()
-	local modelInfo = DataBase:query("SELECT * FROM model_template WHERE id = %d", self.context.model_id)[1]
-	assert(self.modelInfo)
+function Object:onCreate(objType)
+	self.getType = function() return objType end
 end
 
 function Object:isUnit()
-	return self:getType() == Object.TYPES.TYPE_PLAYER or self:getType() == Object.TYPES.TYPE_CREATURE 
+	return self:isPlayer() or self:isCreature()
+end
+
+function Object:isPlayer()
+	return self:getType() == ShareDefine:playerType()
+end
+
+function Object:isCreature()
+	return self:getType() == ShareDefine:creatureType()
 end
 
 function Object:isGameObject()
-	return self:getType() == Object.TYPES.TYPE_GAMEOBJECT 
+	return self:getType() == ShareDefine:gameObjectType()
 end
 
 function Object:getMap()
@@ -57,21 +40,35 @@ function Object:onRemoveFromWorld()
 	self.currMap = nil
 end
 
-function Object:moveInLineOfSight(object_who)
-
-end
-
-function Object:updateMovement()
-	-- 碰撞属性
-end
-
 function Object:onUpdate(diff)
-	self:updateMovement()
-	if self.AI then self.AI:update(diff) end
+	if self.m_AI then self.m_AI:onUpdate(diff) end
+end
+
+function Object:setAI(AIInstance)
+	self.m_AI = AIInstance
+end
+
+function Object:getAI()
+	return self.m_AI
 end
 
 function Object:cleanUpBeforeDelete()
 	return self
+end
+
+function Object:createModelByID(model_id)
+	local model = nil
+	local sql = string.format("SELECT * FROM model_template WHERE entry = %d", model_id)
+	local currModelData = DataBase:query(sql)[1]
+	if currModelData.model_type == "image" then
+		model = cc.Sprite:create(string.format("res/model/%s", currModelData.file_path))
+	elseif currModelData.model_type == "spine" then
+
+	elseif currModelData.model_type == "animation" then
+		
+	end
+	-- self.m_Model = 
+	return model
 end
 
 return Object

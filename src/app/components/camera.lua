@@ -12,12 +12,19 @@ end
 function Camera:ctor(focusUnit, followBoxSize)
 	self.canUpdate = false
 	self.focusUnit = focusUnit or nil
-	self.followBoxSize = followBoxSize or {x = 5, y = 5}
+	self.followBoxSize = followBoxSize or {x = 20, y = 20}
 end
 
 function Camera:move(offSetX, offSetY)
 	local currentPosX, currentPosY = self.focusUnit:getMap():getPosition()
-	self.focusUnit:getMap():move(currentPosX + offSetX, currentPosY + offSetY)
+	local finalPos = {
+		x = currentPosX + offSetX,
+		y = currentPosY + offSetY
+	}
+
+	if finalPos.x > 0 then finalPos.x = 0 end
+	if finalPos.y > 0 then finalPos.y = 0 end
+	self.focusUnit:getMap():move(finalPos.x, finalPos.y)
 end
 
 --[[
@@ -55,9 +62,6 @@ function Camera:getMoveOffset(seed)
 	-- 是否在误差范围内
 	MovePosX = math.abs(MovePosX) <= self.followBoxSize.x and 0 or MovePosX * (seed or 1)
 	MovePosY = math.abs(MovePosY) <= self.followBoxSize.y and 0 or MovePosY * (seed or 1)
-	-- 计算是否地图超过边缘
-	-- 待完善
-	-- 是否
 	return MovePosX, MovePosY
 end
 

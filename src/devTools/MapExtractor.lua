@@ -15,6 +15,7 @@ local TYPE_BACK_GROUND 			= 2
 local TYPE_FRONT_GROUND 		= 3
 local TYPE_CREATURE				= 4
 local TYPE_CLOUD				= 5
+local TYPE_NORMAL_OBJECT		= 6
 
 
 function MapTemplate:onCreate()
@@ -43,8 +44,6 @@ function MapExtractor:loadAllMaps()
 			self.datas[MapEntry][AreaEntry] = dir
         end
 	end
-
-	dump(self.datas, "[AllFiles]", 10)
 end
 
 function MapExtractor:getCurrentMapEntryAndAreaEntry(fullPath)
@@ -105,7 +104,6 @@ function MapExtractor:extractSingleMap(map, MapEntry, AreaEntry)
 		local _begin = string.find(contexts.entry, ".")
 		contexts.entry = tonumber(string.sub(contexts.entry, 1, _begin))
 
-		dump(contexts)
 		local obj_type = self:getTypeFormObjName(contexts.name)
 		if obj_type == TYPE_ERROR then
 			assert(false, "Fitting UnDefined Type Name : ".. contexts.name.." In Map : "..MapEntry.." Area : "..AreaEntry)

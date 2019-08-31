@@ -12,13 +12,19 @@
               <Project Name="0.csd" Type="Layer" />
             </Folder>
           </Folder>
-          <Folder Name="node" />
+          <Folder Name="node">
+            <Project Name="CSB_Node_Controller.csd" Type="Layer" />
+            <Project Name="CSB_Node_HUD_Button.csd" Type="Layer" />
+            <Project Name="CSB_Node_Pawn.csd" Type="Node" />
+          </Folder>
           <Folder Name="scene" />
         </Folder>
         <Folder Name="ui">
           <Folder Name="GameObject">
             <Image Name="1.png" />
           </Folder>
+          <Image Name="Controller.jpg" />
+          <Image Name="Controller_BG.jpg" />
         </Folder>
       </RootFolder>
     </Group>

@@ -142,7 +142,6 @@ function StateMachine:setState(index)
 	if self.currStateIndex == index or self.states[index] == nil then 
 		return self
 	end
-
 	--调用退出方法
 	local stateInfo = self.states[self.currStateIndex]
 	if stateInfo and stateInfo.onExitFunc then 

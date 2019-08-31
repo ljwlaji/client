@@ -18,3 +18,4 @@ runtime/mac
 contents.xcworkspacedata
 IDEWorkspaceChecks.plist
 UserInterfaceState.xcuserstate
+ucrtbased.dll

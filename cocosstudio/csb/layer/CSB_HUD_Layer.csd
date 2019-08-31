@@ -45,14 +45,14 @@
             <EndColor A="255" R="255" G="255" B="255" />
             <ColorVector ScaleY="1.0000" />
           </AbstractNodeData>
-          <AbstractNodeData Name="node_Right_Buttom" ActionTag="-1919837243" Tag="21" IconVisible="False" LeftMargin="904.0186" RightMargin="229.9814" TopMargin="534.0272" BottomMargin="15.9728" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
-            <Size X="200.0000" Y="200.0000" />
+          <AbstractNodeData Name="node_Right_Buttom" ActionTag="-1919837243" Tag="21" IconVisible="False" LeftMargin="904.0200" RightMargin="-50.0200" TopMargin="254.0272" BottomMargin="15.9728" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
+            <Size X="480.0000" Y="480.0000" />
             <AnchorPoint />
-            <Position X="904.0186" Y="15.9728" />
+            <Position X="904.0200" Y="15.9728" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <CColor A="255" R="255" G="255" B="255" />
             <PrePosition X="0.6777" Y="0.0213" />
-            <PreSize X="0.1499" Y="0.2667" />
+            <PreSize X="0.3598" Y="0.6400" />
             <SingleColor A="255" R="150" G="200" B="255" />
             <FirstColor A="255" R="150" G="200" B="255" />
             <EndColor A="255" R="255" G="255" B="255" />
