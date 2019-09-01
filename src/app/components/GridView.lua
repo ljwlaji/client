@@ -1,5 +1,5 @@
 local TableView      	= import("app.components.TableViewEx")
-local CODGridView 		= class("CODGridView", cc.Node)
+local GridView 			= class("GridView", cc.Node)
 
 --[[
 	/*	@context
@@ -14,7 +14,7 @@ local CODGridView 		= class("CODGridView", cc.Node)
 	 */
 
 ]]
-function CODGridView:ctor(context)
+function GridView:ctor(context)
 	self.context = {
 		viewSize 	= context.viewSize 		or { width = 327, height = 327 },
 		cellSize 	= context.cellSize 		or { width = 30,  height = 30 },
@@ -38,7 +38,7 @@ function CODGridView:ctor(context)
 end
 
 --初始化 计算出一部分需要用到的东西
-function CODGridView:onCreate()
+function GridView:onCreate()
 	--TODO
 	--Create TableVIew
     self.tableView = TableView:create({
@@ -68,7 +68,7 @@ function CODGridView:onCreate()
 end
 
 --内存泄露检测
-function CODGridView:cleanupBeforeDelete()
+function GridView:cleanupBeforeDelete()
 	for k, v in pairs(self.m_CellPool) do
 		if v:getReferenceCount() > 1 then
 			print("警告: 在GridView销毁时检测到引用次数大于1的Cell 清注意调用release() 防止内存泄露！")
@@ -78,7 +78,7 @@ function CODGridView:cleanupBeforeDelete()
 end
 
 --获取Cell
-function CODGridView:dequeueCell(parent)
+function GridView:dequeueCell(parent)
 	local cell = nil
 	if #self.m_CellPool == 0 then
 		cell = cc.Node:create()
@@ -95,7 +95,7 @@ function CODGridView:dequeueCell(parent)
 end
 
 --回收Cell
-function CODGridView:ququqCell(cell)
+function GridView:ququqCell(cell)
 	table.insert(self.m_CellPool, cell)
 	cell:retain()
 		:removeFromParent()
@@ -103,14 +103,14 @@ function CODGridView:ququqCell(cell)
 end
 
 --刷新数据
-function CODGridView:setDatas(datas)
+function GridView:setDatas(datas)
 	self.datas = datas or {}
 	self.tableView:setNumbers(math.ceil(#self.datas / self.maxLineCount))
 	self.tableView:reloadData()
 end
 
 --获取TableViewCell大小
-function CODGridView:getBigCellSizeAtIndex(index)
+function GridView:getBigCellSizeAtIndex(index)
 	if self.isVertical and index == 0 then
 		return self.topSize
 	elseif not self.isVertical and index == math.ceil(#self.datas / self.maxLineCount) - 1 then
@@ -120,7 +120,7 @@ function CODGridView:getBigCellSizeAtIndex(index)
 end
 
 --刷新
-function CODGridView:showCell(cell,idx)
+function GridView:showCell(cell,idx)
 	local context = self.context
 	cell.__items = cell.__items or {}
 	local size = self:getBigCellSizeAtIndex(idx)
@@ -151,7 +151,7 @@ function CODGridView:showCell(cell,idx)
 end
 
 --调试用 画出元素位置
-function CODGridView:debugDraw(parent, color, size)
+function GridView:debugDraw(parent, color, size)
 	if parent.__drawNode then parent.__drawNode:removeFromParent() end
 	local myDrawNode=cc.DrawNode:create()
     parent:addChild(myDrawNode)
@@ -162,4 +162,4 @@ function CODGridView:debugDraw(parent, color, size)
     parent.__drawNode = myDrawNode
 end
 
-return CODGridView
+return GridView
