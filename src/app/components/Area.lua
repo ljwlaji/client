@@ -1,6 +1,6 @@
 local Area 			= class("Area", cc.Node)
 local DataBase 		= import("app.components.DataBase")
-local GameOBject 	= import("app.components.Object.GameOBject")
+local GameOBject 	= import("app.components.Object.GameObject")
 local Creature 		= import("app.components.Object.Creature")
 
 function Area:ctor(context)

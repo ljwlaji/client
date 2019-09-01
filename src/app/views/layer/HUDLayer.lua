@@ -1,6 +1,6 @@
 local Controller    = import("app.views.node.vNodeController")
 local HUDButtons 	= import("app.views.node.vNodeSkillButtons")
-local ViewBaseEX 	= import("app.views.ViewBaseEX")
+local ViewBaseEX 	= import("app.views.ViewBaseEx")
 local HUDLayer 		= class("HUDLayer", ViewBaseEX)
 
 HUDLayer.RESOURCE_FILENAME = "res/csb/layer/CSB_HUD_Layer.csb"
