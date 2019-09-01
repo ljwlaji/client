@@ -18,3 +18,4 @@ runtime/mac
 contents.xcworkspacedata
 IDEWorkspaceChecks.plist
 UserInterfaceState.xcuserstate
+frameworks/cocos2d-x/cocos/platform/android/libcocos2dx/build
