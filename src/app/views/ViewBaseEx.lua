@@ -22,22 +22,6 @@ function ViewBaseEx:sendAppMsg(msgID, ...)
     cc.Director:getInstance():getEventDispatcher():dispatchEvent(pEvent)
 end
 
-function ViewBaseEx:regiestCustomEventListenter(id, callBack)
-    self.___eventListeners = self.___eventListeners or {}
-    local listener = cc.EventListenerCustom:create(id, callBack)
-    table.insert(self.___eventListeners, listener)
-    self:getEventDispatcher():addEventListenerWithFixedPriority(listener, 1)
-    if not self.___isExitEventRegiested then
-        self:onNodeEvent("exit", function(event)
-            for k, v in pairs(self.___eventListeners) do
-                self:getEventDispatcher():removeEventListener(v)
-            end
-            self.___eventListeners = {}
-        end)
-        self.___isExitEventRegiested = true
-    end
-end
-
 function ViewBaseEx:debugDraw(parent, color, size)
 	if parent.__drawNode then parent.__drawNode:removeFromParent() end
 	local myDrawNode=cc.DrawNode:create()

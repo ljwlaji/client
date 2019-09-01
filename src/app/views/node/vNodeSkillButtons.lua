@@ -10,29 +10,26 @@ SkillButtons.RESOURCE_BINDING = {
 }
 
 function SkillButtons:onCreate()
-	self:regiestCustomEventListenter("onTouchButtonX", function() release_print("onTouchButtonX") end)
-	self:regiestCustomEventListenter("onTouchButtonY", function() release_print("onTouchButtonY") end)
-	self:regiestCustomEventListenter("onTouchButtonA", function() release_print("onTouchButtonA") end)
-	self:regiestCustomEventListenter("onTouchButtonB", function() release_print("onTouchButtonB") end)
+	
 end
 
 function SkillButtons:onTouchButtonX(e)
-	if e.name ~= "ended" then return end
+	if e.name ~= "began" then return end
 	self:sendAppMsg("onTouchButtonX")
 end
 
 function SkillButtons:onTouchButtonY(e)
-	if e.name ~= "ended" then return end
+	if e.name ~= "began" then return end
 	self:sendAppMsg("onTouchButtonY")
 end
 
 function SkillButtons:onTouchButtonA(e)
-	if e.name ~= "ended" then return end
+	if e.name ~= "began" then return end
 	self:sendAppMsg("onTouchButtonA")
 end
 
 function SkillButtons:onTouchButtonB(e)
-	if e.name ~= "ended" then return end
+	if e.name ~= "began" then return end
 	self:sendAppMsg("onTouchButtonB")
 end
 

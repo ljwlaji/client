@@ -53,13 +53,23 @@ function Unit:onCreate(objType)
 	self.m_Attrs = {}
 	self:setAttrToBase()
 	self:setupStateMechine()
+
+	self:regiestCustomEventListenter("onTouchButtonX", function() release_print("onTouchButtonX") end)
+	self:regiestCustomEventListenter("onTouchButtonY", function() release_print("onTouchButtonY") end)
+	self:regiestCustomEventListenter("onTouchButtonA", function() release_print("onTouchButtonA") end)
+	self:regiestCustomEventListenter("onTouchButtonB", handler(self, self.onButtonXPressed))
+
 	Object.onCreate(self, objType)
+end
+
+function Unit:onButtonXPressed()
+	if not self:isControlByPlayer() then return end
+	self:jump()
 end
 
 function Unit:onUpdate(diff)
 	self.m_StateMachine:executeStateProgress(diff)
 	-- module for testting --
-	self:testJump(diff)
 	-- end of testting --
 	Object.onUpdate(self, diff)
 end
@@ -311,17 +321,6 @@ function Unit:onExecuteJumpFall(diff)
 end
 
 function Unit:onExitJumpFall()
-
-end
-
-
-function Unit:testJump(diff)
-	if not self.m_TestTimeDiff or self.m_TestTimeDiff <= diff then
-		self.m_TestTimeDiff = 100
-		self:jump()
-	else
-		self.m_TestTimeDiff = self.m_TestTimeDiff - diff
-	end
 
 end
 

@@ -9,10 +9,6 @@ local GridView      = import("app.components.GridView")
 local ZOrder_HUD    = 100
 
 function MainScene:onCreate()
-    self:testGridView()
-    do return end
-    self:testTableView()
-    do return end
     self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     self:startGame(1)
 end
