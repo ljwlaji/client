@@ -5,11 +5,67 @@ local DataBase      = import("app.components.DataBase")
 local Camera        = import("app.components.Camera")
 local GameObject    = import("app.components.Object.GameObject")
 local MapExtractor  = import("devTools.MapExtractor")
+local GridView      = import("app.components.GridView")
 local ZOrder_HUD    = 100
 
 function MainScene:onCreate()
+    self:testGridView()
+    do return end
+    self:testTableView()
+    do return end
     self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     self:startGame(1)
+end
+
+function MainScene:testGridView()
+    local datas = {}
+    for i=1, 100 do
+        table.insert(datas, i)
+    end
+
+    local gridView = GridView:create({
+        viewSize    = { width = display.width, height = display.height},
+        cellSize    = { width = display.width / 10,  height = display.height / 10 },
+        rowCount    = 10,
+        fieldCount  = 10,
+        VGAP        = 5,
+        HGAP        = 5,
+    }):addTo(self):move(0, 0):setAnchorPoint(0, 0)
+
+    gridView.onCellAtIndex = function(cell, data)
+        release_print(data)
+        cell.label = cell.label or cc.Label:createWithSystemFont(data, display.DEFAULT_TTF_FONT, 20):addTo(cell):setAnchorPoint(0, 0):move(0, 0)
+        cell.label:setString(data)
+    end
+    gridView:setDatas(datas)
+end
+
+function MainScene:testTableView()
+    self.tableView = import("app.components.TableViewEx"):create({
+        cellSize = cc.size(300, 40),
+        direction = cc.SCROLLVIEW_DIRECTION_VERTICAL,
+        fillOrder = cc.TABLEVIEW_FILL_TOPDOWN,
+        size = cc.size(300, 300),
+    }):addTo(self)
+    self.tableView:onCellAtIndex(
+        function(cell, index)
+            cell.label = cell.label or cc.Label:createWithSystemFont(index, display.DEFAULT_TTF_FONT, 20):addTo(cell):setAnchorPoint(0, 0):move(0, 0)
+            cell.label:setString(index)
+            return cell
+        end)
+    local datas = {1,2,3,4,5,6}
+    self.tableView:setNumbers(#datas):reloadData()
+end
+
+function MainScene:debugDraw(parent, color, size)
+    if parent.__drawNode then parent.__drawNode:removeFromParent() end
+    local myDrawNode=cc.DrawNode:create()
+    parent:addChild(myDrawNode)
+    myDrawNode:setPosition(0, 0)
+    size = size or cc.p(parent:getContentSize().width, parent:getContentSize().height)
+    myDrawNode:drawSolidRect(cc.p(0, 0), size, color or cc.c4f(1,1,1,1))
+    myDrawNode:setLocalZOrder(-10)
+    parent.__drawNode = myDrawNode
 end
 
 function MainScene:testMapExtractor()
@@ -29,9 +85,7 @@ function MainScene:tryEnterMap(mapEntry, chosedCharacterID)
         self.currentMap:removeFromParent()
         self.currentMap = nil
     end
-
     self.currentMap = Map:create(mapEntry, chosedCharacterID):addTo(self)
-
     if not self.Timmer then
         self.Timmer = cc.Timmer:create():addTo(self)
         self:onUpdate(handler(self, self.onNativeUpdate))

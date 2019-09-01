@@ -14,6 +14,10 @@ function Creature:onCreate()
 	self:move(self.context.x, self.context.y)
 end
 
+function Creature:initAvatar()
+
+end
+
 function Creature:resetAttr()
 	self:setBaseAttr("maxHealth", 			self.context.max_health)
 	self:setBaseAttr("maxMana", 			self.context.max_mana)

@@ -6,6 +6,7 @@
         <Folder Name="csb">
           <Folder Name="layer">
             <Project Name="CSB_HUD_Layer.csd" Type="Layer" />
+            <Project Name="CSB_Layer_Inventory.csd" Type="Layer" />
           </Folder>
           <Folder Name="maps">
             <Folder Name="0">

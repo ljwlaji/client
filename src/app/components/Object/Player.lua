@@ -21,6 +21,10 @@ function Player:onCreate()
 	self:setControlByPlayer(true)
 end
 
+function Player:initAvatar()
+	
+end
+
 function Player:onUpdate(diff)
 	Unit.onUpdate(self, diff)
 end
