@@ -1,0 +1,1 @@
+进入游戏->读取Player所在地图->构建地图->加载Player->加载Area->搜索所有在area内的Creaure和GameObject->构造Unit/Creature

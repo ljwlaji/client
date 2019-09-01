@@ -4,7 +4,7 @@
 #include "SocketClient.h"
 #include "Session.h"
 #include "cocos2d.h"
-
+#include "PixalCollisionMgr.h"
 
 static void onProgress(uint32 a, uint32 b)
 {
@@ -55,7 +55,8 @@ void UnitTest::TestSocketClient()
 
 void UnitTest::TestSessionBuffer()
 {
-	Session s;
+	/*
+		Session s;
 	std::string input = "123";
 	s.PushBuffer(input.c_str(), strlen(input.c_str()));
 	s.TestOutPut();
@@ -65,5 +66,8 @@ void UnitTest::TestSessionBuffer()
 	s.TestOutPut();
 	s.PushBuffer("\0", 1);
 	s.TestOutPut();
+	*/
+
+	PixalCollisionMgr::GetInstance()->UnitTest();
 }
 

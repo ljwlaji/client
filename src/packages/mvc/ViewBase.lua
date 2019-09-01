@@ -5,7 +5,7 @@ function ViewBase:ctor(app, name)
     self:enableNodeEvents()
     self.app_ = app
     self.name_ = name
-
+    self.m_Children = {}
     -- check CSB resource file
     local res = rawget(self.class, "RESOURCE_FILENAME")
     if res then
@@ -32,6 +32,14 @@ function ViewBase:getResourceNode()
     return self.resourceNode_
 end
 
+function ViewBase:fillAllChildren(rootNode)
+    for k, v in pairs(rootNode:getChildren()) do
+        assert(not self.m_Children[v:getName()])
+        self.m_Children[v:getName()] = v
+        self:fillAllChildren(v)
+    end
+end
+
 function ViewBase:createResourceNode(resourceFilename)
     if self.resourceNode_ then
         self.resourceNode_:removeSelf()
@@ -44,16 +52,10 @@ end
 
 function ViewBase:createResourceBinding(binding)
     assert(self.resourceNode_, "ViewBase:createResourceBinding() - not load resource node")
+    self:fillAllChildren(self.resourceNode_)
     for nodeName, nodeBinding in pairs(binding) do
-        local node = self.resourceNode_:getChildByName(nodeName)
-        if nodeBinding.varname then
-            self[nodeBinding.varname] = node
-        end
-        for _, event in ipairs(nodeBinding.events or {}) do
-            if event.event == "touch" then
-                node:onTouch(handler(self, self[event.method]))
-            end
-        end
+        local node = self.m_Children[nodeName]
+        if node and nodeBinding then node:onTouch(handler(self, self[nodeBinding])) end
     end
 end
 

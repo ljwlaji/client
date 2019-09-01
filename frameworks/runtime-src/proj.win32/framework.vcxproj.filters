@@ -53,6 +53,15 @@
     <ClInclude Include="..\Classes\Timmer.h">
       <Filter>Classes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\lsqlite3.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\sqlite3.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\PixalCollisionMgr.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
@@ -87,6 +96,15 @@
       <Filter>Classes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Timmer.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\lsqlite3.c">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\sqlite3.c">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\PixalCollisionMgr.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
   </ItemGroup>

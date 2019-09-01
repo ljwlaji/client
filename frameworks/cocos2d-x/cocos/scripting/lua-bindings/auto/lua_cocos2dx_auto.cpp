@@ -5,7 +5,9 @@
 #include "scripting/lua-bindings/manual/CCComponentLua.h"
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
-
+///For Custom Modules Issus
+#include "../runtime-src/Classes/CustomModule.h"
+///End Of Custom Modules
 int lua_cocos2dx_Ref_release(lua_State* tolua_S)
 {
     int argc = 0;
@@ -104663,7 +104665,9 @@ TOLUA_API int register_all_cocos2dx(lua_State* tolua_S)
 	lua_register_cocos2dx_TransitionSlideInB(tolua_S);
 	lua_register_cocos2dx_Speed(tolua_S);
 	lua_register_cocos2dx_ShatteredTiles3D(tolua_S);
-
+	///For Custom Modules Issus
+	register_fire_core_modules(tolua_S);
+	///End Of Custom Modules
 	tolua_endmodule(tolua_S);
 	return 1;
 }

@@ -33,6 +33,14 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+#if defined(WIN32) && defined(COCOS2D_DEBUG)
+	AllocConsole();   //创建一个控制台
+	freopen("CONIN$", "r", stdin);    //将标准输入输出流定位到这个控制台
+	freopen("CONOUT$", "w", stdout);
+	freopen("CONOUT$", "w", stderr);
+#endif
+
     auto simulator = SimulatorWin::getInstance();
     return simulator->run();
 }
