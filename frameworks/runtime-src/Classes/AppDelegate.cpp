@@ -28,6 +28,7 @@
 #include "scripting/lua-bindings/manual/lua_module_register.h"
 #include "UnitTest.h"
 #include "lsqlite3.h"
+#include "lfs.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -94,6 +95,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     lua_State* L = engine->getLuaStack()->getLuaState();
     lua_module_register(L);
     luaopen_lsqlite3(L);
+	luaopen_lfs(L);
     register_all_packages();
 
     LuaStack* stack = engine->getLuaStack();

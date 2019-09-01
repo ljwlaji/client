@@ -4,14 +4,21 @@ local Map           = import("app.components.Map")
 local DataBase      = import("app.components.DataBase")
 local Camera        = import("app.components.Camera")
 local GameObject    = import("app.components.Object.GameObject")
-local MapExtractor  = import("devTools.MapExtractor")
 local GridView      = import("app.components.GridView")
+local Utils         = import("app.components.Utils")
+local MapExtractor  = import("devTools.MapExtractor")
 local ZOrder_HUD    = 100
 
 function MainScene:onCreate()
     self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     self:startGame(1)
 end
+
+function MainScene:fileCopy( ... )
+    local path = cc.FileUtils:getInstance():getWritablePath()
+    Utils.recursionCopy(path.."res\\", Utils.getDownloadPath())
+end
+
 
 function MainScene:testGridView()
     local datas = {}

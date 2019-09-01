@@ -33,7 +33,7 @@ function Controller:getInstance()
 end
 
 function Controller:getHorizonOffset()
-	return self.m_Offset.x / 128
+	return self.m_Offset.x * 0.0078125
 end
 
 function Controller:onOffsetChanged(offset)
@@ -63,7 +63,9 @@ function Controller:onTouchMoved(touch, event)
 	local currPos = self:convertToNodeSpace(touch:getLocation())
 	self.m_Monitor:move(currPos.x, currPos.y)
 	local disdance = cc.pGetDistance(self.centerPoint, self:convertToNodeSpace(touch:getLocation()))
-	if disdance > 128 then self:move(cc.pAdd(cc.p(self:getPosition()), touch:getDelta())) end
+	if disdance > 128 then 
+		self:move(cc.pAdd(cc.p(self:getPosition()), touch:getDelta())) 
+	end
 	self:onOffsetChanged(cc.pSub( currPos, self.centerPoint ))
 
 end

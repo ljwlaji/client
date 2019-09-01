@@ -16,7 +16,7 @@ function vNodePawn:modifyHealth(curr, max)
 end
 
 function vNodePawn:setFlippedX(value)
-	self.m_Children["Node_Character"]:setScaleX( value and 1 or -1 )
+	self.m_Children["Node_Character"]:setScaleX( value and -1 or 1 )
 end
 
 

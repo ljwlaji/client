@@ -3,22 +3,26 @@ local DataBase = class("DataBase")
 DataBase.instance = nil
 
 local DBPATH = "res/datas.db"
-local DBPackagePath = cc.FileUtils:getInstance():fullPathForFilename("res/datas.db")
+local DBPackagePath = cc.FileUtils:getInstance():fullPathForFilename(DBPATH)
 local DBWriteblePath = device.writablePath.."datas.db"         --操作数据库路径
 
 function DataBase:ctor()
-	self:openDB(DBPATH)
+	self:openDB()
 end
 
 function DataBase:openDB(filename)
 	if self.db then return self.db end
-	if not io.exists(DBWriteblePath) then
-        local content = io.readfile(DBPackagePath)
-        if content then
-            dump(io.writefile(DBWriteblePath, content))
+    if device.platform ~= "windows" then
+    	if not io.exists(DBWriteblePath) then
+            local content = io.readfile(DBPackagePath)
+            if content then
+                io.writefile(DBWriteblePath, content)
+            end
         end
+        self.db = sqlite3.open(DBWriteblePath)
+    else
+        self.db = sqlite3.open(DBPATH)
     end
-	self.db = sqlite3.open(DBWriteblePath)
 	return self.db
 end
 
@@ -30,11 +34,11 @@ function DataBase.getInstance()
 end
 
 function DataBase:query(sql)
-    local t = {}
+    local ret = {}
     for row in self.db:nrows(sql) do
-        t[#t + 1] = row
+        ret[#ret + 1] = row
     end
-    return t
+    return ret
 end
 
 function DataBase:close()
