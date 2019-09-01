@@ -18,9 +18,6 @@ local FileUtils 	= cc.FileUtils:getInstance()
 local writeblePath 	= FileUtils:getWritablePath()
 local DownloadPath  = Utils.fixDirByPlatform(writeblePath.."Download/Cache/")
 
-LFS.createDir(writeblePath.."Download")
-LFS.createDir(writeblePath.."Download/Cache")
-
 function Utils.getDownloadPath()
 	return DownloadPath
 end
@@ -44,7 +41,10 @@ function Utils.dirCopy(RootFile, rootPath, destPath, middlePath)
 		else
 			-- dump(table.concat(middlePath, "/"))
 			local currPath = middlePath.."/"..v:getPath()
-			Utils.bCopyFile(rootPath..currPath, destPath..currPath)
+			local currDestPath = destPath..currPath
+			local dest = io.open(currDestPath)
+			if dest then dest:close() os.remove(currDestPath) end
+			Utils.bCopyFile(rootPath..currPath, currDestPath)
 		end
 	end
 end
@@ -52,6 +52,14 @@ end
 function Utils.recursionCopy(srcPath, destPath)
 	-- TODO
 	-- 生成所有目标目录的信息
+	local dirs = string.split(destPath, "\\")
+	local currPath = ""
+	for k, v in pairs(dirs) do
+		if v ~= "" then 
+			currPath = Utils.fixDirByPlatform(currPath..v.."/")
+			release_print("Try Create Path : "..currPath.." "..( LFS.createDir(currPath) and "Successed" or "Failed" ).."!")
+		end
+	end
 	local RootFile = LFS.getAllFilesForPath(srcPath, RootFile)
 	Utils.createPath(RootFile, destPath)
 	Utils.dirCopy(RootFile, RootFile:getPath(), destPath, "")

@@ -10,6 +10,7 @@ local MapExtractor  = import("devTools.MapExtractor")
 local ZOrder_HUD    = 100
 
 function MainScene:onCreate()
+    self:fileCopy()
     self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     self:startGame(1)
 end
