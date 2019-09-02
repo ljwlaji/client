@@ -1,10 +1,9 @@
+local Utils = import("app.components.Utils")
 local DataBase = class("DataBase")
 
 DataBase.instance = nil
 
 local DBPATH = "res/datas.db"
-local DBPackagePath = cc.FileUtils:getInstance():fullPathForFilename(DBPATH)
-local DBWriteblePath = device.writablePath.."datas.db"         --操作数据库路径
 
 function DataBase:ctor()
 	self:openDB()
@@ -12,17 +11,7 @@ end
 
 function DataBase:openDB(filename)
 	if self.db then return self.db end
-    if device.platform ~= "windows" then
-    	if not io.exists(DBWriteblePath) then
-            local content = io.readfile(DBPackagePath)
-            if content then
-                io.writefile(DBWriteblePath, content)
-            end
-        end
-        self.db = sqlite3.open(DBWriteblePath)
-    else
-        self.db = sqlite3.open(DBPATH)
-    end
+    self.db = sqlite3.open(Utils.getDownloadRootPath()..DBPATH)
 	return self.db
 end
 

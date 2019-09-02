@@ -14,12 +14,16 @@ function Utils.fixDirByPlatform(str)
 	return str
 end
 
-local FileUtils 	= cc.FileUtils:getInstance()
-local writeblePath 	= FileUtils:getWritablePath()
-local DownloadPath  = Utils.fixDirByPlatform(writeblePath.."Download/Cache/")
+local FileUtils 			= cc.FileUtils:getInstance()
+local writeblePath 			= FileUtils:getWritablePath()
+local DownloadCachePath  	= Utils.fixDirByPlatform(writeblePath.."Download/Cache/")
 
-function Utils.getDownloadPath()
-	return DownloadPath
+function Utils.getDownloadRootPath()
+	return FileUtils:getWritablePath()
+end
+
+function Utils.getDownloadCachePath()
+	return DownloadCachePath
 end
 
 function Utils.createPath(RootFile, destPath)
@@ -27,7 +31,6 @@ function Utils.createPath(RootFile, destPath)
 		if v:isDir() then
 			local finalPath = destPath..v:getPath().."/"
 			LFS.createDir(finalPath)
-			release_print("createPath : "..finalPath)
 			Utils.createPath(v, finalPath )
 		end
 	end
@@ -52,11 +55,11 @@ end
 function Utils.recursionCopy(srcPath, destPath)
 	-- TODO
 	-- 生成所有目标目录的信息
-	local dirs = string.split(destPath, "\\")
+	local dirs = string.split(destPath, "/")
 	local currPath = ""
 	for k, v in pairs(dirs) do
 		if v ~= "" then 
-			currPath = Utils.fixDirByPlatform(currPath..v.."/")
+			currPath = Utils.fixDirByPlatform(currPath.."/"..v)
 			release_print("Try Create Path : "..currPath.." "..( LFS.createDir(currPath) and "Successed" or "Failed" ).."!")
 		end
 	end

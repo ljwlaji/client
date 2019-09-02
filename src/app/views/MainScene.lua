@@ -9,15 +9,25 @@ local Utils         = import("app.components.Utils")
 local MapExtractor  = import("devTools.MapExtractor")
 local ZOrder_HUD    = 100
 
+local FileUtils = cc.FileUtils:getInstance()
+local pointerPath = "res/packagePointer"
+
 function MainScene:onCreate()
     self:fileCopy()
     self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     self:startGame(1)
 end
 
-function MainScene:fileCopy( ... )
-    local path = cc.FileUtils:getInstance():getWritablePath()
-    Utils.recursionCopy(path.."res\\", Utils.getDownloadPath())
+function MainScene:fileCopy()
+    if FileUtils:isFileExist(Utils.getDownloadRootPath()..pointerPath) then
+        release_print("Pointer In WriteblePath Removed!")
+        os.remove(Utils.getDownloadRootPath()..pointerPath)
+    end
+    dump(FileUtils:fullPathForFilename(pointerPath))
+    local l = string.gsub(FileUtils:fullPathForFilename(pointerPath), pointerPath, "")
+    FileUtils.getPackagePath = function() return l end
+    Utils.recursionCopy(FileUtils.getPackagePath().."res/", Utils.getDownloadRootPath().."res/")
+    Utils.recursionCopy(FileUtils.getPackagePath().."src/", Utils.getDownloadRootPath().."src/")
 end
 
 
