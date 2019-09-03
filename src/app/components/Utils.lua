@@ -17,6 +17,9 @@ local FileUtils 			= cc.FileUtils:getInstance()
 local writeblePath 			= FileUtils:getWritablePath()
 local pointerPath 			= "res/packagePointer"
 local currentResourcePath	= Utils.fixDirByPlatform(writeblePath)
+if device.platform == "windows" then
+	currentResourcePath = currentResourcePath .. "virtualDir/"
+end
 local DownloadRootPath  	= Utils.fixDirByPlatform(writeblePath.."Download/")
 local DownloadCachePath  	= Utils.fixDirByPlatform(DownloadRootPath.."Cache/")
 
@@ -65,10 +68,13 @@ end
 function Utils.recursionCopy(srcPath, destPath)
 	-- TODO
 	-- 生成所有目标目录的信息
+	destPath = string.gsub(destPath, "\\", "/")
 	local dirs = string.split(destPath, "/")
 	local currPath = ""
 	for k, v in pairs(dirs) do
-		if v ~= "" then 
+		if k == 1 then
+			currPath = v
+		elseif v ~= "" then 
 			currPath = Utils.fixDirByPlatform(currPath.."/"..v)
 			release_print("Try Create Path : "..currPath.." "..( LFS.createDir(currPath) and "Successed" or "Failed" ).."!")
 		end
@@ -117,9 +123,9 @@ if not Utils.getPackagePath then
         os.remove(Utils.getCurrentResPath()..pointerPath)
         release_print("Pointer In WriteblePath Removed!")
     end
-    local l = string.gsub(FileUtils:fullPathForFilename(pointerPath), pointerPath, "")
-    Utils.getPackagePath = function() return l end
-    dump(l)
+    local path = string.gsub(FileUtils:fullPathForFilename(pointerPath), pointerPath, "")
+    Utils.getPackagePath = function() return path end
+    dump(l, "PackagePath : ")
 end
 
 

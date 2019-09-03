@@ -105,7 +105,10 @@ bool AppDelegate::applicationDidFinishLaunching()
     //LuaStack* stack = engine->getLuaStack();
     //register_custom_function(stack->getLuaState());
     
-    std::string writeblePath = FileUtils::getInstance()->getWritablePath().c_str();
+	std::string writeblePath = FileUtils::getInstance()->getWritablePath().c_str();
+#ifdef WIN32
+	writeblePath += "virtualDir/";
+#endif
     
     FileUtils::getInstance()->addSearchPath(writeblePath + "src");
     FileUtils::getInstance()->addSearchPath(writeblePath + "res");
