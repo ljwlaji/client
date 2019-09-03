@@ -84,7 +84,7 @@ function StateMachine:executeStateProgress(diff)
 	if not self._running then return end
 	local stateInfo = self.states[self.currStateIndex]
 	if stateInfo then
-		if stateInfo.onExecuteFunc then stateInfo.onExecuteFunc(stateInfo.params or {}, diff) end
+		if stateInfo.onExecuteFunc then stateInfo.onExecuteFunc(diff) end
 	else
 		self._running = false
 		error("State Mechine Running With An Invaild Index : "..self.currStateIndex.." !  Auto Terminated !")
@@ -138,8 +138,8 @@ end
 --[[
 	进入下一个状态并退出当前状态
 ]]
-function StateMachine:setState(index)
-	if self.currStateIndex == index or self.states[index] == nil then 
+function StateMachine:setState(index, restart)
+	if not restart and (self.currStateIndex == index or self.states[index] == nil) then 
 		return self
 	end
 	--调用退出方法

@@ -4,6 +4,9 @@ cc.FileUtils:getInstance():setPopupNotify(false)
 require "config"
 require "cocos.init"
 
+
+--Director::restart()
+
 local function main()
     require("app.MyApp"):create():run()
     display.getWorld():initlize()

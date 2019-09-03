@@ -2,7 +2,6 @@ local LFS 		= import("app.components.Lfs")
 local LFile 	= import("app.components.LFile")
 local Utils 	= class("Utils")
 
-
 function Utils.fixDirByPlatform(str)
 	str = string.gsub(str, "\\\\", "\\")
 	str = string.gsub(str, "//", "/")
@@ -16,8 +15,14 @@ end
 
 local FileUtils 			= cc.FileUtils:getInstance()
 local writeblePath 			= FileUtils:getWritablePath()
+local pointerPath 			= "res/packagePointer"
+local currentResourcePath	= Utils.fixDirByPlatform(writeblePath)
 local DownloadRootPath  	= Utils.fixDirByPlatform(writeblePath.."Download/")
 local DownloadCachePath  	= Utils.fixDirByPlatform(DownloadRootPath.."Cache/")
+
+function Utils.getCurrentResPath()
+	return currentResourcePath
+end
 
 function Utils.isFileExisted(path)
 	return FileUtils:isFileExist(path)
@@ -68,23 +73,53 @@ function Utils.recursionCopy(srcPath, destPath)
 			release_print("Try Create Path : "..currPath.." "..( LFS.createDir(currPath) and "Successed" or "Failed" ).."!")
 		end
 	end
-	local RootFile = LFS.getAllFilesForPath(srcPath, RootFile)
+	local RootFile = LFS.getAllFilesForPath(srcPath)
 	Utils.createPath(RootFile, destPath)
 	Utils.dirCopy(RootFile, RootFile:getPath(), destPath, "")
 end
 
-function Utils.bCopyFile(srcPath, destPath)
-	local src = io.open(srcPath,"rb")
-	if not src then return false end
-	local dest = io.open(destPath)
-	if dest then dest:close() os.remove(destPath) end
-	local len = src:seek("end")
-	src:seek("set", 0)
-	local data = src:read(len)
-	dest = io.open(destPath,"wb")
-	dest:write(data,len)
-	src:close()
-	dest:close()
+function Utils.bCopyFile(sourcefile,destinationfile)
+	local read_file =""
+	local write_file=""
+	local temp_content ="";
+	read_file = io.open(sourcefile,"r")
+	temp_content = read_file:read("*a")
+	write_file = io.open(destinationfile,"w")
+	write_file:write(temp_content)
+	read_file:close()
+	write_file:close()
+end
+
+function Utils.getVersionInfo()
+	local file = io.open(Utils.getCurrentResPath().."res/version","r")
+	local content = file:read("*a")
+	file:close()
+	return loadstring(content)()
+end
+
+-- function Utils.bCopyFile(srcPath, destPath)
+-- 	local src = io.open(srcPath,"rb")
+-- 	if not src then return false end
+-- 	local dest = io.open(destPath)
+-- 	if dest then dest:close() os.remove(destPath) end
+-- 	local len = src:seek("end")
+-- 	src:seek("set", 0)
+-- 	local data = src:read(len)
+-- 	dest = io.open(destPath,"wb")
+-- 	dest:write(data,len)
+-- 	src:close()
+-- 	dest:close()
+-- end
+
+
+if not Utils.getPackagePath then
+    if FileUtils:isFileExist(Utils.getCurrentResPath()..pointerPath) then
+        os.remove(Utils.getCurrentResPath()..pointerPath)
+        release_print("Pointer In WriteblePath Removed!")
+    end
+    local l = string.gsub(FileUtils:fullPathForFilename(pointerPath), pointerPath, "")
+    Utils.getPackagePath = function() return l end
+    dump(l)
 end
 
 

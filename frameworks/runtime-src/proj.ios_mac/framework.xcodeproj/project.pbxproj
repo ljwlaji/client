@@ -65,6 +65,8 @@
 		722DCD66231C21F4002818CC /* PixalCollisionMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD61231C21F2002818CC /* PixalCollisionMgr.cpp */; };
 		722DCD69231C871C002818CC /* lfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD67231C871C002818CC /* lfs.c */; };
 		722DCD6A231C871C002818CC /* lfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD67231C871C002818CC /* lfs.c */; };
+		722DCD71231EE304002818CC /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD6E231EE304002818CC /* MD5.cpp */; };
+		722DCD72231EE304002818CC /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD6E231EE304002818CC /* MD5.cpp */; };
 		9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */; };
 		9FF504841A5E87B100AFDA55 /* ConsoleWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */; };
 		9FF504851A5E87B100AFDA55 /* ConsoleWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF504831A5E87B100AFDA55 /* ConsoleWindowController.m */; };
@@ -243,6 +245,8 @@
 		722DCD64231C21F3002818CC /* PixalCollisionMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PixalCollisionMgr.h; path = ../Classes/PixalCollisionMgr.h; sourceTree = "<group>"; };
 		722DCD67231C871C002818CC /* lfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lfs.c; path = ../Classes/lfs.c; sourceTree = "<group>"; };
 		722DCD68231C871C002818CC /* lfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lfs.h; path = ../Classes/lfs.h; sourceTree = "<group>"; };
+		722DCD6B231EE304002818CC /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5.h; path = ../Classes/MD5.h; sourceTree = "<group>"; };
+		722DCD6E231EE304002818CC /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5.cpp; path = ../Classes/MD5.cpp; sourceTree = "<group>"; };
 		9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		9FF504781A5E86D600AFDA55 /* libsimulator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libsimulator.xcodeproj; path = "../../cocos2d-x/tools/simulator/libsimulator/proj.ios_mac/libsimulator.xcodeproj"; sourceTree = "<group>"; };
 		9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConsoleWindow.xib; sourceTree = "<group>"; };
@@ -453,6 +457,8 @@
 		F293BB7C15EB830F00256477 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				722DCD6E231EE304002818CC /* MD5.cpp */,
+				722DCD6B231EE304002818CC /* MD5.h */,
 				722DCD67231C871C002818CC /* lfs.c */,
 				722DCD68231C871C002818CC /* lfs.h */,
 				722DCD61231C21F2002818CC /* PixalCollisionMgr.cpp */,
@@ -698,6 +704,7 @@
 				720EB60E230E5B88003ADE72 /* lsqlite3.c in Sources */,
 				720EB5F5230E58FC003ADE72 /* Timmer.cpp in Sources */,
 				720EB5F9230E58FC003ADE72 /* Zipper.cpp in Sources */,
+				722DCD72231EE304002818CC /* MD5.cpp in Sources */,
 				722DCD6A231C871C002818CC /* lfs.c in Sources */,
 				722DCD66231C21F4002818CC /* PixalCollisionMgr.cpp in Sources */,
 				720EB5F3230E58FC003ADE72 /* SocketClient.cpp in Sources */,
@@ -721,6 +728,7 @@
 				720EB60D230E5B88003ADE72 /* lsqlite3.c in Sources */,
 				720EB5F4230E58FC003ADE72 /* Timmer.cpp in Sources */,
 				720EB5F8230E58FC003ADE72 /* Zipper.cpp in Sources */,
+				722DCD71231EE304002818CC /* MD5.cpp in Sources */,
 				722DCD69231C871C002818CC /* lfs.c in Sources */,
 				722DCD65231C21F4002818CC /* PixalCollisionMgr.cpp in Sources */,
 				720EB5F2230E58FC003ADE72 /* SocketClient.cpp in Sources */,

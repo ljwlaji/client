@@ -105,18 +105,23 @@ bool AppDelegate::applicationDidFinishLaunching()
     //LuaStack* stack = engine->getLuaStack();
     //register_custom_function(stack->getLuaState());
     
-#if CC_64BITS
-    FileUtils::getInstance()->addSearchPath("src/64bit");
-#endif
-    FileUtils::getInstance()->addSearchPath("src");
-    FileUtils::getInstance()->addSearchPath("res");
+    std::string writeblePath = FileUtils::getInstance()->getWritablePath().c_str();
+    
+    FileUtils::getInstance()->addSearchPath(writeblePath + "src");
+    FileUtils::getInstance()->addSearchPath(writeblePath + "res");
+     #if CC_64BITS
+     FileUtils::getInstance()->addSearchPath("src/64bit");
+     #endif
+     FileUtils::getInstance()->addSearchPath("src");
+     FileUtils::getInstance()->addSearchPath("res");
+     
     if (engine->executeScriptFile("main.lua"))
     {
         return false;
     }
 
 
-	UnitTest _UnitTest;
+	//UnitTest _UnitTest;
 	//_UnitTest.TestZip();
 	//_UnitTest.TestAssetsManger();
 	//_UnitTest.TestSessionBuffer();

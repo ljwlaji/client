@@ -12,7 +12,7 @@ local Camera        = import("app.components.Camera")
 -- local FileUtils = cc.FileUtils:getInstance()
 -- local pointerPath = "res/packagePointer"
 
-local LayerEntrance = import("app.views.Layer.LayerEntrance")
+local LayerEntrance = import("app.views.layer.LayerEntrance")
 
 function MainScene:onCreate()
     self.sycnUpdateList = {}
@@ -88,13 +88,6 @@ end
 
 
 function MainScene:fileCopy()
-    if FileUtils:isFileExist(Utils.getDownloadRootPath()..pointerPath) then
-        release_print("Pointer In WriteblePath Removed!")
-        os.remove(Utils.getDownloadRootPath()..pointerPath)
-    end
-    dump(FileUtils:fullPathForFilename(pointerPath))
-    local l = string.gsub(FileUtils:fullPathForFilename(pointerPath), pointerPath, "")
-    FileUtils.getPackagePath = function() return l end
     Utils.recursionCopy(FileUtils.getPackagePath().."res/", Utils.getDownloadRootPath().."res/")
     Utils.recursionCopy(FileUtils.getPackagePath().."src/", Utils.getDownloadRootPath().."src/")
 end

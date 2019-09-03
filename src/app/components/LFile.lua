@@ -6,6 +6,7 @@ function LFile:ctor()
 	self.m_Attr = "unknow"
 	self.m_SubFiles = {}
 	self.m_CurrentDir = ""
+	self.m_TotalFileCount = nil
 end
 
 function LFile:isDir()
@@ -30,6 +31,25 @@ end
 
 function LFile:addSubFile(file)
 	table.insert(self.m_SubFiles, file)
+end
+
+function LFile:_getFileCount()
+	local count = 0
+	for k, v in pairs(self:subFiles()) do
+		if v:isDir() then
+			count = count + v:_getFileCount()
+		else
+			count = count + 1
+		end
+	end
+	return count
+end
+
+function LFile:getFileCount()
+	if not self.m_TotalFileCount then
+		self.m_TotalFileCount = self:isDir() and 1 or self:_getFileCount()
+	end
+	return
 end
 
 
