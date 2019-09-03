@@ -13,6 +13,8 @@ public:
 	void TestZip();
 	void TestSocketClient();
 	void TestSessionBuffer();
+	void TestSHA1();
+	void TestMD5();
 	
 private:
 

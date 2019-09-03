@@ -16,10 +16,15 @@ end
 
 local FileUtils 			= cc.FileUtils:getInstance()
 local writeblePath 			= FileUtils:getWritablePath()
-local DownloadCachePath  	= Utils.fixDirByPlatform(writeblePath.."Download/Cache/")
+local DownloadRootPath  	= Utils.fixDirByPlatform(writeblePath.."Download/")
+local DownloadCachePath  	= Utils.fixDirByPlatform(DownloadRootPath.."Cache/")
+
+function Utils.isFileExisted(path)
+	return FileUtils:isFileExist(path)
+end
 
 function Utils.getDownloadRootPath()
-	return FileUtils:getWritablePath()
+	return DownloadRootPath
 end
 
 function Utils.getDownloadCachePath()

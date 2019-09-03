@@ -16,6 +16,27 @@ function ViewBaseEx:autoAlgin()
 	if self.m_Children["node_Right_Buttom"] 	then self.m_Children["node_Right_Buttom"]:move(display.width, 0):setAnchorPoint(1, 0) end
 end
 
+function ViewBaseEx:onEnter_()
+	if self.onEnter then self:onEnter() end
+end
+
+function ViewBaseEx:onExit_()
+	if self.onExit then self:onExit() end
+end
+
+function ViewBaseEx:onEnterTransitionFinish_()
+	if self.onEnterTransitionFinish then self:onEnterTransitionFinish() end
+end
+
+function ViewBaseEx:onExitTransitionStart_()
+	if self.onExitTransitionStart then self:onExitTransitionStart() end
+end
+
+function ViewBaseEx:onCleanup_()
+	display.getRunningScene():removeNodeFromSyncUpdateList(self)
+	if self.onCleanup then self:onCleanup() end
+end
+
 function ViewBaseEx:sendAppMsg(msgID, ...)
     local pEvent = cc.EventCustom:new(msgID)
     pEvent.parameters = {...}
@@ -31,6 +52,10 @@ function ViewBaseEx:debugDraw(parent, color, size)
     myDrawNode:drawSolidRect(cc.p(0, 0), size, color or cc.c4f(1,1,1,1))
     myDrawNode:setLocalZOrder(-10)
     parent.__drawNode = myDrawNode
+end
+
+function ViewBaseEx:enableUpdate(func)
+	display.getWorld():addNodeSyncUpdate(self, func)
 end
 
 

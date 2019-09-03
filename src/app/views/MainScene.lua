@@ -1,22 +1,91 @@
 
 local MainScene     = class("MainScene", cc.load("mvc").ViewBase)
-local Map           = import("app.components.Map")
-local DataBase      = import("app.components.DataBase")
+-- local Map           = import("app.components.Map")
+-- local DataBase      = import("app.components.DataBase")
 local Camera        = import("app.components.Camera")
-local GameObject    = import("app.components.Object.GameObject")
-local GridView      = import("app.components.GridView")
-local Utils         = import("app.components.Utils")
-local MapExtractor  = import("devTools.MapExtractor")
-local ZOrder_HUD    = 100
+-- local GameObject    = import("app.components.Object.GameObject")
+-- local GridView      = import("app.components.GridView")
+-- local Utils         = import("app.components.Utils")
+-- local MapExtractor  = import("devTools.MapExtractor")
+-- local ZOrder_HUD    = 100
 
-local FileUtils = cc.FileUtils:getInstance()
-local pointerPath = "res/packagePointer"
+-- local FileUtils = cc.FileUtils:getInstance()
+-- local pointerPath = "res/packagePointer"
+
+local LayerEntrance = import("app.views.Layer.LayerEntrance")
 
 function MainScene:onCreate()
-    self:fileCopy()
-    self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
-    self:startGame(1)
+    self.sycnUpdateList = {}
+    do return end
+    -- self:fileCopy()
+    -- self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
+    -- self:startGame(1)
 end
+
+function MainScene:initlize()
+    self:run()
+    LayerEntrance:create():addTo(self)
+end
+
+function MainScene:run()
+    if not self.Timmer then
+        self.Timmer = cc.Timmer:create():addTo(self)
+        self:onUpdate(handler(self, self.onNativeUpdate))
+    end
+end
+
+function MainScene:onNativeUpdate()
+    local diff = self.Timmer:getMSDiff()
+    if diff >= 16 then
+        self.Timmer:reset()
+        -- Update All Sync Views
+        for k, v in pairs(self.sycnUpdateList) do v(diff) end
+
+        -- Update The World
+        if self.currentMap then self.currentMap:onUpdate(diff) end
+
+        -- Update Camera
+        Camera:onUpdate(diff)
+    end
+end
+
+
+function MainScene:addNodeSyncUpdate(node, func)
+    self.sycnUpdateList[node] = func
+end
+
+function MainScene:removeNodeFromSyncUpdateList(node)
+    if self.sycnUpdateList[node] then self.sycnUpdateList[node] = nil end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function MainScene:fileCopy()
     if FileUtils:isFileExist(Utils.getDownloadRootPath()..pointerPath) then
@@ -103,15 +172,6 @@ function MainScene:tryEnterMap(mapEntry, chosedCharacterID)
     if not self.Timmer then
         self.Timmer = cc.Timmer:create():addTo(self)
         self:onUpdate(handler(self, self.onNativeUpdate))
-    end
-end
-
-function MainScene:onNativeUpdate()
-    local diff = self.Timmer:getMSDiff()
-    if diff >= 16 then
-        self.Timmer:reset()
-        if self.currentMap then self.currentMap:onUpdate(diff) end
-        Camera:onUpdate(diff)
     end
 end
 

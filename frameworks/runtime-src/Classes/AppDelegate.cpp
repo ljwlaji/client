@@ -119,7 +119,9 @@ bool AppDelegate::applicationDidFinishLaunching()
 	UnitTest _UnitTest;
 	//_UnitTest.TestZip();
 	//_UnitTest.TestAssetsManger();
-	_UnitTest.TestSessionBuffer();
+	//_UnitTest.TestSessionBuffer();
+	//_UnitTest.TestMD5();
+	//_UnitTest.TestSHA1();
     return true;
 }
 

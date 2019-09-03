@@ -5,6 +5,8 @@
 #include "Session.h"
 #include "cocos2d.h"
 #include "PixalCollisionMgr.h"
+#include "SHA1.h"
+#include "MD5.h"
 
 static void onProgress(uint32 a, uint32 b)
 {
@@ -69,5 +71,49 @@ void UnitTest::TestSessionBuffer()
 	*/
 
 	PixalCollisionMgr::GetInstance()->UnitTest();
+}
+
+void UnitTest::TestSHA1()
+{
+	std::string input = "123123123123123";
+	CSHA1 sha1;
+	sha1.Update((unsigned char*)input.c_str(), strlen(input.c_str()));
+	//sha1.Update((unsigned char*)str2, strlen(str2);
+	sha1.Final();
+	uint8 cha[20];
+	sha1.GetHash(cha);
+
+	std::string copy = "";
+	char msg[20];
+	for (int i = 0; i < 20; i++)
+	{
+		snprintf(msg, 20, "%d", cha[i]);
+		copy += msg;
+	}
+
+	CCLOG("%s", copy);
+}
+
+void PrintMD5(const string& str, MD5& md5) {
+	CCLOG("%s", md5.toString().c_str());
+}
+
+void UnitTest::TestMD5()
+{
+	MD5 md5;
+	md5.update("");
+	PrintMD5("", md5);
+	md5.update("a");
+	PrintMD5("a", md5);
+
+	md5.update("bc");
+	PrintMD5("abc", md5);
+
+	md5.update("defghijklmnopqrstuvwxyz");
+	PrintMD5("abcdefghijklmnopqrstuvwxyz", md5);
+
+	md5.reset();
+	md5.update("message digest");
+	PrintMD5("message digest", md5);
 }
 

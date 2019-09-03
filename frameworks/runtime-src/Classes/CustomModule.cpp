@@ -412,7 +412,7 @@ int register_fire_PixalCollisionMgr_module(lua_State* L)
 	return 1;
 }
 
-int register_fire_core_curl_module(lua_State* L)
+int register_fire_core_assets_manager_module(lua_State* L)
 {
 	return 1;
 }
@@ -421,5 +421,6 @@ int register_fire_core_modules(lua_State* L)
 {
 	register_fire_PixalCollisionMgr_module(L);
 	register_fire_timmer_module(L);
+	register_fire_core_assets_manager_module(L);
 	return 1;
 }

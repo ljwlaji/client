@@ -281,6 +281,9 @@ int LuaStack::executeScriptFile(const char* filename)
 
     std::string fullPath = utils->fullPathForFilename(buf);
     Data data = utils->getDataFromFile(fullPath);
+#if (COCOS2D_DEBUG > 0)
+	CCLOG("DEBUGMODE");
+#endif
     int rn = 0;
     if (!data.isNull())
     {
