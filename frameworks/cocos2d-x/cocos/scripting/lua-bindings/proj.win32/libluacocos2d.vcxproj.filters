@@ -303,6 +303,15 @@
     <ClCompile Include="..\manual\network\lua_downloader.cpp">
       <Filter>manual\network</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\external\lua\cjson\lua_cjson.c">
+      <Filter>manual\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\lua\cjson\strbuf.c">
+      <Filter>manual\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\lua\cjson\fpconv.c">
+      <Filter>manual\extension</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\auto\lua_cocos2dx_auto.hpp">
@@ -535,6 +544,15 @@
     </ClInclude>
     <ClInclude Include="..\manual\network\lua_downloader.h">
       <Filter>manual\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\external\lua\cjson\lua_cjson.h">
+      <Filter>manual\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\external\lua\cjson\strbuf.h">
+      <Filter>manual\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\external\lua\cjson\fpconv.h">
+      <Filter>manual\extension</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

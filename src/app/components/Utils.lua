@@ -1,5 +1,4 @@
 local LFS 		= import("app.components.Lfs")
-local LFile 	= import("app.components.LFile")
 local Utils 	= class("Utils")
 
 function Utils.fixDirByPlatform(str)
@@ -84,16 +83,20 @@ function Utils.recursionCopy(srcPath, destPath)
 	Utils.dirCopy(RootFile, RootFile:getPath(), destPath, "")
 end
 
-function Utils.bCopyFile(sourcefile,destinationfile)
+function Utils.bCopyFile(sourcefile, destinationfile)
 	local read_file =""
 	local write_file=""
 	local temp_content ="";
 	read_file = io.open(sourcefile,"r")
-	temp_content = read_file:read("*a")
-	write_file = io.open(destinationfile,"w")
-	write_file:write(temp_content)
-	read_file:close()
-	write_file:close()
+	if not read_file then
+		release_print("Failed To Read File : "..sourcefile)
+	else
+		temp_content = read_file:read("*a")
+		write_file = io.open(destinationfile,"w")
+		write_file:write(temp_content)
+		read_file:close()
+		write_file:close()
+	end
 end
 
 function Utils.getVersionInfo()

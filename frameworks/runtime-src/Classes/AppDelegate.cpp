@@ -93,6 +93,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto engine = LuaEngine::getInstance();
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
     lua_State* L = engine->getLuaStack()->getLuaState();
+	//添加 cjson https://www.cnblogs.com/zhangdw/p/6824350.html
+	//Lua 文件读取在 Cocos2dxLuaLoader.cpp 这边 加密可以考虑在这边搞
     lua_module_register(L);
     luaopen_lsqlite3(L);
 	luaopen_lfs(L);
@@ -110,7 +112,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 	writeblePath += "virtualDir/";
 #endif
     
-    FileUtils::getInstance()->addSearchPath(writeblePath + "src");
+    FileUtils::getInstance()->addSearchPath(writeblePath + "src"); 
     FileUtils::getInstance()->addSearchPath(writeblePath + "res");
      #if CC_64BITS
      FileUtils::getInstance()->addSearchPath("src/64bit");

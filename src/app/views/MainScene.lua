@@ -14,7 +14,11 @@ local Camera        = import("app.components.Camera")
 
 local LayerEntrance = import("app.views.layer.LayerEntrance")
 
+
+
 function MainScene:onCreate()
+    self:testAutoUpdater()
+    do return end
     self.sycnUpdateList = {}
     do return end
     -- self:fileCopy()
@@ -23,6 +27,7 @@ function MainScene:onCreate()
 end
 
 function MainScene:initlize()
+    do return end
     self:run()
     LayerEntrance:create():addTo(self)
 end
@@ -31,7 +36,7 @@ function MainScene:run()
     if not self.Timmer then
         self.Timmer = cc.Timmer:create():addTo(self)
         self:onUpdate(handler(self, self.onNativeUpdate))
-    end
+end
 end
 
 function MainScene:onNativeUpdate()
@@ -84,7 +89,9 @@ end
 
 
 
-
+function MainScene:testAutoUpdater()
+    import("devTools.AutoUpdater").run("08d74f3", "6b92b7d")
+end
 
 
 function MainScene:fileCopy()

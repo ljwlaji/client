@@ -5,6 +5,7 @@
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 #include "PixalCollisionMgr.h"
 #include "Timmer.h"
+#include "MD5.h"
 
 
 int tolua_firecore_timmer_create(lua_State* L)
@@ -412,8 +413,245 @@ int register_fire_PixalCollisionMgr_module(lua_State* L)
 	return 1;
 }
 
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+
+
 int register_fire_core_assets_manager_module(lua_State* L)
 {
+	return 1;
+}
+
+int tolua_firecore_MD5_create(lua_State* L)
+{
+	int argc = 0;
+	bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+	if (!tolua_isusertable(L, 1, "cc.MD5", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+	argc = lua_gettop(L) - 1;
+
+	if (argc == 0)
+	{
+		if (!ok)
+		{
+			tolua_error(L, "invalid arguments in function 'tolua_firecore_MD5_create'", nullptr);
+			return 0;
+		}
+		MD5* ret = new (std::nothrow)MD5();
+		if (ret)
+			object_to_luaval<MD5>(L, "cc.MD5", (MD5*)ret);
+		return 1;
+	}
+	luaL_error(L, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.MD5:create", argc, 0);
+	return 0;
+#if COCOS2D_DEBUG >= 1
+	tolua_lerror:
+		tolua_error(L, "#ferror in function 'tolua_firecore_MD5_create'.", &tolua_err);
+#endif
+	return 0;
+}
+
+int tolua_firecore_MD5_update(lua_State* tolua_S)
+{
+    int argc = 0;
+    MD5* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.MD5",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (MD5*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_MD5_update'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1)
+    {
+		std::string arg1 = "";
+		ok &= luaval_to_std_string(tolua_S, 2, &arg1, "cc.MD5:update");
+		if(!ok)
+        {
+			tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_MD5_update'", nullptr);
+            return 0;
+        }
+		cobj->reset();
+        cobj->update(arg1.c_str());
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.MD5:update",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_MD5_update'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int tolua_firecore_MD5_updateFromFile(lua_State* tolua_S)
+{
+    int argc = 0;
+    MD5* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.MD5",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (MD5*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_MD5_updateFromFile'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1)
+    {
+		std::string arg1 = "";
+		ok &= luaval_to_std_string(tolua_S, 2, &arg1, "cc.MD5:updateFromFile");
+		if(!ok)
+        {
+			tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_MD5_updateFromFile'", nullptr);
+            return 0;
+        }
+		cobj->reset();
+		std::ifstream ifs(arg1.c_str());
+		cobj->update(ifs);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.MD5:updateFromFile",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_MD5_update'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int tolua_firecore_MD5_getString(lua_State* tolua_S)
+{
+    int argc = 0;
+	MD5* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.MD5",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (MD5*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_MD5_getString'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_MD5_getString'", nullptr);
+            return 0;
+        }
+		lua_pushstring(tolua_S, cobj->toString().c_str());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.MD5:getString",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_MD5_getString'.",&tolua_err);
+#endif
+
+    return 0;
+}
+
+int tolua_firecore_MD5_destory(lua_State* tolua_S)
+{
+    int argc = 0;
+	MD5* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.MD5",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (MD5*)tolua_tousertype(tolua_S,1,0);
+	delete cobj;
+	cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_MD5_destory'.",&tolua_err);
+#endif
+
+    return 0;
+}
+
+int register_fire_core_md5_module(lua_State* L)
+{
+	tolua_usertype(L, "cc.MD5");
+	tolua_cclass(L, "MD5", "cc.MD5", "", nullptr);
+
+	tolua_beginmodule(L, "MD5");
+		tolua_function(L, "create", tolua_firecore_MD5_create);
+		tolua_function(L, "update", tolua_firecore_MD5_update);
+		tolua_function(L, "updateFromFile", tolua_firecore_MD5_updateFromFile);
+		tolua_function(L, "getString", tolua_firecore_MD5_getString);
+		tolua_function(L, "desotry", tolua_firecore_MD5_destory);
+
+	tolua_endmodule(L);
+	std::string typeName = typeid(MD5).name();
+	g_luaType[typeName] = "cc.MD5";
+	g_typeCast["MD5"] = "cc.MD5";
 	return 1;
 }
 
@@ -422,5 +660,6 @@ int register_fire_core_modules(lua_State* L)
 	register_fire_PixalCollisionMgr_module(L);
 	register_fire_timmer_module(L);
 	register_fire_core_assets_manager_module(L);
+	register_fire_core_md5_module(L);
 	return 1;
 }

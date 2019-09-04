@@ -59,6 +59,10 @@ function LayerEntrance:onExecuteFirstInit()
     self:setState(STATE_CHECK_VERSION)
 end
 
+						------------------------------
+						--		请求版本列表相关		--
+						------------------------------
+
 function LayerEntrance:requestVersionList()
 	local url = "http://127.0.0.1/downloads/test.download"
 	local xhr = cc.XMLHttpRequest:new()
@@ -93,7 +97,6 @@ function LayerEntrance:onRequestNewVersionListCallBack(RemoteVersionInfo)
 end
 
 function LayerEntrance:onEnterRequestNewVersion()
-	release_print("onEnterRequestNewVersion")
 	self.m_MaxRetryTime = self.m_MaxRetryTime and self.m_MaxRetryTime - 1 or 3
 	self.m_Children["textState"]:setString("STATE_REQUEST_NEW_VERSION RetryTimeLeft : "..self.m_MaxRetryTime)
 	if self.m_MaxRetryTime < 0 then
@@ -114,6 +117,10 @@ function LayerEntrance:onExecuteRequestNewVersion(diff)
 		self:setState(STATE_REQUEST_NEW_VERSION, true)
 	end
 end
+
+						------------------------------
+						--		请求版本列表结束		--
+						------------------------------
 
 function LayerEntrance:onEnterTryDownloadUpdates()
 
