@@ -4,7 +4,7 @@ local MainScene     = class("MainScene", cc.load("mvc").ViewBase)
 -- local DataBase      = import("app.components.DataBase")
 local Camera        = import("app.components.Camera")
 -- local GameObject    = import("app.components.Object.GameObject")
--- local GridView      = import("app.components.GridView")
+local GridView      = import("app.components.GridView")
 -- local Utils         = import("app.components.Utils")
 -- local MapExtractor  = import("devTools.MapExtractor")
 -- local ZOrder_HUD    = 100
@@ -17,17 +17,16 @@ local LayerEntrance = import("app.views.layer.LayerEntrance")
 
 
 function MainScene:onCreate()
-    self:testAutoUpdater()
-    do return end
     self.sycnUpdateList = {}
-    do return end
+    -- do return end
     -- self:fileCopy()
     -- self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     -- self:startGame(1)
 end
 
 function MainScene:initlize()
-    do return end
+    -- self:testGridView()
+    -- do return end
     self:run()
     LayerEntrance:create():addTo(self)
 end
@@ -36,7 +35,7 @@ function MainScene:run()
     if not self.Timmer then
         self.Timmer = cc.Timmer:create():addTo(self)
         self:onUpdate(handler(self, self.onNativeUpdate))
-end
+    end
 end
 
 function MainScene:onNativeUpdate()
@@ -62,7 +61,6 @@ end
 function MainScene:removeNodeFromSyncUpdateList(node)
     if self.sycnUpdateList[node] then self.sycnUpdateList[node] = nil end
 end
-
 
 
 

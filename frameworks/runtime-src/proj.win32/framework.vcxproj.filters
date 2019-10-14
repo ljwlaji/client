@@ -29,9 +29,6 @@
     <ClInclude Include="..\Classes\CustomModule.h">
       <Filter>Classes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\AssetsManager.h">
-      <Filter>Classes</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\ShareDefine.h">
       <Filter>Classes</Filter>
     </ClInclude>
@@ -68,6 +65,9 @@
     <ClInclude Include="..\Classes\MD5.h">
       <Filter>Classes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\UpdateMgr.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
@@ -81,9 +81,6 @@
       <Filter>win32</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\CustomModule.cpp">
-      <Filter>Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\AssetsManager.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\UnitTest.cpp">
@@ -117,6 +114,9 @@
       <Filter>Classes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\MD5.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\UpdateMgr.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
   </ItemGroup>

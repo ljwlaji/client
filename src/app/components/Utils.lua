@@ -103,7 +103,42 @@ function Utils.getVersionInfo()
 	local file = io.open(Utils.getCurrentResPath().."res/version","r")
 	local content = file:read("*a")
 	file:close()
-	return loadstring(content)()
+	return loadstring("return "..content)()
+end
+
+function Utils.TableToString(table)
+	local data = "{"
+	for k, v in pairs(table) do
+		if type(v) ~= "function" then
+			local vk = type(k) == "string" and '["'..k..'"]' or "["..k.."]"
+			if type(v) == "table" then
+				data = data..vk.."="..Utils.TableToString(v)..","
+			else
+				if type(v) == "string" then
+					-- if v == "\n" then v = "\\n" end
+					data = data..vk.."="..'"'..v..'"'..","
+				else
+					data = data..vk.."="..v..","
+				end
+			end
+		end
+	end
+
+	data = string.sub(data, 1, string.len(data) - 1)
+	data = data.."}"
+	return data
+end
+
+function Utils.updateVersion(versionTable)
+	local Info = versionTable.updateInfo
+	local fileWrite = io.open(Utils.getCurrentResPath().."res/version","w")
+	fileWrite:write(Utils.TableToString({
+		Date 		= Info.Date,
+		firstCommit = Info.commitBase,
+		lastCommit 	= Info.commitLast,
+		version 	= versionTable.versionID
+	}))
+	fileWrite:close()
 end
 
 -- function Utils.bCopyFile(srcPath, destPath)
@@ -124,11 +159,11 @@ end
 if not Utils.getPackagePath then
     if FileUtils:isFileExist(Utils.getCurrentResPath()..pointerPath) then
         os.remove(Utils.getCurrentResPath()..pointerPath)
-        release_print("Pointer In WriteblePath Removed!")
+        release_print("================Pointer In WriteblePath Removed!===============")
     end
     local path = string.gsub(FileUtils:fullPathForFilename(pointerPath), pointerPath, "")
     Utils.getPackagePath = function() return path end
-    dump(l, "PackagePath : ")
+    dump(Utils.getPackagePath(), "PackagePath : ")
 end
 
 

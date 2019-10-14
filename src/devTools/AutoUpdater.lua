@@ -11,6 +11,8 @@ local MD5 = cc.MD5:create()
 
 ]]
 
+local WLSPath = "ubuntu1604.exe"
+
 function AutoUpdater.checkModified(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
@@ -35,9 +37,37 @@ function AutoUpdater.checkModified(firstCommit, lastCommit)
 	return files
 end
 
+function AutoUpdater.runLinuxCMD(cmd)
+	local file = io.popen(string.format('D:/WorkSpace/prj_framework/client/framework/Tools/Upload.bat "%s"', cmd))
+	dump(file:read("*a"))
+end
+
 function AutoUpdater.getMD5(filePath)
 	MD5:updateFromFile(filePath)
 	return MD5:getString()
+end
+
+local function TableToString(table)
+	local data = "{"
+	for k, v in pairs(table) do
+		if type(v) ~= "function" then
+			local vk = type(k) == "string" and '["'..k..'"]' or "["..k.."]"
+			if type(v) == "table" then
+				data = data..vk.."="..TableToString(v)..","
+			else
+				if type(v) == "string" then
+					-- if v == "\n" then v = "\\n" end
+					data = data..vk.."="..'"'..v..'"'..","
+				else
+					data = data..vk.."="..v..","
+				end
+			end
+		end
+	end
+
+	data = string.sub(data, 1, string.len(data) - 1)
+	data = data.."}"
+	return data
 end
 
 function AutoUpdater.run(firstCommit, lastCommit)
@@ -59,8 +89,8 @@ function AutoUpdater.run(firstCommit, lastCommit)
 				tempDir = tempDir.."/"..dir
 				LFS.createDir(tempDir)
 			else
-				local From = currentDir.."/"..v
-				local To = updateDir.."/"..v
+				local From = string.gsub(currentDir.."/"..v, "\\", "/")
+				local To = string.gsub(updateDir.."/"..v, "\\", "/")
 				release_print(string.format("正在处理差异文件 [%s] ", v))
 				table.insert(tasks, {
 					From = From,
@@ -89,8 +119,78 @@ function AutoUpdater.run(firstCommit, lastCommit)
 		release_print(string.format("文件MD5检测 [%s] : [%s] !", successed and "通过" or "错误", v.ShortDir ))
 		assert(successed, "检测到错误...停止程序....")
 	end
+
+	-- dump(tasks)
+	release_print("")
+	release_print("开始打包文件...")
+	local path = updateDir.."/Update.FCZip"
+	local unZipDir = updateDir.."/testUnZip"
+	os.remove(path)
+	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper.exe"
+	local callBack = io.popen(string.format("%s %s %s", ZipperPath, updateDir, updateDir))
+
+	local Successed = false
+	for line in callBack:lines() do
+		if line == "successed" then
+			Successed = true
+			break
+		end
+	end
+	assert(Successed, "检测到错误...停止程序....")
+	release_print("打包文件成功 !")
+	release_print(string.format("更新包路径 : [%s]", path))
+
 	release_print("")
 	release_print("")
+	release_print("============================================")
+	release_print("================尝试解压文件================")
+	release_print("============================================")
+
+	LFS.createDir(unZipDir)
+	release_print("")
+	release_print("文件解压完毕! 正在写入更新数据....")
+	release_print("")
+	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper.exe"
+	local callBack = io.popen(string.format("%s %s %s unCompress", ZipperPath, path, updateDir.."/TestUnZip")):read("*all")
+	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"r")
+	local originData = originFile and loadstring("return "..originFile:read("*a"))() or {}
+	if originFile then
+		originFile:close()
+		originFile = nil
+	end
+
+	for k, v in pairs(tasks) do
+		v.MD5 = v.FromMD5
+		v.FromMD5 = nil
+		v.ToMD5 = nil
+		v.From = nil
+		v.To = nil
+		v.Dir = v.ShortDir
+		v.ShortDir = nil
+	end
+
+	originData[#originData + 1] = {
+		FileList = tasks,
+		Date = os.date(),
+		commitBase = firstCommit,
+		commitLast = lastCommit
+	}
+
+	dump(originData, "", 2)
+
+
+	local fileTo = string.gsub(updateDir.."/AllUpdates", "\\", "/")
+	local fileWrite = io.open(fileTo,"w")
+	fileWrite:write(TableToString(originData))
+	fileWrite:close()
+
+	release_print("正在更新根目录[AllUpdates]文件")
+	Utils.bCopyFile(fileTo, currentDir.."/AllUpdates")
+
+	release_print("")
+	release_print("")
+	release_print("===========全部操作完成!===========")
+	-- AutoUpdater.runLinuxCMD("cd /mnt/d/ && mkdir testttttttt")
 end
 
 return AutoUpdater

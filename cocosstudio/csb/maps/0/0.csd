@@ -1,5 +1,5 @@
 <GameFile>
-  <PropertyGroup Name="vMap_00_00_00" Type="Layer" ID="a7e9cb1b-112a-4201-9bfb-3bb0f8f7cedd" Version="3.10.0.0" />
+  <PropertyGroup Name="0" Type="Layer" ID="a7e9cb1b-112a-4201-9bfb-3bb0f8f7cedd" Version="3.10.0.0" />
   <Content ctype="GameProjectContent">
     <Content>
       <Animation Duration="0" Speed="1.0000" />
@@ -17,13 +17,13 @@
             <FileData Type="Normal" Path="ui/GameObject/1.png" Plist="" />
             <BlendFunc Src="1" Dst="771" />
           </AbstractNodeData>
-          <AbstractNodeData Name="Floor_1" ActionTag="2069260394" Tag="11" IconVisible="False" LeftMargin="162.0000" RightMargin="1019.0000" TopMargin="689.0000" ctype="SpriteObjectData">
+          <AbstractNodeData Name="Floor_1" ActionTag="2069260394" Tag="11" IconVisible="False" LeftMargin="163.0000" RightMargin="1018.0000" TopMargin="689.0000" ctype="SpriteObjectData">
             <Size X="163.0000" Y="61.0000" />
             <AnchorPoint />
-            <Position X="162.0000" />
+            <Position X="163.0000" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <PrePosition X="0.1205" />
+            <PrePosition X="0.1213" />
             <PreSize X="0.1213" Y="0.0813" />
             <FileData Type="Normal" Path="ui/GameObject/1.png" Plist="" />
             <BlendFunc Src="1" Dst="771" />
@@ -90,6 +90,17 @@
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <CColor A="255" R="255" G="255" B="255" />
             <PrePosition X="0.8490" />
+            <PreSize X="0.1213" Y="0.0813" />
+            <FileData Type="Normal" Path="ui/GameObject/1.png" Plist="" />
+            <BlendFunc Src="1" Dst="771" />
+          </AbstractNodeData>
+          <AbstractNodeData Name="Floor_8" ActionTag="-1302431485" Tag="10" IconVisible="False" LeftMargin="253.2416" RightMargin="927.7584" TopMargin="630.8157" BottomMargin="58.1843" ctype="SpriteObjectData">
+            <Size X="163.0000" Y="61.0000" />
+            <AnchorPoint />
+            <Position X="253.2416" Y="58.1843" />
+            <Scale ScaleX="1.0000" ScaleY="1.0000" />
+            <CColor A="255" R="255" G="255" B="255" />
+            <PrePosition X="0.1884" Y="0.0776" />
             <PreSize X="0.1213" Y="0.0813" />
             <FileData Type="Normal" Path="ui/GameObject/1.png" Plist="" />
             <BlendFunc Src="1" Dst="771" />

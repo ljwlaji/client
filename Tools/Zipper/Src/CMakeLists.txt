@@ -8,7 +8,7 @@ set(firecore_SRCS
   ${sources_Exec}
 )
 
-add_executable(FireCore
+add_executable(Zipper
   ${firecore_SRCS}
 )
 
@@ -19,6 +19,6 @@ include_directories(
 )
 
 
-target_link_libraries(FireCore
+target_link_libraries(Zipper
 
 )

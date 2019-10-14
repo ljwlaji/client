@@ -195,7 +195,7 @@ xcopy "$(ProjectDir)..\..\..\src" "$(LocalDebuggerWorkingDirectory)\Resources\sr
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
-    <ClInclude Include="..\Classes\AssetsManager.h" />
+    <ClInclude Include="..\Classes\UpdateMgr.h" />
     <ClInclude Include="..\Classes\CustomModule.h" />
     <ClInclude Include="..\Classes\lfs.h" />
     <ClInclude Include="..\Classes\lsqlite3.h" />
@@ -217,7 +217,7 @@ xcopy "$(ProjectDir)..\..\..\src" "$(LocalDebuggerWorkingDirectory)\Resources\sr
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
-    <ClCompile Include="..\Classes\AssetsManager.cpp" />
+    <ClCompile Include="..\Classes\UpdateMgr.cpp" />
     <ClCompile Include="..\Classes\CustomModule.cpp" />
     <ClCompile Include="..\Classes\lfs.c" />
     <ClCompile Include="..\Classes\lsqlite3.c" />

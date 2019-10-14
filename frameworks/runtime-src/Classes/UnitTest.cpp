@@ -1,5 +1,5 @@
 #include "UnitTest.h"
-#include "AssetsManager.h"
+#include "UpdateMgr.h"
 #include "Zipper.h"
 #include "SocketClient.h"
 #include "Session.h"
@@ -19,11 +19,6 @@ static void onFinished(DownloadJob* ptr)
 
 void UnitTest::TestAssetsManger()
 {
-	uint32 a = sAssetsMgr->GetFileHash("asdfasdfasdf");
-	uint32 b = sAssetsMgr->GetFileHash("asdfasdfasdf");
-	uint32 c = sAssetsMgr->GetFileHash("asdfasdfasdfaaa");
-	uint32 d = sAssetsMgr->GetFileHash("asdfasdfasdfbbb");
-
 	/*
 		std::string s = "http://speedtest.fremont.linode.com/100MB-fremont.bin";
 		sAssetsMgr->PushDownloadJob(s, cocos2d::FileUtils::getInstance()->getWritablePath() + "test.exe", &onProgress, &onFinished);

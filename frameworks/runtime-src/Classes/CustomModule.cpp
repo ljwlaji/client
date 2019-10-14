@@ -4,8 +4,10 @@
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 #include "PixalCollisionMgr.h"
+#include "UpdateMgr.h"
 #include "Timmer.h"
 #include "MD5.h"
+#include "Zipper.h"
 
 
 int tolua_firecore_timmer_create(lua_State* L)
@@ -417,11 +419,237 @@ int register_fire_PixalCollisionMgr_module(lua_State* L)
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
+int tolua_firecore_UpdateMgr_getInstance(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertable(tolua_S,1,"cc.UpdateMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+
+    if (argc == 0)
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_UpdateMgr_getInstance'", nullptr);
+            return 0;
+        }
+		UpdateMgr* ret = UpdateMgr::GetInstance();
+        object_to_luaval<UpdateMgr>(tolua_S, "cc.UpdateMgr",(UpdateMgr*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.UpdateMgr:getInstance",argc, 0);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_UpdateMgr_getInstance'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int tolua_firecore_UpdateMgr_start(lua_State* tolua_S)
+{
+    int argc = 0;
+    UpdateMgr* cobj = nullptr;
+    bool ok  = true;
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.UpdateMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (UpdateMgr*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_UpdateMgr_start'", nullptr);
+        return 0;
+    }
+#endif
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 2) 
+	{
+		std::string arg0;
+		ok &= luaval_to_std_string(tolua_S, 2, &arg0, "cc.UpdateMgr:start");
+		if (!ok) return 0;
+        std::string arg1;
+		ok &= luaval_to_std_string(tolua_S, 3, &arg1, "cc.UpdateMgr:start");
+		if (!ok) return 0;
+
+		cobj->StartWithTask(arg0, arg1);
+		lua_settop(tolua_S, 1);
+		return 1;
+	}
+	else
+		luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n",  "cc.UpdateMgr:start",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_UpdateMgr_start'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int tolua_firecore_UpdateMgr_isStopped(lua_State* tolua_S)
+{
+    int argc = 0;
+	UpdateMgr* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
 
 
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.UpdateMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (UpdateMgr*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_UpdateMgr_isStopped'", nullptr);
+        return 0;
+    }
+#endif
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_UpdateMgr_isStopped'", nullptr);
+            return 0;
+        }
+		lua_pushboolean(tolua_S, cobj->IsStopped());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.UpdateMgr:isStopped",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_UpdateMgr_isStopped'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int tolua_firecore_UpdateMgr_getDownloadedSize(lua_State* tolua_S)
+{
+    int argc = 0;
+	UpdateMgr* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.UpdateMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (UpdateMgr*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_UpdateMgr_getDownloadedSize'", nullptr);
+        return 0;
+    }
+#endif
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_UpdateMgr_getDownloadedSize'", nullptr);
+            return 0;
+        }
+		lua_pushinteger(tolua_S, cobj->GetDownloadedSizeDisplay());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.UpdateMgr:getDownloadedSize",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_UpdateMgr_getDownloadedSize'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int tolua_firecore_UpdateMgr_getTotalSize(lua_State* tolua_S)
+{
+    int argc = 0;
+	UpdateMgr* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.UpdateMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (UpdateMgr*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_UpdateMgr_getTotalSize'", nullptr);
+        return 0;
+    }
+#endif
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_UpdateMgr_getTotalSize'", nullptr);
+            return 0;
+        }
+		lua_pushinteger(tolua_S, cobj->GetTotalSizeDisplay());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.UpdateMgr:getTotalSize",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_UpdateMgr_getTotalSize'.",&tolua_err);
+#endif
+    return 0;
+}
 
 int register_fire_core_assets_manager_module(lua_State* L)
 {
+	tolua_usertype(L, "cc.UpdateMgr");
+	tolua_cclass(L, "UpdateMgr", "cc.UpdateMgr", "", nullptr);
+
+	tolua_beginmodule(L, "UpdateMgr");
+		tolua_function(L, "getInstance",		tolua_firecore_UpdateMgr_getInstance);
+		tolua_function(L, "start",				tolua_firecore_UpdateMgr_start);
+		tolua_function(L, "isStopped",			tolua_firecore_UpdateMgr_isStopped);
+		tolua_function(L, "getDownloadedSize",	tolua_firecore_UpdateMgr_getDownloadedSize);
+		tolua_function(L, "getTotalSize",		tolua_firecore_UpdateMgr_getTotalSize);
+
+	tolua_endmodule(L);
+	std::string typeName	= typeid(UpdateMgr).name();
+	g_luaType[typeName]		= "cc.UpdateMgr";
+	g_typeCast["UpdateMgr"] = "cc.UpdateMgr";
 	return 1;
 }
 
@@ -655,8 +883,47 @@ int register_fire_core_md5_module(lua_State* L)
 	return 1;
 }
 
+
+int tolua_firecore_ZipReader_uncompress(lua_State* tolua_S)
+{
+	bool ok = true;
+    int argc = lua_gettop(tolua_S);
+    if (argc == 2) 
+	{
+		std::string arg0;
+		ok &= luaval_to_std_string(tolua_S, 1, &arg0, "cc.ZipReader:uncompress");
+		if (!ok) return 0;
+        std::string arg1;
+		ok &= luaval_to_std_string(tolua_S, 2, &arg1, "cc.ZipReader:uncompress");
+		if (!ok) return 0;
+		ZipReader reader(arg0);
+		reader.ExecuteAll(arg1);
+		lua_settop(tolua_S, 1);
+		return 1;
+	}
+	else
+		luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n",  "cc.ZipReader:uncompress",argc, 2);
+    return 0;
+}
+
+int register_fire_Zipper_module(lua_State* L)
+{
+	tolua_usertype(L, "cc.ZipReader");
+	tolua_cclass(L, "ZipReader", "cc.ZipReader", "", nullptr);
+
+	tolua_beginmodule(L, "ZipReader");
+		tolua_function(L, "uncompress", tolua_firecore_ZipReader_uncompress);
+
+	tolua_endmodule(L);
+	std::string typeName = typeid(ZipReader).name();
+	g_luaType[typeName] = "cc.ZipReader";
+	g_typeCast["ZipReader"] = "cc.ZipReader";
+	return 1;
+}
+
 int register_fire_core_modules(lua_State* L)
 {
+	register_fire_Zipper_module(L);
 	register_fire_PixalCollisionMgr_module(L);
 	register_fire_timmer_module(L);
 	register_fire_core_assets_manager_module(L);
