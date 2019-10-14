@@ -197,6 +197,8 @@ end
 function LayerEntrance:onExecuteUncompress()
 	if #self.DownloadResList == 0 then
 		self.m_SM:stop()
+		release_print("没有需要解压的任务...直接进入游戏")
+		self:enterGame()
 		return
 	end
 	self.uncompressIndex = self.uncompressIndex or 1
@@ -209,7 +211,8 @@ function LayerEntrance:onExecuteUncompress()
 	self.uncompressIndex = self.uncompressIndex + 1
 	if self.uncompressIndex >= #self.DownloadResList then
 		self.m_SM:stop()
-		release_print("All Done!")
+		release_print("解压完毕...进入游戏!")
+		self:enterGame()
 	end
 end
 
@@ -223,6 +226,11 @@ end
 
 function LayerEntrance:getState()
 	return self.m_SM:getCurrentState()
+end
+
+function LayerEntrance:enterGame()
+	dump(Utils.getVersionInfo(), "本地版本信息: ")
+
 end
 
 
