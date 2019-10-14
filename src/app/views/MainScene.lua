@@ -25,6 +25,8 @@ function MainScene:onCreate()
 end
 
 function MainScene:initlize()
+    -- self:testAutoUpdater()
+    -- do return end
     -- self:testGridView()
     -- do return end
     self:run()
@@ -88,7 +90,12 @@ end
 
 
 function MainScene:testAutoUpdater()
-    import("devTools.AutoUpdater").run("08d74f3", "6b92b7d")
+    cc.Sprite:create():addTo(self)
+    local layout = ccui.Layout:create():addTo(self):move(display.center):setColor(cc.c3b(255, 255, 255)):setContentSize(200, 200):onTouch(function() 
+        release_print("Touched")
+        import("devTools.AutoUpdater").run("08d74f3", "f3b106b")
+    end)
+    cc.Label:createWithSystemFont(index, display.DEFAULT_TTF_FONT, 20):addTo(self):setAnchorPoint(0, 0):move(0, 0)
 end
 
 

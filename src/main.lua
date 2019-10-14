@@ -1,12 +1,3 @@
-
-
-local tempDofile = dofile
-
-dofile = function(...)
-	dump({...})
-	tempDofile(...)
-end
-
 cc.FileUtils:getInstance():setPopupNotify(false)
 
 require "config"

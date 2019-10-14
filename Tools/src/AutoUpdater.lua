@@ -71,7 +71,7 @@ local function TableToString(table)
 end
 
 function AutoUpdater.run(firstCommit, lastCommit)
-	local currentDir = string.gsub(io.popen("echo %CD%"):read("*all"), "\n", "")
+	local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "")
 	local modifiedFiles = AutoUpdater.checkModified(firstCommit, lastCommit)
 
 	-- Create Update Dir

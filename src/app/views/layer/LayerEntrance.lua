@@ -48,7 +48,7 @@ function LayerEntrance:onExecuteCheckVersion()
 	-- TODO
 	-- Check Version
 	-- do return end
-    -- release_print("检查是否需要初始化...")
+    release_print("检查是否需要初始化...")
 	if not Utils.isFileExisted(Utils.fixDirByPlatform(Utils.getCurrentResPath().."res/version")) then 
 		self:setState(STATE_FIRST_INIT) 
 		return 
