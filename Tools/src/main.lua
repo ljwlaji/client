@@ -2,5 +2,5 @@
 -- require "cocos.init"
 
 require "functions"
-import("AutoUpdater").run("08d74f3", "e371842")
+import("AutoUpdater").run("e371842", "5692539")
 

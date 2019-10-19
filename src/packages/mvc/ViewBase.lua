@@ -1,7 +1,7 @@
 
 local ViewBase = class("ViewBase", cc.Node)
 
-function ViewBase:ctor(app, name)
+function ViewBase:ctor(app, name, context)
     self:enableNodeEvents()
     self.app_ = app
     self.name_ = name
@@ -17,7 +17,7 @@ function ViewBase:ctor(app, name)
         self:createResourceBinding(binding)
     end
 
-    if self.onCreate then self:onCreate() end
+    if self.onCreate then self:onCreate(context) end
 end
 
 function ViewBase:getApp()
@@ -38,6 +38,10 @@ function ViewBase:fillAllChildren(rootNode)
         self.m_Children[v:getName()] = v
         self:fillAllChildren(v)
     end
+end
+
+function ViewBase:createView(...)
+    return self.app_:createView(...)
 end
 
 function ViewBase:createResourceNode(resourceFilename)

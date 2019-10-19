@@ -7,28 +7,33 @@ local LayerEntrance 	= class("LayerEntrance", ViewBaseEx)
 LayerEntrance.RESOURCE_FILENAME = "res/csb/layer/CSB_Layer_Entrance.csb"
 LayerEntrance.RESOURCE_BINDING = {}
 
-local RemoteVersionFile = "http://120.78.223.173/AllUpdates"
-local RemoteUpdatePath = "http://120.78.223.173/downloads/"
-local STATE_CHECK_VERSION 			= 1
-local STATE_FIRST_INIT 				= 2
-local STATE_REQUEST_NEW_VERSION 	= 3
-local STATE_TRY_DOWNLOAD_UPDATES	= 4
-local STATE_TRY_UNCOMPARESS			= 5
+local DevMode 								= import("app.ShareDefine"):isDevMode()
+local RemoteVersionFile 					= "http://120.78.223.173/AllUpdates"
+local RemoteUpdatePath 						= "http://120.78.223.173/downloads/"
+local STATE_CHECK_VERSION 					= 1
+local STATE_FIRST_INIT 						= 2
+local STATE_REQUEST_NEW_VERSION 			= 3
+local STATE_TRY_DOWNLOAD_UPDATES			= 4
+local STATE_TRY_UNCOMPARESS					= 5
+local STATE_REQUEST_NEW_VERSION_TIME_OUT 	= 6
 
-local STATE_REQUEST_NEW_VERSION_TIME_OUT = 100
 
-function LayerEntrance:onCreate()
+function LayerEntrance:onCreate(onFinishedCallBack)
 	release_print("OnCreate")
+	self.onFinishedCallBack = onFinishedCallBack
 	self.m_Children["progressBar"]:setPercent(0)
 	self:autoAlgin()
 end
 
 function LayerEntrance:onEnterTransitionFinish()
+	release_print("onEnterTransitionFinish")
+	if DevMode == true then self:enterGame() return end
 	self:initStateMachine()
 	self:enableUpdate(handler(self, self.onUpdate))
 end
 
 function LayerEntrance:initStateMachine()
+	-- 如果是开发模式 则直接进入游戏
 	self.m_SM = StateMachine:create()
 							:addState(STATE_CHECK_VERSION, 					handler(self, self.onEnterCheckVersion), 		handler(self, self.onExecuteCheckVersion), 		nil, nil)
 							:addState(STATE_FIRST_INIT, 					handler(self, self.onEnterFirstInit), 			handler(self, self.onExecuteFirstInit), 		nil, nil)
@@ -157,7 +162,7 @@ function LayerEntrance:onExecuteTryDownloadUpdates(diff)
 	--没有正在进行的下载任务 尝试添加新任务
 	if not self:tryStartNewTask() then
 		release_print("没有新的下载任务 停止下载")
-		self.m_SM:setState(STATE_TRY_UNCOMPARESS)
+		self:enterGame()
 	end
 end
 
@@ -196,7 +201,6 @@ end
 
 function LayerEntrance:onExecuteUncompress()
 	if #self.DownloadResList == 0 then
-		self.m_SM:stop()
 		release_print("没有需要解压的任务...直接进入游戏")
 		self:enterGame()
 		return
@@ -210,7 +214,6 @@ function LayerEntrance:onExecuteUncompress()
 	Utils.updateVersion(currTask)
 	self.uncompressIndex = self.uncompressIndex + 1
 	if self.uncompressIndex >= #self.DownloadResList then
-		self.m_SM:stop()
 		release_print("解压完毕...进入游戏!")
 		self:enterGame()
 	end
@@ -229,10 +232,22 @@ function LayerEntrance:getState()
 end
 
 function LayerEntrance:enterGame()
-	dump(Utils.getVersionInfo(), "本地版本信息: ")
+	release_print("enterGame")
+	-- 发行版本
+	if DevMode == false then
+		self.m_SM:stop()
+		dump(Utils.getVersionInfo(), "本地版本信息: ")
+	end
 
+	self:runAction(
+		cc.Sequence:create(
+						cc.DelayTime:create(1),
+			cc.CallFunc:create(function()
+				self.onFinishedCallBack()
+				self:removeFromParent()
+		end)
+			)
+	)
 end
-
-
 
 return LayerEntrance

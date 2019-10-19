@@ -141,21 +141,6 @@ function Utils.updateVersion(versionTable)
 	fileWrite:close()
 end
 
--- function Utils.bCopyFile(srcPath, destPath)
--- 	local src = io.open(srcPath,"rb")
--- 	if not src then return false end
--- 	local dest = io.open(destPath)
--- 	if dest then dest:close() os.remove(destPath) end
--- 	local len = src:seek("end")
--- 	src:seek("set", 0)
--- 	local data = src:read(len)
--- 	dest = io.open(destPath,"wb")
--- 	dest:write(data,len)
--- 	src:close()
--- 	dest:close()
--- end
-
-
 if not Utils.getPackagePath then
     if FileUtils:isFileExist(Utils.getCurrentResPath()..pointerPath) then
         os.remove(Utils.getCurrentResPath()..pointerPath)

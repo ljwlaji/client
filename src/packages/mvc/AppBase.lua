@@ -43,7 +43,7 @@ function AppBase:enterScene(sceneName, transition, time, more)
     return view
 end
 
-function AppBase:createView(name)
+function AppBase:createView(name, ...)
     for _, root in ipairs(self.configs_.viewsRoot) do
         local packageName = string.format("%s.%s", root, name)
         local status, view = xpcall(function()
@@ -55,7 +55,7 @@ function AppBase:createView(name)
         end)
         local t = type(view)
         if status and (t == "table" or t == "userdata") then
-            return view:create(self, name)
+            return view:create(self, name, ...)
         end
     end
     error(string.format("AppBase:createView() - not found view \"%s\" in search paths \"%s\"",

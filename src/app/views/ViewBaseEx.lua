@@ -33,7 +33,7 @@ function ViewBaseEx:onExitTransitionStart_()
 end
 
 function ViewBaseEx:onCleanup_()
-	display.getRunningScene():removeNodeFromSyncUpdateList(self)
+	display.getWorld():removeNodeFromSyncUpdateList(self)
 	if self.onCleanup then self:onCleanup() end
 end
 

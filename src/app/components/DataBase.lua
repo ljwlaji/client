@@ -2,8 +2,9 @@ local Utils = import("app.components.Utils")
 local DataBase = class("DataBase")
 
 DataBase.instance = nil
+local DevMode   = import("app.ShareDefine"):isDevMode()
+local DBPATH    = "res/datas.db"
 
-local DBPATH = "res/datas.db"
 
 function DataBase:ctor()
 	self:openDB()
@@ -11,7 +12,7 @@ end
 
 function DataBase:openDB(filename)
 	if self.db then return self.db end
-    self.db = sqlite3.open(Utils.getDownloadRootPath()..DBPATH)
+    self.db = sqlite3.open(DevMode and DBPATH or Utils.getDownloadRootPath()..DBPATH)
 	return self.db
 end
 

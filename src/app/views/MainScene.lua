@@ -1,36 +1,31 @@
 
 local MainScene     = class("MainScene", cc.load("mvc").ViewBase)
--- local Map           = import("app.components.Map")
--- local DataBase      = import("app.components.DataBase")
 local Camera        = import("app.components.Camera")
--- local GameObject    = import("app.components.Object.GameObject")
 local GridView      = import("app.components.GridView")
--- local Utils         = import("app.components.Utils")
--- local MapExtractor  = import("devTools.MapExtractor")
--- local ZOrder_HUD    = 100
-
--- local FileUtils = cc.FileUtils:getInstance()
--- local pointerPath = "res/packagePointer"
-
 local LayerEntrance = import("app.views.layer.LayerEntrance")
+local DataBase      = import("app.components.DataBase")
+local Map           = import("app.components.Map")
 
 
 
 function MainScene:onCreate()
     self.sycnUpdateList = {}
     -- do return end
-    -- self:fileCopy()
-    -- self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
     -- self:startGame(1)
 end
 
-function MainScene:initlize()
-    -- self:testAutoUpdater()
-    -- do return end
-    -- self:testGridView()
-    -- do return end
+function MainScene:onEnterTransitionFinish()
     self:run()
-    LayerEntrance:create():addTo(self)
+    self:createView("layer.LayerEntrance", function() 
+        self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(99999999)
+        -- self:startGame(1)
+    end):addTo(self)
+end
+
+function MainScene:onCheckVersionFinished()
+    -- do return end
+    -- self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
+    -- self:startGame(1)
 end
 
 function MainScene:run()
@@ -70,39 +65,6 @@ end
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function MainScene:testAutoUpdater()
-    cc.Sprite:create():addTo(self)
-    local layout = ccui.Layout:create():addTo(self):move(display.center):setColor(cc.c3b(255, 255, 255)):setContentSize(200, 200):onTouch(function() 
-        release_print("Touched")
-        import("devTools.AutoUpdater").run("08d74f3", "f3b106b")
-    end)
-    cc.Label:createWithSystemFont(index, display.DEFAULT_TTF_FONT, 20):addTo(self):setAnchorPoint(0, 0):move(0, 0)
-end
-
-
-function MainScene:fileCopy()
-    Utils.recursionCopy(FileUtils.getPackagePath().."res/", Utils.getDownloadRootPath().."res/")
-    Utils.recursionCopy(FileUtils.getPackagePath().."src/", Utils.getDownloadRootPath().."src/")
-end
 
 
 function MainScene:testGridView()
