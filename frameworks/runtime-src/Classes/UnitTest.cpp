@@ -12,11 +12,6 @@ static void onProgress(uint32 a, uint32 b)
 	CCLOG("%d || %d", a, b);
 }
 
-static void onFinished(DownloadJob* ptr)
-{
-	CCLOG("%s Finished", ptr->From.c_str());
-}
-
 void UnitTest::TestAssetsManger()
 {
 	/*

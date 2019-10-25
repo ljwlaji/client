@@ -51,8 +51,6 @@
 		720EB5F9230E58FC003ADE72 /* Zipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EA230E58FC003ADE72 /* Zipper.cpp */; };
 		720EB5FA230E58FC003ADE72 /* CustomModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EC230E58FC003ADE72 /* CustomModule.cpp */; };
 		720EB5FB230E58FC003ADE72 /* CustomModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EC230E58FC003ADE72 /* CustomModule.cpp */; };
-		720EB5FC230E58FC003ADE72 /* AssetsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5ED230E58FC003ADE72 /* AssetsManager.cpp */; };
-		720EB5FD230E58FC003ADE72 /* AssetsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5ED230E58FC003ADE72 /* AssetsManager.cpp */; };
 		720EB5FE230E58FC003ADE72 /* ZipHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */; };
 		720EB5FF230E58FC003ADE72 /* ZipHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */; };
 		720EB600230E58FC003ADE72 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5F1230E58FC003ADE72 /* Session.cpp */; };
@@ -67,6 +65,9 @@
 		722DCD6A231C871C002818CC /* lfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD67231C871C002818CC /* lfs.c */; };
 		722DCD71231EE304002818CC /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD6E231EE304002818CC /* MD5.cpp */; };
 		722DCD72231EE304002818CC /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD6E231EE304002818CC /* MD5.cpp */; };
+		725AF5B32362D9F50033F8A1 /* UpdateMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 725AF5B22362D9F50033F8A1 /* UpdateMgr.cpp */; };
+		725AF5B42362D9F50033F8A1 /* UpdateMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 725AF5B22362D9F50033F8A1 /* UpdateMgr.cpp */; };
+		725B07E62362F10D001A22F7 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 725B07E52362F10D001A22F7 /* libcurl.a */; };
 		9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */; };
 		9FF504841A5E87B100AFDA55 /* ConsoleWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */; };
 		9FF504851A5E87B100AFDA55 /* ConsoleWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF504831A5E87B100AFDA55 /* ConsoleWindowController.m */; };
@@ -232,9 +233,7 @@
 		720EB5EA230E58FC003ADE72 /* Zipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Zipper.cpp; path = ../Classes/Zipper.cpp; sourceTree = "<group>"; };
 		720EB5EB230E58FC003ADE72 /* SocketClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocketClient.h; path = ../Classes/SocketClient.h; sourceTree = "<group>"; };
 		720EB5EC230E58FC003ADE72 /* CustomModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomModule.cpp; path = ../Classes/CustomModule.cpp; sourceTree = "<group>"; };
-		720EB5ED230E58FC003ADE72 /* AssetsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AssetsManager.cpp; path = ../Classes/AssetsManager.cpp; sourceTree = "<group>"; };
 		720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZipHelper.cpp; path = ../Classes/ZipHelper.cpp; sourceTree = "<group>"; };
-		720EB5EF230E58FC003ADE72 /* AssetsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AssetsManager.h; path = ../Classes/AssetsManager.h; sourceTree = "<group>"; };
 		720EB5F0230E58FC003ADE72 /* Session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Session.h; path = ../Classes/Session.h; sourceTree = "<group>"; };
 		720EB5F1230E58FC003ADE72 /* Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Session.cpp; path = ../Classes/Session.cpp; sourceTree = "<group>"; };
 		720EB608230E5B87003ADE72 /* lsqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lsqlite3.c; path = ../Classes/lsqlite3.c; sourceTree = "<group>"; };
@@ -247,6 +246,9 @@
 		722DCD68231C871C002818CC /* lfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lfs.h; path = ../Classes/lfs.h; sourceTree = "<group>"; };
 		722DCD6B231EE304002818CC /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5.h; path = ../Classes/MD5.h; sourceTree = "<group>"; };
 		722DCD6E231EE304002818CC /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5.cpp; path = ../Classes/MD5.cpp; sourceTree = "<group>"; };
+		725AF5B12362D9F50033F8A1 /* UpdateMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UpdateMgr.h; path = ../Classes/UpdateMgr.h; sourceTree = "<group>"; };
+		725AF5B22362D9F50033F8A1 /* UpdateMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UpdateMgr.cpp; path = ../Classes/UpdateMgr.cpp; sourceTree = "<group>"; };
+		725B07E52362F10D001A22F7 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = "../../cocos2d-x/external/curl/prebuilt/ios/libcurl.a"; sourceTree = "<group>"; };
 		9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		9FF504781A5E86D600AFDA55 /* libsimulator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libsimulator.xcodeproj; path = "../../cocos2d-x/tools/simulator/libsimulator/proj.ios_mac/libsimulator.xcodeproj"; sourceTree = "<group>"; };
 		9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConsoleWindow.xib; sourceTree = "<group>"; };
@@ -306,6 +308,7 @@
 				9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */,
 				ED545A891B68A23E00C3958E /* libiconv.dylib in Frameworks */,
 				9FF504871A5E88CE00AFDA55 /* libsimulator iOS.a in Frameworks */,
+				725B07E62362F10D001A22F7 /* libcurl.a in Frameworks */,
 				5200BECA1A53D9A500AC45E4 /* Security.framework in Frameworks */,
 				15427CD5198F222200DC375D /* libluacocos2d iOS.a in Frameworks */,
 				15427CD3198F221400DC375D /* libcocos2d iOS.a in Frameworks */,
@@ -442,6 +445,7 @@
 				5023817917EBBE8300990C9B /* OpenGLES.framework */,
 				1AF4C402178663F200122817 /* libz.dylib */,
 				15C1568D1683131500D239F2 /* libcurl.a */,
+				725B07E52362F10D001A22F7 /* libcurl.a */,
 				F293B3CC15EB7BE500256477 /* QuartzCore.framework */,
 				F293B3CE15EB7BE500256477 /* OpenGLES.framework */,
 				F293B3D015EB7BE500256477 /* OpenAL.framework */,
@@ -457,6 +461,8 @@
 		F293BB7C15EB830F00256477 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				725AF5B22362D9F50033F8A1 /* UpdateMgr.cpp */,
+				725AF5B12362D9F50033F8A1 /* UpdateMgr.h */,
 				722DCD6E231EE304002818CC /* MD5.cpp */,
 				722DCD6B231EE304002818CC /* MD5.h */,
 				722DCD67231C871C002818CC /* lfs.c */,
@@ -467,8 +473,6 @@
 				720EB608230E5B87003ADE72 /* lsqlite3.c */,
 				720EB60B230E5B87003ADE72 /* sqlite3.c */,
 				720EB60C230E5B87003ADE72 /* sqlite3.h */,
-				720EB5ED230E58FC003ADE72 /* AssetsManager.cpp */,
-				720EB5EF230E58FC003ADE72 /* AssetsManager.h */,
 				720EB5EC230E58FC003ADE72 /* CustomModule.cpp */,
 				720EB5E6230E58FB003ADE72 /* CustomModule.h */,
 				720EB5E3230E58FB003ADE72 /* lua_module_register.h */,
@@ -705,10 +709,10 @@
 				720EB5F5230E58FC003ADE72 /* Timmer.cpp in Sources */,
 				720EB5F9230E58FC003ADE72 /* Zipper.cpp in Sources */,
 				722DCD72231EE304002818CC /* MD5.cpp in Sources */,
+				725AF5B42362D9F50033F8A1 /* UpdateMgr.cpp in Sources */,
 				722DCD6A231C871C002818CC /* lfs.c in Sources */,
 				722DCD66231C21F4002818CC /* PixalCollisionMgr.cpp in Sources */,
 				720EB5F3230E58FC003ADE72 /* SocketClient.cpp in Sources */,
-				720EB5FD230E58FC003ADE72 /* AssetsManager.cpp in Sources */,
 				C07828F818B4D72E00BD2287 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -729,10 +733,10 @@
 				720EB5F4230E58FC003ADE72 /* Timmer.cpp in Sources */,
 				720EB5F8230E58FC003ADE72 /* Zipper.cpp in Sources */,
 				722DCD71231EE304002818CC /* MD5.cpp in Sources */,
+				725AF5B32362D9F50033F8A1 /* UpdateMgr.cpp in Sources */,
 				722DCD69231C871C002818CC /* lfs.c in Sources */,
 				722DCD65231C21F4002818CC /* PixalCollisionMgr.cpp in Sources */,
 				720EB5F2230E58FC003ADE72 /* SocketClient.cpp in Sources */,
-				720EB5FC230E58FC003ADE72 /* AssetsManager.cpp in Sources */,
 				5023811817EBBCAC00990C9B /* AppController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -929,7 +933,7 @@
 				);
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../../cocos2d-x/external/curl/prebuilt/ios\"";
 				OTHER_LDFLAGS = (
 					"$(_COCOS_LIB_IOS_BEGIN)",
 					"$(_COCOS_LIB_IOS_END)",
@@ -946,7 +950,7 @@
 				SDKROOT = iphoneos;
 				STRIP_PNG_TEXT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(_COCOS_HEADER_IOS_BEGIN) $(_COCOS_HEADER_IOS_END)";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) $(_COCOS_HEADER_IOS_BEGIN) $(_COCOS_HEADER_IOS_END) \"$(SRCROOT)/../../cocos2d-x/external/curl/include/ios\"";
 				VALID_ARCHS = "arm64 armv7";
 			};
 			name = Debug;
@@ -970,7 +974,7 @@
 				);
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../../cocos2d-x/external/curl/prebuilt/ios\"";
 				OTHER_LDFLAGS = (
 					"$(_COCOS_LIB_IOS_BEGIN)",
 					"$(_COCOS_LIB_IOS_END)",
@@ -987,7 +991,7 @@
 				SDKROOT = iphoneos;
 				STRIP_PNG_TEXT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(_COCOS_HEADER_IOS_BEGIN) $(_COCOS_HEADER_IOS_END)";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) $(_COCOS_HEADER_IOS_BEGIN) $(_COCOS_HEADER_IOS_END) \"$(SRCROOT)/../../cocos2d-x/external/curl/include/ios\"";
 				VALID_ARCHS = "arm64 armv7";
 			};
 			name = Release;

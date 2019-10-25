@@ -108,6 +108,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     //register_custom_function(stack->getLuaState());
     
 	std::string writeblePath = FileUtils::getInstance()->getWritablePath().c_str();
+    CCLOG("%s", writeblePath.c_str());
 #ifdef WIN32
 	writeblePath += "virtualDir/";
 #endif
@@ -124,14 +125,6 @@ bool AppDelegate::applicationDidFinishLaunching()
     {
         return false;
     }
-
-
-	//UnitTest _UnitTest;
-	//_UnitTest.TestZip();
-	//_UnitTest.TestAssetsManger();
-	//_UnitTest.TestSessionBuffer();
-	//_UnitTest.TestMD5();
-	//_UnitTest.TestSHA1();
     return true;
 }
 

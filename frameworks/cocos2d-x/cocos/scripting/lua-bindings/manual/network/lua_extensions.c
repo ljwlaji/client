@@ -38,7 +38,7 @@ extern "C" {
 static luaL_Reg luax_exts[] = {
     {"socket.core", luaopen_socket_core},
 	{"mime.core", luaopen_mime_core},
-	{"cjon", luaopen_cjson},
+	//{"cjon", luaopen_cjson},
     {NULL, NULL}
 };
 

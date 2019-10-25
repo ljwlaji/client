@@ -3,7 +3,6 @@ local MainScene     = class("MainScene", cc.load("mvc").ViewBase)
 local Camera        = import("app.components.Camera")
 local GridView      = import("app.components.GridView")
 local LayerEntrance = import("app.views.layer.LayerEntrance")
-local DataBase      = import("app.components.DataBase")
 local Map           = import("app.components.Map")
 
 
@@ -123,7 +122,7 @@ function MainScene:testMapExtractor()
 end
 
 function MainScene:startGame(chosedCharacterID)
-    local MapEntry = DataBase:query(string.format("SELECT * FROM character WHERE character_id = %d", chosedCharacterID))[1]["curr_map_entry"]
+    local MapEntry = import("app.components.DataBase"):query(string.format("SELECT * FROM character WHERE character_id = %d", chosedCharacterID))[1]["curr_map_entry"]
     self:tryEnterMap(MapEntry, chosedCharacterID)
 end
 

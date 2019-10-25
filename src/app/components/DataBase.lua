@@ -10,9 +10,9 @@ function DataBase:ctor()
 	self:openDB()
 end
 
-function DataBase:openDB(filename)
+function DataBase:openDB()
 	if self.db then return self.db end
-    self.db = sqlite3.open(DevMode and DBPATH or Utils.getDownloadRootPath()..DBPATH)
+    self.db = sqlite3.open(DevMode and DBPATH or Utils.getCurrentResPath()..DBPATH)
 	return self.db
 end
 
@@ -24,6 +24,7 @@ function DataBase.getInstance()
 end
 
 function DataBase:query(sql)
+    if not self.db then self:openDB() end
     local ret = {}
     for row in self.db:nrows(sql) do
         ret[#ret + 1] = row

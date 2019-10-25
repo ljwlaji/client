@@ -141,8 +141,8 @@ end
 
 function LayerEntrance:onEnterTryDownloadUpdates()
 	self.m_Children["textState"]:setString("STATE_TRY_DOWNLOAD_UPDATES")
-	import("app.components.LFS").createDir(Utils.getDownloadRootPath())
-	import("app.components.LFS").createDir(Utils.getDownloadCachePath())
+	import("app.components.Lfs").createDir(Utils.getDownloadRootPath())
+	import("app.components.Lfs").createDir(Utils.getDownloadCachePath())
 	
 	for k, v in pairs(self.DownloadResList) do
 		v.DownloadUrl 	= string.format("%s%s.FCZip", RemoteUpdatePath, v.versionID)
