@@ -18,7 +18,7 @@ function MainScene:onEnterTransitionFinish()
     self:run()
     self:createView("layer.LayerEntrance", function() 
         self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(99999999)
-        -- self:startGame(1)
+        self:startGame(1)
     end):addTo(self)
 end
 

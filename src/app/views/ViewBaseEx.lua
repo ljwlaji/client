@@ -58,5 +58,8 @@ function ViewBaseEx:enableUpdate(func)
 	display.getWorld():addNodeSyncUpdate(self, func)
 end
 
+function ViewBaseEx:runSequence(...)
+	self:runAction( cc.Sequence:create( ... ) )
+end
 
 return ViewBaseEx

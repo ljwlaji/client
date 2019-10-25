@@ -188,6 +188,7 @@ function LayerEntrance:onDownloadProgress()
 	local nowDownloaded 	= UpdateMgr:getDownloadedSize()
 	local totalToDownload 	= UpdateMgr:getTotalSize()
 	release_print(string.format("%s/%s", nowDownloaded, totalToDownload))
+	self.m_Children["progressBar"]:setPercent(nowDownloaded / totalToDownload)
 	if UpdateMgr:isStopped() then
 		release_print("进入验证解压阶段...")
 		--验证/解压 等后续处理
@@ -207,6 +208,7 @@ function LayerEntrance:onExecuteUncompress()
 	end
 	self.uncompressIndex = self.uncompressIndex or 1
 	self.m_Children["textState"]:setString(string.format("Uncompress %d / %d", self.uncompressIndex, #self.DownloadResList))
+	self.m_Children["progressBar"]:setPercent(self.uncompressIndex / #self.DownloadResList)
 	local currTask = self.DownloadResList[self.uncompressIndex]
 	local path = Utils.getDownloadCachePath()..currTask.versionID..".FCZip"
 	release_print(string.format("正在解压: [%s] To [%s]", path, Utils.getCurrentResPath()))
@@ -239,15 +241,7 @@ function LayerEntrance:enterGame()
 		dump(Utils.getVersionInfo(), "本地版本信息: ")
 	end
 
-	self:runAction(
-		cc.Sequence:create(
-						cc.DelayTime:create(1),
-			cc.CallFunc:create(function()
-				self.onFinishedCallBack()
-				self:removeFromParent()
-		end)
-			)
-	)
+	self:runSequence(cc.DelayTime:create(1), cc.CallFunc:create(function() self.onFinishedCallBack() self:removeFromParent() end))
 end
 
 return LayerEntrance
