@@ -147,7 +147,8 @@
     {
       "idiom" : "ios-marketing",
       "size" : "1024x1024",
-      "scale" : "1x"
+      "scale" : "1x",
+      "filename" : "1024+1024.png"
     }
   ],
   "info" : {
