@@ -190,6 +190,7 @@ function LayerEntrance:onDownloadProgress()
 	if UpdateMgr:isStopped() then
 		--验证/解压 等后续处理
 		self:handleUpdateFiles()
+		Utils.updateVersion(self.CurrentTask)
 		self.CurrentTask = nil
 	end
 end
@@ -201,6 +202,11 @@ function LayerEntrance:getMD5FromFile(path)
 end
 
 function LayerEntrance:handleUpdateFiles()
+	local zipFilePath = Utils.getDownloadCachePath()..self.CurrentTask.versionID..".FCZip"
+	cc.ZipReader.uncompress(zipFilePath, Utils.getCurrentResPath())
+
+
+	do return end
 	--Utils.getCurrentResPath()
 	dump(self.CurrentTask, "", 100)
 	--解压到临时目录并验证
@@ -223,7 +229,6 @@ function LayerEntrance:handleUpdateFiles()
 		self:enterGame()
 		return
 	end
-	Utils.updateVersion(self.CurrentTask)
 end
 
 function LayerEntrance:onEnterTryUncomparess()
