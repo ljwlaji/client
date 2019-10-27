@@ -343,7 +343,7 @@ function math.radian2angle(radian)
 end
 
 function io.exists(path)
-    local file = io.open(path, "r")
+    local file = io.open(path, "rb")
     if file then
         io.close(file)
         return true
@@ -352,7 +352,7 @@ function io.exists(path)
 end
 
 function io.readfile(path)
-    local file = io.open(path, "r")
+    local file = io.open(path, "rb")
     if file then
         local content = file:read("*a")
         io.close(file)
@@ -401,7 +401,7 @@ end
 
 function io.filesize(path)
     local size = false
-    local file = io.open(path, "r")
+    local file = io.open(path, "rb")
     if file then
         local current = file:seek()
         size = file:seek("end")

@@ -100,7 +100,7 @@ function Utils.bCopyFile(sourcefile, destinationfile)
 end
 
 function Utils.getVersionInfo()
-	local file = io.open(Utils.getCurrentResPath().."res/version","r")
+	local file = io.open(Utils.getCurrentResPath().."res/version","rb")
 	local content = file:read("*a")
 	file:close()
 	return loadstring("return "..content)()
@@ -131,7 +131,7 @@ end
 
 function Utils.updateVersion(versionTable)
 	local Info = versionTable.updateInfo
-	local fileWrite = io.open(Utils.getCurrentResPath().."res/version","w")
+	local fileWrite = io.open(Utils.getCurrentResPath().."res/version","wb")
 	fileWrite:write(Utils.TableToString({
 		Date 		= Info.Date,
 		firstCommit = Info.commitBase,

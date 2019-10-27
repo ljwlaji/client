@@ -849,12 +849,14 @@ int tolua_firecore_MD5_destory(lua_State* tolua_S)
 
 
 #if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"cc.MD5",0,&tolua_err)) goto tolua_lerror;
+    if (!tolua_isusertype(tolua_S,1,"cc.MD5",0,&tolua_err)) 
+		goto tolua_lerror;
 #endif
 
     cobj = (MD5*)tolua_tousertype(tolua_S,1,0);
 	delete cobj;
 	cobj = nullptr;
+	return 1;
 
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:

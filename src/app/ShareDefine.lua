@@ -74,7 +74,7 @@ function ShareDefine.getInstance()
 end
 
 function ShareDefine:isDevMode()
-	return true
+	return false
 end
 
 

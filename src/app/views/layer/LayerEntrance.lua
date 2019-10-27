@@ -145,7 +145,6 @@ function LayerEntrance:onEnterTryDownloadUpdates()
 	
 	for k, v in pairs(self.DownloadResList) do
 		v.DownloadUrl 	= string.format("%s%s.FCZip", RemoteUpdatePath, v.versionID)
-		--添加下载任务
 		release_print(string.format("添加下载任务: [%s]", v.DownloadUrl))
 	end
 end
@@ -189,10 +188,42 @@ function LayerEntrance:onDownloadProgress()
 	release_print(string.format("%s/%s", nowDownloaded, totalToDownload))
 	self.m_Children["progressBar"]:setPercent(nowDownloaded / totalToDownload)
 	if UpdateMgr:isStopped() then
-		release_print("进入验证解压阶段...")
 		--验证/解压 等后续处理
+		self:handleUpdateFiles()
 		self.CurrentTask = nil
 	end
+end
+
+function LayerEntrance:getMD5FromFile(path)
+	self.MD5 = self.MD5 or cc.MD5:create()
+	self.MD5:updateFromFile(filePath)
+	return self.MD5:getString()
+end
+
+function LayerEntrance:handleUpdateFiles()
+	--Utils.getCurrentResPath()
+	dump(self.CurrentTask, "", 100)
+	--解压到临时目录并验证
+	local zipFilePath = Utils.getDownloadCachePath()..self.CurrentTask.versionID..".FCZip"
+	local tempDir = Utils.getDownloadCachePath().."temp/"
+	cc.ZipReader.uncompress(zipFilePath, tempDir)
+	local needCheck = {}
+	local allPassed = true
+	for k, v in pairs(self.CurrentTask["updateInfo"]["FileList"]) do
+		release_print(self:getMD5FromFile(tempDir..v.Dir), v.MD5)
+		if self:getMD5FromFile(tempDir..v.Dir) ~= v.MD5 then
+			allPassed = false
+			release_print(tempDir..v.Dir)
+			dump(v, "文件MD5检测失败: ")
+			break
+		end
+	end
+
+	if not allPassed then
+		self:enterGame()
+		return
+	end
+	Utils.updateVersion(self.CurrentTask)
 end
 
 function LayerEntrance:onEnterTryUncomparess()
@@ -234,6 +265,7 @@ end
 
 function LayerEntrance:enterGame()
 	release_print("enterGame")
+	if self.MD5 then self.MD5:desotry() self.MD5 = nil end
 	self.m_SM:stop()
 	dump(Utils.getVersionInfo(), "本地版本信息: ")
 	self:runSequence(cc.DelayTime:create(1), cc.CallFunc:create(function() self.onFinishedCallBack() self:removeFromParent() end))

@@ -152,7 +152,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper.exe"
 	local callBack = io.popen(string.format("%s %s %s unCompress", ZipperPath, path, updateDir.."/TestUnZip")):read("*all")
-	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"r")
+	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"rb")
 	local originData = originFile and loadstring("return "..originFile:read("*a"))() or {}
 	if originFile then
 		originFile:close()
@@ -186,6 +186,17 @@ function AutoUpdater.run(firstCommit, lastCommit)
 
 	release_print("正在更新根目录[AllUpdates]文件")
 	Utils.bCopyFile(fileTo, currentDir.."/AllUpdates")
+
+	release_print("正在更新本地[version]文件")
+	local Info = originData[#originData]
+	fileWrite = io.open(currentDir.."res/version","w")
+	fileWrite:write(Utils.TableToString({
+		Date 		= Info.Date,
+		firstCommit = Info.commitBase,
+		lastCommit 	= Info.commitLast,
+		version 	= #originData
+	}))
+	fileWrite:close()
 
 	release_print("")
 	release_print("")
