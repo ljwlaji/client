@@ -124,8 +124,9 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	release_print("开始打包文件...")
 	local path = updateDir.."/Update.FCZip"
+	local updateFilePath = path
 	local unZipDir = updateDir.."/testUnZip"
-	os.remove(path)
+	os.remove(updateDir.."/testUnZip")
 	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper.exe"
 	local callBack = io.popen(string.format("%s %s %s", ZipperPath, updateDir, updateDir))
 
@@ -153,7 +154,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper.exe"
 	local callBack = io.popen(string.format("%s %s %s unCompress", ZipperPath, path, updateDir.."/TestUnZip")):read("*all")
 	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"rb")
-	local originData = originFile and loadstring("return "..originFile:read("*a"))() or {}
+	local originData = originFile and loadstring("return "..originFile:read("*all"))() or {}
 	if originFile then
 		originFile:close()
 		originFile = nil
@@ -176,11 +177,13 @@ function AutoUpdater.run(firstCommit, lastCommit)
 		commitLast = lastCommit
 	}
 
+	os.rename(updateDir.."/Update.FCZip", updateDir.."/"..#originData..".FCZip")
+
 	dump(originData, "", 2)
 
 
 	local fileTo = string.gsub(updateDir.."/AllUpdates", "\\", "/")
-	local fileWrite = io.open(fileTo,"w")
+	local fileWrite = io.open(fileTo,"wb")
 	fileWrite:write(TableToString(originData))
 	fileWrite:close()
 
@@ -189,7 +192,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 
 	release_print("正在更新本地[version]文件")
 	local Info = originData[#originData]
-	fileWrite = io.open(currentDir.."res/version","w")
+	fileWrite = io.open(currentDir.."res/version","wb")
 	fileWrite:write(Utils.TableToString({
 		Date 		= Info.Date,
 		firstCommit = Info.commitBase,
