@@ -16,7 +16,7 @@ local FileUtils 			= cc.FileUtils:getInstance()
 local writeblePath 			= FileUtils:getWritablePath()
 local pointerPath 			= "res/packagePointer"
 local currentResourcePath	= Utils.fixDirByPlatform(writeblePath)
-if device.platform == "windows" then
+if device.platform == "windows" or device.platform == "mac" then
 	currentResourcePath = currentResourcePath .. "virtualDir/"
 end
 local DownloadRootPath  	= Utils.fixDirByPlatform(writeblePath.."Download/")
