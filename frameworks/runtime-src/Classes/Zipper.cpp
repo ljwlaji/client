@@ -57,7 +57,6 @@ bool ZipReader::ReadFiles()
 
 bool ZipReader::ReadSingleFile(char * Buffer, uint32& ReadPos, uint32 FileTotalLen, FCFile* rootFile)
 {
-	std::locale chs("chs");
 	if (ReadPos + sizeof(uint32) * 4 >= FileTotalLen)
 		return false;
 
