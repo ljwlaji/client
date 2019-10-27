@@ -50,14 +50,13 @@ function LayerEntrance:onEnterCheckVersion()
 end
 
 function LayerEntrance:onExecuteCheckVersion()
-	-- TODO
-	-- Check Version
-	-- do return end
     release_print("检查是否需要初始化...")
 	if not Utils.isFileExisted(Utils.fixDirByPlatform(Utils.getCurrentResPath().."res/version")) then 
 		self:setState(STATE_FIRST_INIT) 
 		return 
 	end
+	-- in DevMode we skip the version update progress
+	if DevMode == true then self:enterGame() end
 	self:setState(STATE_REQUEST_NEW_VERSION)
 end
 
@@ -235,12 +234,8 @@ end
 
 function LayerEntrance:enterGame()
 	release_print("enterGame")
-	-- 发行版本
-	if DevMode == false then
-		self.m_SM:stop()
-		dump(Utils.getVersionInfo(), "本地版本信息: ")
-	end
-
+	self.m_SM:stop()
+	dump(Utils.getVersionInfo(), "本地版本信息: ")
 	self:runSequence(cc.DelayTime:create(1), cc.CallFunc:create(function() self.onFinishedCallBack() self:removeFromParent() end))
 end
 

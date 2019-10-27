@@ -87,12 +87,12 @@ function Utils.bCopyFile(sourcefile, destinationfile)
 	local read_file =""
 	local write_file=""
 	local temp_content ="";
-	read_file = io.open(sourcefile,"r")
+	read_file = io.open(sourcefile,"rb")
 	if not read_file then
 		release_print("Failed To Read File : "..sourcefile)
 	else
 		temp_content = read_file:read("*a")
-		write_file = io.open(destinationfile,"w")
+		write_file = io.open(destinationfile,"wb")
 		write_file:write(temp_content)
 		read_file:close()
 		write_file:close()
