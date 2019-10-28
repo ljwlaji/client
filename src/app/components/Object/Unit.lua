@@ -14,9 +14,8 @@ local STATE_JUMP_FALL_LAND  = 6
 
 local MAX_MOVE_SPEED 		= 7.0
 local SPEED_REDUCTION 		= 0.8
-local MAX_FALL_SPEED 		= -20
-local START_JUMP_FORCE 		= 7
-
+local MAX_FALL_SPEED 		= 20
+local START_JUMP_FORCE 		= 9
 --[[
 	Unit Base Attrs
 
@@ -34,7 +33,6 @@ local START_JUMP_FORCE 		= 7
 function Unit:onCreate(objType)
 	self.m_MoveSpeed = 0
 	self.m_FallSpeed = -1
-	self.m_JumpSpeed = 0
 	self.m_Direction = "right"
 	self.m_ControlByPlayer = false
 	self.m_Alive = true
@@ -210,21 +208,36 @@ end
 
 function Unit:updateHorizonOffset(diff)
 	local offset = self:isControlByPlayer() and self:onControllerMove(diff) or self:onAIMove(diff)
-	if math.abs(offset.x) > 0 then self:updateDirection(offset) end
+	if math.abs(offset.x) == 0 then return false end
+	self:updateDirection(offset)
 	local finalPos = self:getMap():tryFixPosition( self, offset )
 	self:move(finalPos)
+	return true
 end
 
 function Unit:updateVerticalOffset(diff)
 	local offset = { x = 0, y = 0 }
 	local currState = self.m_StateMachine:getCurrentState()
 	if currState == STATE_JUMP_HIGH then
-		offset.y = self.m_JumpSpeed
+		self.m_FallSpeed = self.m_FallSpeed * 0.9
+		if self.m_FallSpeed < 1 then self.m_StateMachine:setState(STATE_JUMP_FALL) end
 	else
-		self.m_FallSpeed = self.m_FallSpeed + self.m_FallSpeed * 0.1
-		self.m_FallSpeed = self.m_FallSpeed < MAX_FALL_SPEED and MAX_FALL_SPEED or self.m_FallSpeed
-		offset.y = self.m_FallSpeed
+		local TotalYOffset = 0
+		local calcTime = math.abs(math.modf(self.m_FallSpeed / MAX_FALL_SPEED))
+		local extraFallOffset = math.fmod(self.m_FallSpeed , MAX_FALL_SPEED )
+		offset.y = -MAX_FALL_SPEED
+		while calcTime > 1 do
+			local finalPos, hitGround = self:getMap():tryFixPosition( self, offset )
+			self:move(finalPos)
+			if hitGround then return true end
+			calcTime = calcTime - 1
+			return hitGround
+		end
+		offset.y = extraFallOffset
+		local finalPos, hitGround = self:getMap():tryFixPosition( self, offset )
+		self.m_FallSpeed = self.m_FallSpeed * 1.1
 	end
+	offset.y = self.m_FallSpeed
 	local finalPos, hitGround = self:getMap():tryFixPosition( self, offset )
 	if hitGround then self.m_FallSpeed = -1 end
 	self:move(finalPos)
@@ -254,12 +267,14 @@ end
 --	 State Machine Functions   --
 ---------------------------------
 function Unit:onEnterIdle()
-
+	release_print("onEnterIdle")
 end
 
 function Unit:onExecuteIdle(diff)
-	self:updateHorizonOffset(diff)
+	local nextState = nil
+	if self:updateHorizonOffset(diff) then nextState = STATE_RUN end
 	self:updateVerticalOffset(diff)
+	if nextState then self.m_StateMachine:setState(nextState) end
 end
 
 function Unit:onExitIdle()
@@ -267,12 +282,13 @@ function Unit:onExitIdle()
 end
 
 function Unit:onEnterIdleRun()
+	release_print("onEnterIdleRun")
 
 end
 
 function Unit:onExecuteIdleRun(diff)
 	self:updateHorizonOffset(diff)
-	self:updateVerticalOffset(diff)
+	if not self:updateVerticalOffset(diff) then self.m_StateMachine:setState(STATE_JUMP_FALL) end
 end
 
 function Unit:onExitIdleRun()
@@ -280,12 +296,15 @@ function Unit:onExitIdleRun()
 end
 
 function Unit:onEnterRun()
+	release_print("onEnterRun")
 
 end
 
 function Unit:onExecuteRun(diff)
-	self:updateHorizonOffset(diff)
+	local nextState = nil
+	if not self:updateHorizonOffset(diff) then nextState = STATE_IDLE end
 	self:updateVerticalOffset(diff)
+	if nextState then self.m_StateMachine:setState(nextState) end
 end
 
 function Unit:onExitRun()
@@ -293,22 +312,20 @@ function Unit:onExitRun()
 end
 
 function Unit:onEnterJumpHigh()
-	self.m_JumpSpeed = START_JUMP_FORCE
+	release_print("onEnterJumpHigh")
+	self.m_FallSpeed = START_JUMP_FORCE
 end
 
 function Unit:onExecuteJumpHigh(diff)
 	self:updateHorizonOffset(diff)
 	self:updateVerticalOffset(diff)
-	self.m_JumpSpeed = self.m_JumpSpeed * 0.9
-	if self.m_JumpSpeed <= 1 then
-		self.m_StateMachine:setState(STATE_JUMP_FALL)
-	end
 end
 
 function Unit:onExitJumpHigh()
 end
 
 function Unit:onEnterJumpFall()
+	release_print("onEnterJumpFall")
 	self.m_FallSpeed = -1
 end
 
