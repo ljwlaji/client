@@ -115,22 +115,18 @@ function Unit:isAlive()
 end
 
 function Unit:setBaseAttr(attrName, value)
-	assert(self.m_BaseAttrs[attrName])
 	self.m_BaseAttrs[attrName] = value
 end
 
 function Unit:getBaseAttr(attrName, value)
-	assert(self.m_BaseAttrs[attrName])
 	return self.m_BaseAttrs[attrName]
 end
 
 function Unit:setAttr(attrName, value)
-	assert(self.m_Attrs[attrName])
 	self.m_Attrs[attrName] = value
 end
 
 function Unit:getAttr(attrName)
-	assert(self.m_Attrs[attrName])
 	return self.m_Attrs[attrName]
 end
 
