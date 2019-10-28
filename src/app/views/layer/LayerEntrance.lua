@@ -14,7 +14,6 @@ local STATE_CHECK_VERSION 					= 1
 local STATE_FIRST_INIT 						= 2
 local STATE_REQUEST_NEW_VERSION 			= 3
 local STATE_TRY_DOWNLOAD_UPDATES			= 4
-local STATE_TRY_UNCOMPARESS					= 5
 local STATE_REQUEST_NEW_VERSION_TIME_OUT 	= 6
 
 
@@ -40,7 +39,6 @@ function LayerEntrance:initStateMachine()
 							:addState(STATE_FIRST_INIT, 					handler(self, self.onEnterFirstInit), 			handler(self, self.onExecuteFirstInit), 		nil, nil)
 							:addState(STATE_REQUEST_NEW_VERSION, 			handler(self, self.onEnterRequestNewVersion), 	handler(self, self.onExecuteRequestNewVersion), nil, nil)
 							:addState(STATE_TRY_DOWNLOAD_UPDATES, 			handler(self, self.onEnterTryDownloadUpdates), 	handler(self, self.onExecuteTryDownloadUpdates),nil, nil)
-							:addState(STATE_TRY_UNCOMPARESS, 				handler(self, self.onEnterTryUncomparess), 		handler(self, self.onExecuteUncompress),		nil, nil)
 							:addState(STATE_REQUEST_NEW_VERSION_TIME_OUT, 	nil, nil, nil, nil)
 							:setState(STATE_CHECK_VERSION)
 							:run()
@@ -160,7 +158,6 @@ function LayerEntrance:onExecuteTryDownloadUpdates(diff)
 
 	--没有正在进行的下载任务 尝试添加新任务
 	if not self:tryStartNewTask() then
-		release_print("没有新的下载任务 停止下载")
 		self:enterGame()
 	end
 end
@@ -182,6 +179,14 @@ function LayerEntrance:tryStartNewTask()
 	assert(false)
 end
 
+function LayerEntrance:getMD5FromFile(path)
+	local file = io.open(path, "rb")
+	local content = file:read("*all")
+	file:close()
+	self.MD5:update(content)
+	return self.MD5:getString()
+end
+
 function LayerEntrance:onDownloadProgress()
 	local UpdateMgr 		= cc.UpdateMgr:getInstance()
 	local nowDownloaded 	= UpdateMgr:getDownloadedSize()
@@ -191,17 +196,8 @@ function LayerEntrance:onDownloadProgress()
 	if UpdateMgr:isStopped() then
 		--验证/解压 等后续处理
 		self:handleUpdateFiles()
-		Utils.updateVersion(self.CurrentTask)
 		self.CurrentTask = nil
 	end
-end
-
-function LayerEntrance:getMD5FromFile(path)
-	local file = io.open(path, "rb")
-	local content = file:read("*all")
-	file:close()
-	self.MD5:update(content)
-	return self.MD5:getString()
 end
 
 function LayerEntrance:handleUpdateFiles()
@@ -210,22 +206,8 @@ function LayerEntrance:handleUpdateFiles()
 	cc.ZipReader.uncompress(zipFilePath, tempDir)
 	local needCheck = {}
 	local allPassed = true
-	for k, v in pairs(self.CurrentTask["updateInfo"]["FileList"]) do
-		release_print(v.Dir)
-		release_print(self:getMD5FromFile(tempDir..v.Dir), self:getMD5FromFile("/Users/ljw/WorkSpace/client/"..v.Dir))
-	end
 
-	do return end
-	--Utils.getCurrentResPath()
-	dump(self.CurrentTask, "", 100)
-	--解压到临时目录并验证
-	local zipFilePath = Utils.getDownloadCachePath()..self.CurrentTask.versionID..".FCZip"
-	local tempDir = Utils.getDownloadCachePath().."temp/"
-	cc.ZipReader.uncompress(zipFilePath, tempDir)
-	local needCheck = {}
-	local allPassed = true
 	for k, v in pairs(self.CurrentTask["updateInfo"]["FileList"]) do
-		release_print(self:getMD5FromFile(tempDir..v.Dir), v.MD5)
 		if self:getMD5FromFile(tempDir..v.Dir) ~= v.MD5 then
 			allPassed = false
 			release_print(tempDir..v.Dir)
@@ -234,35 +216,20 @@ function LayerEntrance:handleUpdateFiles()
 		end
 	end
 
+	-- 检测不通过
 	if not allPassed then
-		self:enterGame()
-		return
+		self.m_Children["textState"]:setString("FILE_MD5_CHECK_FAILED")
+		self.m_SM:stop()
+		return 
 	end
-end
+	-- 文件全部检测通过
+	-- 把临时文件复制到正式目录
+	for k, v in pairs(self.CurrentTask["updateInfo"]["FileList"]) do 
+		local oldDir = string.format("%s/%s", tempDir, v.Dir)
+		Utils.bCopyFile(oldDir, string.format("%s/%s", Utils.getCurrentResPath(), v.Dir ))
+		os.remove(oldDir)
+	end
 
-function LayerEntrance:onEnterTryUncomparess()
-	self.m_Children["textState"]:setString("STATE_TRY_UNCOMPARESS")
-end
-
-function LayerEntrance:onExecuteUncompress()
-	if #self.DownloadResList == 0 then
-		release_print("没有需要解压的任务...直接进入游戏")
-		self:enterGame()
-		return
-	end
-	self.uncompressIndex = self.uncompressIndex or 1
-	self.m_Children["textState"]:setString(string.format("Uncompress %d / %d", self.uncompressIndex, #self.DownloadResList))
-	self.m_Children["progressBar"]:setPercent(self.uncompressIndex / #self.DownloadResList)
-	local currTask = self.DownloadResList[self.uncompressIndex]
-	local path = Utils.getDownloadCachePath()..currTask.versionID..".FCZip"
-	release_print(string.format("正在解压: [%s] To [%s]", path, Utils.getCurrentResPath()))
-	cc.ZipReader.uncompress(path, Utils.getCurrentResPath())
-	Utils.updateVersion(currTask)
-	self.uncompressIndex = self.uncompressIndex + 1
-	if self.uncompressIndex >= #self.DownloadResList then
-		release_print("解压完毕...进入游戏!")
-		self:enterGame()
-	end
 end
 
 function LayerEntrance:onUpdate(diff)
