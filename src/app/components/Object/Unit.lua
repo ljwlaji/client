@@ -208,9 +208,11 @@ end
 
 function Unit:updateHorizonOffset(diff)
 	local offset = self:isControlByPlayer() and self:onControllerMove(diff) or self:onAIMove(diff)
-	if math.abs(offset.x) > 0 then self:updateDirection(offset) end
+	if math.abs(offset.x) == 0 then return false end
+	self:updateDirection(offset)
 	local finalPos = self:getMap():tryFixPosition( self, offset )
 	self:move(finalPos)
+	return true
 end
 
 function Unit:updateVerticalOffset(diff)
@@ -269,8 +271,10 @@ function Unit:onEnterIdle()
 end
 
 function Unit:onExecuteIdle(diff)
-	self:updateHorizonOffset(diff)
-	if not self:updateVerticalOffset(diff) then self.m_StateMachine:setState(STATE_JUMP_FALL) end
+	local nextState = nil
+	if self:updateHorizonOffset(diff) then nextState = STATE_RUN end
+	self:updateVerticalOffset(diff)
+	if nextState then self.m_StateMachine:setState(nextState) end
 end
 
 function Unit:onExitIdle()
@@ -297,8 +301,10 @@ function Unit:onEnterRun()
 end
 
 function Unit:onExecuteRun(diff)
-	self:updateHorizonOffset(diff)
-	if not self:updateVerticalOffset(diff) then self.m_StateMachine:setState(STATE_JUMP_FALL) end
+	local nextState = nil
+	if not self:updateHorizonOffset(diff) then nextState = STATE_IDLE end
+	self:updateVerticalOffset(diff)
+	if nextState then self.m_StateMachine:setState(nextState) end
 end
 
 function Unit:onExitRun()
