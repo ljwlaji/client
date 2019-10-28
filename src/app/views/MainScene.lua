@@ -5,6 +5,8 @@ local GridView      = import("app.components.GridView")
 local LayerEntrance = import("app.views.layer.LayerEntrance")
 local Map           = import("app.components.Map")
 
+local updateCount = 0
+local totalMS = 0
 
 
 function MainScene:onCreate()
@@ -36,7 +38,7 @@ end
 
 function MainScene:onNativeUpdate()
     local diff = self.Timmer:getMSDiff()
-    if diff >= 16 then
+    if diff >= 1 then
         self.Timmer:reset()
         -- Update All Sync Views
         for k, v in pairs(self.sycnUpdateList) do v(diff) end
@@ -46,6 +48,13 @@ function MainScene:onNativeUpdate()
 
         -- Update Camera
         Camera:onUpdate(diff)
+        totalMS = totalMS + diff
+        updateCount = updateCount + 1
+        if updateCount >= 500 then
+            release_print("Update Diff : ", totalMS / 500)
+            totalMS = 0
+            updateCount = 0
+        end
     end
 end
 
