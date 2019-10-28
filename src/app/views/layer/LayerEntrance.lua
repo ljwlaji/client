@@ -27,7 +27,6 @@ end
 
 function LayerEntrance:onEnterTransitionFinish()
 	release_print("onEnterTransitionFinish")
-	if DevMode == true then self:enterGame() return end
 	self:initStateMachine()
 	self:enableUpdate(handler(self, self.onUpdate))
 end
@@ -154,8 +153,6 @@ function LayerEntrance:onExecuteTryDownloadUpdates(diff)
 		self:onDownloadProgress()
 		return 
 	end
-	release_print("尝试添加新的下载任务...")
-
 	--没有正在进行的下载任务 尝试添加新任务
 	if not self:tryStartNewTask() then
 		self:enterGame()
