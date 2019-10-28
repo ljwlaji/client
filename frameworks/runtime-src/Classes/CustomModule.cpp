@@ -725,7 +725,7 @@ int tolua_firecore_MD5_update(lua_State* tolua_S)
             return 0;
         }
 		cobj->reset();
-        cobj->update(arg1.c_str());
+        cobj->update(arg1);
         lua_settop(tolua_S, 1);
         return 1;
     }

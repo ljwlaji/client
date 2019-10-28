@@ -23,6 +23,7 @@ function LayerEntrance:onCreate(onFinishedCallBack)
 	self.onFinishedCallBack = onFinishedCallBack
 	self.m_Children["progressBar"]:setPercent(0)
 	self:autoAlgin()
+	self.MD5 = cc.MD5:create()
 end
 
 function LayerEntrance:onEnterTransitionFinish()
@@ -196,15 +197,23 @@ function LayerEntrance:onDownloadProgress()
 end
 
 function LayerEntrance:getMD5FromFile(path)
-	self.MD5 = self.MD5 or cc.MD5:create()
-	self.MD5:updateFromFile(filePath)
+	local file = io.open(path, "rb")
+	local content = file:read("*all")
+	file:close()
+	self.MD5:update(content)
 	return self.MD5:getString()
 end
 
 function LayerEntrance:handleUpdateFiles()
 	local zipFilePath = Utils.getDownloadCachePath()..self.CurrentTask.versionID..".FCZip"
-	cc.ZipReader.uncompress(zipFilePath, Utils.getCurrentResPath())
-
+	local tempDir = Utils.getDownloadCachePath().."temp/"
+	cc.ZipReader.uncompress(zipFilePath, tempDir)
+	local needCheck = {}
+	local allPassed = true
+	for k, v in pairs(self.CurrentTask["updateInfo"]["FileList"]) do
+		release_print(v.Dir)
+		release_print(self:getMD5FromFile(tempDir..v.Dir), self:getMD5FromFile("/Users/ljw/WorkSpace/client/"..v.Dir))
+	end
 
 	do return end
 	--Utils.getCurrentResPath()
