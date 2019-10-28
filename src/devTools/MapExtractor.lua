@@ -10,7 +10,7 @@ rootPath = string.sub(rootPath, 1, string.len(rootPath) - 1)
 local subPath = "res\\csb\\maps\\"
 
 local TYPE_ERROR				= 0
-local TYPE_FLOOR 				= 1
+local TYPE_GOBJECT 				= 1
 local TYPE_BACK_GROUND 			= 2
 local TYPE_FRONT_GROUND 		= 3
 local TYPE_CREATURE				= 4
@@ -65,8 +65,8 @@ function MapExtractor:extractOneByOne()
 end
 
 function MapExtractor:getTypeFormObjName(name)
-	if string.find(name, "Floor_") then
-		return TYPE_FLOOR
+	if string.find(name, "Gobject_") then
+		return TYPE_GOBJECT
 	elseif string.find(name, "Back_Ground_") then
 		return TYPE_BACK_GROUND
 	elseif string.find(name, "Front_Ground_") then
@@ -85,13 +85,13 @@ function MapExtractor:extractSingleMap(map, MapEntry, AreaEntry)
 		-- TODO
 		-- 判断类型rootPath
 		local contexts = {
-			resName = v:getTexture():getPath(),
-			posX = v:getPositionX(), 
-			posY = v:getPositionY(),
+			resName 	= v:getTexture():getPath(),
+			posX 		= v:getPositionX(), 
+			posY 		= v:getPositionY(),
 			AnchorPoint = v:getAnchorPoint(),
-			ScaleX = v:getScaleX(),
-			ScaleY = v:getScaleY(),
-			name = v:getName()
+			ScaleX 		= v:getScaleX(),
+			ScaleY 		= v:getScaleY(),
+			name 		= v:getName()
 		}
 
 		contexts.entry = contexts.resName
@@ -114,7 +114,6 @@ function MapExtractor:extractSingleMap(map, MapEntry, AreaEntry)
 			-- Replace To Creature_instance
 			assert(false)
 		else
-						--																1			    2		3	   4  5	   6	    7		8				1	2		3	4		5	6		7		8
 			DataBase:query(string.format("REPLACE INTO game_object_instance(map_entry, area_entry, entry, x, y, scale_x, scale_y, zorder) VALUES('%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d')", 
 									--		1		2			3
 										MapEntry, AreaEntry, contexts.entry, contexts.posX, contexts.posY, contexts.ScaleX, contexts.ScaleY, 0))
