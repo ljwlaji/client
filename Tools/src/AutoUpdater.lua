@@ -119,7 +119,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 
 	for k, v in pairs(tasks) do
 		local successed = v.FromMD5 == v.ToMD5
-		release_print(string.format("文件MD5检测 [%s] : [%s] !", successed and "通过" or "错误", v.ShortDir ))
+        release_print(string.format("文件MD5检测 [%s] : [%s] !", successed and "通过" or "错误", v.ShortDir ))
 		assert(successed, "检测到错误...停止程序....")
 	end
 
@@ -178,7 +178,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 		commitBase = firstCommit,
 		commitLast = lastCommit
 	}
-
+    os.rename(updateDir.."/Update.FCZip", updateDir.."/"..#originData..".FCZip")
 	dump(originData, "", 2)
 
 
