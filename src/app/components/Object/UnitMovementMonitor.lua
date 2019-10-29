@@ -1,3 +1,4 @@
+local AudioMgr				= import("app.components.AudioMgr")
 local StateMachine 			= import("app.components.StateMachine")
 local Controller 			= import("app.views.node.vNodeController")
 local UnitMovementMonitor 	= class("UnitMovementMonitor")
@@ -58,7 +59,6 @@ end
 
 function UnitMovementMonitor:jump()
 	local currentState = self.m_StateMachine:getCurrentState()
-	release_print(currentState)
 	if currentState == MovementStates.STATE_JUMP_HIGH or currentState == MovementStates.STATE_JUMP_FALL then return end
 	self.m_StateMachine:setState(MovementStates.STATE_JUMP_HIGH)
 end
@@ -173,6 +173,7 @@ end
 
 function UnitMovementMonitor:onEnterJumpHigh()
 	release_print("onEnterJumpHigh")
+    AudioMgr:playEffect("Jump.mp3", false)
 	self.m_FallSpeed = self:getOwner():getBaseAttr("jumpForce")
 	self.m_JumpDirection = self.m_Direction
 end

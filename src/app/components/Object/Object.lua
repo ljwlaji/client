@@ -28,6 +28,10 @@ function Object:isGameObject()
 	return self:getType() == ShareDefine:gameObjectType()
 end
 
+function Object:isGround()
+	return self:getType() == ShareDefine:groundType()
+end
+
 function Object:getMap()
 	return self.currMap
 end
@@ -60,6 +64,10 @@ function Object:createModelByID(model_id)
 	local model = nil
 	local sql = string.format("SELECT * FROM model_template WHERE entry = %d", model_id)
 	local currModelData = DataBase:query(sql)[1]
+	if not currModelData then
+		dump(model_id)
+		assert(false)
+	end
 	if currModelData.model_type == "image" then
 		model = cc.Sprite:create(string.format("res/model/%s", currModelData.file_path))
 	elseif currModelData.model_type == "spine" then

@@ -3,6 +3,8 @@ local DataBase 		= import("app.components.DataBase")
 local Camera 		= import("app.components.Camera")
 local Area 			= import("app.components.Area")
 local Player        = import("app.components.Object.Player")
+local GameObject    = import("app.components.Object.GameObject")
+local Ground    	= import("app.components.Object.Ground")
 
 -- 需要实现的功能
 -- 无缝地图
@@ -26,48 +28,59 @@ local Player        = import("app.components.Object.Player")
 
 ]]
 
-local LoadRect = {
-	width = display.width * 2,
-	height = display.height * 2,
-}
-
-local RemoveRect = {
-	width = display.width * 5,
-	height = display.height * 5,
-}
-
+local DISTANCE_FOR_SHOWN 		= 600--display.width * 1.3
+local DISTANCE_FOR_DISAPPEAR 	= 1000--display.width * 2
 
 function Map:ctor(Entry, chosedCharacterID)
 	self.m_Entry = Entry
+	self.m_GroundDatas = {}
 	self.m_ObjectList = {}
 	self.m_AreaTemplates = {}
 	self.m_Areas = {}
 	self:onCreate(chosedCharacterID)
 end
 
+function Map:getEntry()
+	return self.m_Entry
+end
+
 function Map:onCreate(chosedCharacterID)
-	self:loadFromDB()
 	local plr = Player:create(chosedCharacterID)
     self:setPlayer(plr)
     Camera:changeFocus(plr)
+	self:loadFromDB()
 end
 
 function Map:loadFromDB()
-	-- TODO
-	-- 获取数据库信息
-	self.context = DataBase:query(string.format("SELECT * FROM map_template WHERE entry = %d", self.m_Entry))[1]
-	-- 初始化地区信息
-	local areaTemplates = DataBase:query( string.format( "SELECT * FROM area_template WHERE entry IN (%s)", table.concat(loadstring(string.format("return %s", self.context["areas"]))(), ",") ) )
-	for k, areaData in pairs( areaTemplates ) do
-		areaData.rect = {
-			x 		= areaData.x,
-			y 		= areaData.y,
-			width 	= areaData.width,
-			height 	= areaData.height,
-		}
-		areaData.mapEntry = self.m_Entry
-		self.m_AreaTemplates[areaData.entry] = areaData
+	self:loadAllGroundInfoFromDB()
+	self:loadAllCreatureInfoFromDB()
+	self:loadAllGameObjectInfoFromDB()
+	self:loadAllBackGroundInfoFromDB()
+	self:loadAllFrontGroundInfoFromDB()
+end
+
+function Map:loadAllGroundInfoFromDB()
+	local sql = string.format("SELECT * FROM ground_instance AS I JOIN ground_template AS T ON I.entry == T.entry WHERE I.map_entry == %d", self:getEntry())
+	local queryResults = DataBase:query(sql)
+	for k, v in pairs(queryResults) do
+		self.m_GroundDatas[v.guid] = v
 	end
+end
+
+function Map:loadAllCreatureInfoFromDB()
+
+end
+
+function Map:loadAllGameObjectInfoFromDB()
+
+end
+
+function Map:loadAllFrontGroundInfoFromDB()
+
+end
+
+function Map:loadAllBackGroundInfoFromDB()
+
 end
 
 function Map:onUpdate(diff)
@@ -75,8 +88,27 @@ function Map:onUpdate(diff)
 	for _, v in pairs(self.m_ObjectList) do v:onUpdate(diff) end
 	Camera:onUpdate(diff)
 	-- 尝试加载Area
-	self:tryLoadNewArea()
-	self:tryRemoveArea()
+	self:tryLoadNewObjects()
+	self:tryRemoveObjects()
+end
+
+function Map:tryLoadNewObjects() 
+	for k, v in pairs(self.m_GroundDatas) do 
+		if not v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) < DISTANCE_FOR_SHOWN then 
+			v.instance = Ground:create(v)
+			self:addObject(v.instance)
+		end
+	end 
+end
+
+function Map:tryRemoveObjects()
+	for k, v in pairs(self.m_GroundDatas) do 
+		if v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) > DISTANCE_FOR_DISAPPEAR then 
+			self:removeObject(v.instance)
+			v.instance:removeFromParent()
+			v.instance = nil
+		end
+	end 
 end
 
 -- 判断Area是否在加载范围内
@@ -86,42 +118,6 @@ end
 
 function Map:isInRemoveRange(areaRect)
 	return not cc.rectIntersectsRect(RemoveRect, areaRect)
-end
-
-function Map:tryLoadNewArea()
-	LoadRect.x = -self:getPositionX()
-	LoadRect.y = -self:getPositionY()
-	for k, currAreaData in pairs(self.m_AreaTemplates) do
-		if not self.m_Areas[currAreaData.entry] and self:isInLoadRange(currAreaData.rect) then
-			release_print("区域热加载: ", currAreaData.entry)
-			local area = Area:create(currAreaData)
-							 :addTo(self)
-							 :move(currAreaData.x, currAreaData.y)
-							 :setContentSize(currAreaData.width, currAreaData.height)
-			area:loadFromDB()
-			self.m_Areas[currAreaData.entry] = area
-		end
-	end
-end
-
-function Map:tryRemoveArea()
-	RemoveRect.x = -self:getPositionX()
-	RemoveRect.y = -self:getPositionY()
-	local continue = true
-	while continue == true do
-		continue = false
-		for k, currentArea in pairs(self.m_Areas) do
-			if self:isInRemoveRange(currentArea:getRect()) then
-				release_print("区域热卸载: ", currentArea:getEntry())
-				if currentArea:isAreaLazy() then
-					continue = true
-					self.m_Areas[k] = nil
-					currentArea:cleanUpBeforeDelete():removeFromParent()
-					break
-				end
-			end
-		end
-	end
 end
 
 function Map:addObject(object)
@@ -167,7 +163,7 @@ function Map:tryFixPosition(unit, offset)
 		y = nowPosY,
 	}
 	for k, v in pairs(self.m_ObjectList) do
-		if v:isGameObject() and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
+		if (v:isGameObject() or v:isGround()) and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
 			if offset.x > 0 then
 				nextPos.x = v:getPositionX() - 1
 			elseif offset.x < 0 then
@@ -179,7 +175,7 @@ function Map:tryFixPosition(unit, offset)
 
 	nextPos.y = nextPos.y + offset.y
 	for k, v in pairs(self.m_ObjectList) do
-		if v:isGameObject() and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
+		if (v:isGameObject() or v:isGround()) and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
 			nextPos.y = v:getPositionY() + v:getContentSize().height + 1
 			hitGround = true
 			break
@@ -192,7 +188,7 @@ end
 function Map:getStandingObject(nextPos)
 	local obj = nil
 	for k, v in pairs(self.m_ObjectList) do
-		if v:isGameObject() then
+		if (v:isGameObject() or v:isGround()) then
 			if cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
 				if v:hasPixalCollision() then
 				else

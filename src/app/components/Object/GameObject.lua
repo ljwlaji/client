@@ -26,8 +26,8 @@ local sPCMgr = cc.PixalCollisionMgr:getInstance()
 
 
 function GameObject:onCreate()
-	self:reset()
 	Object.onCreate(self, ShareDefine:gameObjectType())
+	self:reset()
 end
 
 function GameObject:reset()
