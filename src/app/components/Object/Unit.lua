@@ -201,17 +201,19 @@ function Unit:isControlByPlayer()
 	return self.m_ControlByPlayer
 end
 
-function Unit:updateDirection(offset)
-	self.m_Direction = offset.x > 0 and "right" or "left"
+function Unit:updateDirection()
+	local offset = Controller:getInstance():getHorizonOffset()
+	if offset == 0 then return end
+	self.m_Direction = offset > 0 and "right" or "left"
 	self:getPawn():setFlippedX(self.m_Direction == "left" and true or false)
 end
 
-function Unit:updateHorizonOffset(diff)
-	local offset = self:isControlByPlayer() and self:onControllerMove(diff) or self:onAIMove(diff)
+function Unit:updateHorizonOffset(diff, isJumpping)
+	local offset = self:isControlByPlayer() and self:onControllerMove(diff, isJumpping) or self:onAIMove(diff, isJumpping)
 	if math.abs(offset.x) == 0 then return false end
-	self:updateDirection(offset)
 	local finalPos = self:getMap():tryFixPosition( self, offset )
 	self:move(finalPos)
+	self:updateDirection()
 	return true
 end
 
@@ -244,11 +246,15 @@ function Unit:updateVerticalOffset(diff)
 	return hitGround
 end
 
-function Unit:onControllerMove()
-	local _c = Controller:getInstance()
-	self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION
-	self.m_MoveSpeed = self.m_MoveSpeed + (_c and _c:getHorizonOffset() or 0)
-	if math.abs(self.m_MoveSpeed) <= 0.1 then self.m_MoveSpeed = 0 end
+function Unit:onControllerMove(diff, isJumpping)
+	if isJumpping then
+		self.m_MoveSpeed = self.m_JumpDirection == "left" and -math.abs(self.m_MoveSpeed) or math.abs(self.m_MoveSpeed)
+	else
+		local _c = Controller:getInstance()
+		self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION
+		self.m_MoveSpeed = self.m_MoveSpeed + (_c and _c:getHorizonOffset() or 0)
+		if math.abs(self.m_MoveSpeed) <= 0.1 then self.m_MoveSpeed = 0 end
+	end
 	return cc.p(self.m_MoveSpeed, 0)
 end
 
@@ -314,10 +320,11 @@ end
 function Unit:onEnterJumpHigh()
 	release_print("onEnterJumpHigh")
 	self.m_FallSpeed = START_JUMP_FORCE
+	self.m_JumpDirection = self.m_Direction
 end
 
 function Unit:onExecuteJumpHigh(diff)
-	self:updateHorizonOffset(diff)
+	self:updateHorizonOffset(diff, true)
 	self:updateVerticalOffset(diff)
 end
 
@@ -330,7 +337,7 @@ function Unit:onEnterJumpFall()
 end
 
 function Unit:onExecuteJumpFall(diff)
-	self:updateHorizonOffset(diff)
+	self:updateHorizonOffset(diff, true)
 	if self:updateVerticalOffset(diff) then
 		local offset = self:isControlByPlayer() and self:onControllerMove(diff) or self:onAIMove(diff)
 		self.m_StateMachine:setState(math.abs(offset.x) == 0 and STATE_IDLE or STATE_RUN)
