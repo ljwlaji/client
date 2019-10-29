@@ -4,13 +4,12 @@ local Ground 		= class("Ground", Object)
 
 function Ground:onCreate()
 	Object.onCreate(self, ShareDefine:groundType())
-	self:reset()
+	self:construct()
 end
 
 
-function Ground:reset(context)
-	self.context = context or self.context
-	context = self.context
+function Ground:construct()
+	local context = self.context
 	if self.m_View then self.m_View:removeFromParent() self.m_View = nil end
 	self.m_View = self:createModelByID(context.model_id):addTo(self):setAnchorPoint(0, 0)
 	self:setContentSize(self.m_View:getContentSize())

@@ -1,7 +1,6 @@
 local Map 			= class("Map", cc.Node)
 local DataBase 		= import("app.components.DataBase")
 local Camera 		= import("app.components.Camera")
-local Area 			= import("app.components.Area")
 local Player        = import("app.components.Object.Player")
 local GameObject    = import("app.components.Object.GameObject")
 local Ground    	= import("app.components.Object.Ground")
@@ -35,8 +34,6 @@ function Map:ctor(Entry, chosedCharacterID)
 	self.m_Entry = Entry
 	self.m_GroundDatas = {}
 	self.m_ObjectList = {}
-	self.m_AreaTemplates = {}
-	self.m_Areas = {}
 	self:onCreate(chosedCharacterID)
 end
 
@@ -87,7 +84,6 @@ function Map:onUpdate(diff)
 	-- 更新Unit信息
 	for _, v in pairs(self.m_ObjectList) do v:onUpdate(diff) end
 	Camera:onUpdate(diff)
-	-- 尝试加载Area
 	self:tryLoadNewObjects()
 	self:tryRemoveObjects()
 end
@@ -109,15 +105,6 @@ function Map:tryRemoveObjects()
 			v.instance = nil
 		end
 	end 
-end
-
--- 判断Area是否在加载范围内
-function Map:isInLoadRange(areaRect)
-	return cc.rectIntersectsRect(LoadRect, areaRect)
-end
-
-function Map:isInRemoveRange(areaRect)
-	return not cc.rectIntersectsRect(RemoveRect, areaRect)
 end
 
 function Map:addObject(object)
@@ -148,11 +135,6 @@ function Map:cleanUpBeforeDelete()
 	-- Remove Player
 	self.mPlayer:cleanUpBeforeDelete()
 	self.mPlayer:removeFromParent()
-	-- CleanUp Areas
-	for k, v in pairs( self.m_Areas ) do
-		v:cleanUpBeforeDelete():removeFromParent()
-	end
-	self.m_Areas = {}
 end
 
 function Map:tryFixPosition(unit, offset)

@@ -152,7 +152,7 @@ end
 
 function MainScene:testPixalCollisionMgr()
         -- self:testPixalCollisionMgr()
-    local testpng = "res/image180.png"
+    local testpng = "res/player.png"
 
     local sp = cc.Sprite:create(testpng):addTo(self):setAnchorPoint(1, 0):move(display.center)
     local width = sp:getContentSize().width
