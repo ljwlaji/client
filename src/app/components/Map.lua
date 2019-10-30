@@ -133,8 +133,13 @@ end
 function Map:cleanUpBeforeDelete()
 	-- TODO
 	-- Remove Player
-	self.mPlayer:cleanUpBeforeDelete()
-	self.mPlayer:removeFromParent()
+	Camera:changeFocus(nil)
+	local obj = nil
+	while #self.m_ObjectList > 0 do
+		obj = table.remove(self.m_ObjectList)
+		obj:cleanUpBeforeDelete()
+		obj:removeFromParent()
+	end
 end
 
 function Map:tryFixPosition(unit, offset)
@@ -144,23 +149,27 @@ function Map:tryFixPosition(unit, offset)
 		x = nowPosX + offset.x,
 		y = nowPosY,
 	}
-	for k, v in pairs(self.m_ObjectList) do
-		if (v:isGameObject() or v:isGround()) and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
-			if offset.x > 0 then
-				nextPos.x = v:getPositionX() - 1
-			elseif offset.x < 0 then
-				nextPos.x = v:getPositionX() + v:getContentSize().width + 1
+	if math.abs(offset.x) ~= 0 then
+		for k, v in pairs(self.m_ObjectList) do
+			if (v:isGameObject() or v:isGround()) and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
+				if offset.x > 0 then
+					nextPos.x = v:getPositionX() - 1
+				elseif offset.x < 0 then
+					nextPos.x = v:getPositionX() + v:getContentSize().width + 1
+				end
+				break
 			end
-			break
 		end
 	end
 
 	nextPos.y = nextPos.y + offset.y
-	for k, v in pairs(self.m_ObjectList) do
-		if (v:isGameObject() or v:isGround()) and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
-			nextPos.y = v:getPositionY() + v:getContentSize().height + 1
-			hitGround = true
-			break
+	if math.abs(offset.y) ~= 0 then
+		for k, v in pairs(self.m_ObjectList) do
+			if (v:isGameObject() or v:isGround()) and cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
+				nextPos.y = v:getPositionY() + v:getContentSize().height + 1
+				hitGround = true
+				break
+			end
 		end
 	end
 

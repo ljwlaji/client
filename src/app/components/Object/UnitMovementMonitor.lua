@@ -88,7 +88,7 @@ function UnitMovementMonitor:updateVerticalOffset(diff)
 	else
 		local TotalYOffset = 0
 		local calcTime = math.abs(math.modf(self.m_FallSpeed / MAX_FALL_SPEED))
-		local extraFallOffset = math.fmod(self.m_FallSpeed , MAX_FALL_SPEED )
+		local extraFallOffset = math.fmod(self.m_FallSpeed, MAX_FALL_SPEED )
 		offset.y = -MAX_FALL_SPEED
 		while calcTime > 1 do
 			local finalPos, hitGround = self:getOwner():getMap():tryFixPosition( self:getOwner(), offset )
@@ -174,7 +174,7 @@ end
 function UnitMovementMonitor:onEnterJumpHigh()
 	release_print("onEnterJumpHigh")
     AudioMgr:playEffect("Jump.mp3", false)
-	self.m_FallSpeed = self:getOwner():getBaseAttr("jumpForce")
+	self.m_FallSpeed = self:getOwner():getAttr("jumpForce")
 	self.m_JumpDirection = self.m_Direction
 end
 

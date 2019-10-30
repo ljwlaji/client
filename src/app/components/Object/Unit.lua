@@ -24,6 +24,8 @@ function Unit:onCreate(objType)
 	self.m_BaseAttrs = {
 		maxHealth 				= 1,
 		maxMana 				= 1,
+		maxRage					= 1,
+		maxEnergy				= 1,
 		attackPower 			= 1,
 		magicAttackPower 		= 1,
 		defence 				= 1,
@@ -76,22 +78,18 @@ function Unit:isAlive()
 end
 
 function Unit:setBaseAttr(attrName, value)
-	assert(self.m_BaseAttrs[attrName])
 	self.m_BaseAttrs[attrName] = value
 end
 
 function Unit:getBaseAttr(attrName, value)
-	assert(self.m_BaseAttrs[attrName])
 	return self.m_BaseAttrs[attrName]
 end
 
 function Unit:setAttr(attrName, value)
-	assert(self.m_Attrs[attrName])
 	self.m_Attrs[attrName] = value
 end
 
 function Unit:getAttr(attrName)
-	assert(self.m_Attrs[attrName])
 	return self.m_Attrs[attrName]
 end
 
@@ -122,6 +120,18 @@ end
 			-----------------------
 			-- End Of Attr Issus --
 			-----------------------
+
+function Unit:castSpell(target, spellID)
+	local spellTemplate = SpellMgr:getSpellTemplate(spellID)
+	if not spellTemplate then release_print("Cannot Find SpellTemplate By SpellID : "..spellID) return end
+
+	self.m_CasttingSpell = Spell:create(self, target, spellTemplate)
+	self.m_CasttingSpell:prepare()
+end
+
+function Unit:onSpellCancel()
+	release_print("onSpellCancel")
+end
 
 			--------------------
 			-- For Pawn Issus --

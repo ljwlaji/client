@@ -46,6 +46,9 @@ void PixalCollisionMgr::unLink(const char* url)
 			delete data;
 			data = nullptr;
 			m_PixalTemplate.erase(m_PixalTemplate.find(url));
+#if COCOS2D_DEBUG >= 1
+			CCLOG("Pixal Collision Data Removed : %s", url);
+#endif
 		}
 	}
 }
@@ -112,7 +115,7 @@ bool PixalCollisionMgr::loadPNGData(const char * url)
 	} while (0);
 
 	delete image;
-	return true;
+	return ret;
 }
 
 void PixalCollisionMgr::UnitTest()
