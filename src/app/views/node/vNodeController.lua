@@ -79,8 +79,8 @@ function Controller:onKeyPressed(keyID, event)
 		self:sendAppMsg("onTouchButtonB")
 	end
 	Move_Seed = 0
-	if Pressed_Left 	then Move_Seed = Move_Seed - 256 end
-	if Pressed_Right 	then Move_Seed = Move_Seed + 256 end
+	if Pressed_Left 	then Move_Seed = Move_Seed - 128 end
+	if Pressed_Right 	then Move_Seed = Move_Seed + 128 end
 	self.m_Offset.x = Move_Seed
 end
 
@@ -95,8 +95,8 @@ function Controller:onKeyReleased(keyID, event)
 		Pressed_Left = false
 	end
 	Move_Seed = 0
-	if Pressed_Left 	then Move_Seed = Move_Seed - 256 end
-	if Pressed_Right 	then Move_Seed = Move_Seed + 256 end
+	if Pressed_Left 	then Move_Seed = Move_Seed - 128 end
+	if Pressed_Right 	then Move_Seed = Move_Seed + 128 end
 	self.m_Offset.x = Move_Seed
 end
 

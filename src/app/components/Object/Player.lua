@@ -30,7 +30,12 @@ function Player:onUpdate(diff)
 	Unit.onUpdate(self, diff)
 end
 
+function Player:saveToDB()
+
+end
+
 function Player:cleanUpBeforeDelete()
+	self:saveToDB()
 	Player.instance = nil
 	Unit.cleanUpBeforeDelete(self)
 end

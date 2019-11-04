@@ -11,8 +11,6 @@ local totalMS = 0
 
 function MainScene:onCreate()
     self.sycnUpdateList = {}
-    -- do return end
-    -- self:startGame(1)
 end
 
 function MainScene:onEnterTransitionFinish()
@@ -21,12 +19,6 @@ function MainScene:onEnterTransitionFinish()
         self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(99999999)
         self:startGame(1)
     end):addTo(self)
-end
-
-function MainScene:onCheckVersionFinished()
-    -- do return end
-    -- self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ZOrder_HUD)
-    -- self:startGame(1)
 end
 
 function MainScene:run()
@@ -38,7 +30,7 @@ end
 
 function MainScene:onNativeUpdate()
     local diff = self.Timmer:getMSDiff()
-    if diff >= 1 then
+    if diff >= 5 then
         self.Timmer:reset()
         -- Update All Sync Views
         for k, v in pairs(self.sycnUpdateList) do v(diff) end
@@ -152,7 +144,7 @@ end
 
 function MainScene:testPixalCollisionMgr()
         -- self:testPixalCollisionMgr()
-    local testpng = "res/image180.png"
+    local testpng = "res/player.png"
 
     local sp = cc.Sprite:create(testpng):addTo(self):setAnchorPoint(1, 0):move(display.center)
     local width = sp:getContentSize().width

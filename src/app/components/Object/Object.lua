@@ -5,6 +5,7 @@ local ShareDefine = import("app.ShareDefine")
 function Object:ctor(context)
 	self.context = context
 	self.m_Type = 0
+	self:onNodeEvent("cleanup", handler(self, self.cleanUpBeforeDelete))
 	if self.onCreate then self:onCreate() end
 end
 
@@ -26,6 +27,10 @@ end
 
 function Object:isGameObject()
 	return self:getType() == ShareDefine:gameObjectType()
+end
+
+function Object:isGround()
+	return self:getType() == ShareDefine:groundType()
 end
 
 function Object:getMap()
@@ -53,13 +58,23 @@ function Object:getAI()
 end
 
 function Object:cleanUpBeforeDelete()
+	release_print("Object : cleanUpBeforeDelete")
 	return self
+end
+
+function Object:getModelDataByModelID(model_id)
+	local sql = string.format("SELECT * FROM model_template WHERE entry = %d", model_id)
+	local currModelData = DataBase:query(sql)[1]
+	if not currModelData then
+		dump(model_id)
+		assert(false)
+	end
+	return currModelData
 end
 
 function Object:createModelByID(model_id)
 	local model = nil
-	local sql = string.format("SELECT * FROM model_template WHERE entry = %d", model_id)
-	local currModelData = DataBase:query(sql)[1]
+	local currModelData = self:getModelDataByModelID(model_id)
 	if currModelData.model_type == "image" then
 		model = cc.Sprite:create(string.format("res/model/%s", currModelData.file_path))
 	elseif currModelData.model_type == "spine" then
