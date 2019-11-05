@@ -2,18 +2,6 @@
 local LFile = import("app.components.LFile")
 local LFS = class("LFS")
 
-
-local function fixDirByPlatform(str)
-	str = string.gsub(str, "\\\\", "\\")
-	str = string.gsub(str, "//", "/")
-	if device.platform == "windows" then
-		str = string.gsub(str, "/", "\\")
-	else
-		str = string.gsub(str, "\\", "/")
-	end
-	return str
-end
-
 function LFS.getAllFilesForPath(rootPath, parentFile)
 	if not parentFile then 
 		parentFile = LFile:create() 
@@ -22,7 +10,7 @@ function LFS.getAllFilesForPath(rootPath, parentFile)
 	end
     for entry in lfs.dir(rootPath) do
         if entry ~='.' and entry ~= '..' then
-            local path = fixDirByPlatform(string.format("%s/%s", rootPath, entry))
+            local path = string.format("%s/%s", rootPath, entry)
             local attr = lfs.attributes(path)
         	local tempFile = LFile:create()
         	tempFile:setPath(entry)

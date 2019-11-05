@@ -73,8 +73,9 @@ end
 function UnitMovementMonitor:updateMovement(diff, isJumpping)
 	local offset = self:getOwner():isControlByPlayer() and self:onControllerMove(diff, isJumpping) or self:onAIMove(diff, isJumpping)
 	local currState = self.m_StateMachine:getCurrentState()
+	local finalState = nil
 	if currState == MovementStates.STATE_JUMP_HIGH then
-		if self.m_FallSpeed < 1 then self.m_StateMachine:setState(MovementStates.STATE_JUMP_FALL) end
+		if self.m_FallSpeed < 1 then finalState = MovementStates.STATE_JUMP_FALL end
 		self.m_FallSpeed = self.m_FallSpeed * 0.9
 	else
 		self.m_FallSpeed = self.m_FallSpeed * 1.1
@@ -82,12 +83,15 @@ function UnitMovementMonitor:updateMovement(diff, isJumpping)
 	offset.y = self.m_FallSpeed
 	local finalPos, hitGround = self:getOwner():getMap():tryFixPosition( self:getOwner(), offset )
 	if hitGround then 
-        self.m_StateMachine:setState(math.abs(offset.x) == 0 and MovementStates.STATE_IDLE or MovementStates.STATE_RUN)
-		self.m_FallSpeed = -1 
+		finalState = math.abs(offset.x) == 0 and MovementStates.STATE_IDLE or MovementStates.STATE_RUN
+		self.m_FallSpeed = -1
+	elseif currState ~= MovementStates.STATE_JUMP_FALL and currState ~= MovementStates.STATE_JUMP_HIGH then
+		self.m_JumpDirection = self.m_Direction
+		finalState = MovementStates.STATE_JUMP_FALL
 	end
+	if finalState then self.m_StateMachine:setState(finalState) end
 	self:getOwner():move(finalPos)
 	self:updateDirection()
-	return hitGround
 end
 
 function UnitMovementMonitor:onControllerMove(diff, isJumpping)

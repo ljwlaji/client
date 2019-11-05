@@ -1,6 +1,10 @@
 #include "UpdateMgr.h"
 #include "cocos2d.h"
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#include "external/curl/include/android/curl/curl.h"
+#else
 #include <curl/curl.h>
+#endif
 
 
 static size_t write_func(void *ptr, size_t size, size_t nmemb, void *userdata)
@@ -60,6 +64,7 @@ void UpdateMgr::Run()
 			m_Stopped = true;
 			break;
 		}
+
 		m_Handler = m_Handler ? m_Handler : curl_easy_init();
 		curl_easy_setopt(m_Handler, CURLOPT_URL, m_From.c_str());
 		curl_easy_setopt(m_Handler, CURLOPT_TIMEOUT, 10);

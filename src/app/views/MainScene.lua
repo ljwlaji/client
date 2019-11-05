@@ -43,7 +43,7 @@ function MainScene:onNativeUpdate()
         totalMS = totalMS + diff
         updateCount = updateCount + 1
         if updateCount >= 500 then
-            release_print("Update Diff : ", totalMS / 500)
+            release_print(string.format("World Update Time Diff : [%d] ms(s)", totalMS / 500))
             totalMS = 0
             updateCount = 0
         end

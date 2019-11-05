@@ -49,8 +49,40 @@ if(APPLE OR VS)
 endif()
 
 # record sources, headers
-set(GAME_HEADER ${RUNTIME_SRC_ROOT}/Classes/AppDelegate.h)
-set(GAME_SOURCE ${RUNTIME_SRC_ROOT}/Classes/AppDelegate.cpp)
+set(GAME_HEADER 
+        ${RUNTIME_SRC_ROOT}/Classes/AppDelegate.h
+        ${RUNTIME_SRC_ROOT}/Classes/CustomModule.h
+        ${RUNTIME_SRC_ROOT}/Classes/lfs.h
+        ${RUNTIME_SRC_ROOT}/Classes/lsqlite3.h
+        ${RUNTIME_SRC_ROOT}/Classes/lua_module_register.h
+        ${RUNTIME_SRC_ROOT}/Classes/MD5.h
+        ${RUNTIME_SRC_ROOT}/Classes/PixalCollisionMgr.h
+        ${RUNTIME_SRC_ROOT}/Classes/Session.h
+        ${RUNTIME_SRC_ROOT}/Classes/ShareDefine.h
+        ${RUNTIME_SRC_ROOT}/Classes/SocketClient.h
+        ${RUNTIME_SRC_ROOT}/Classes/sqlite3.h
+        ${RUNTIME_SRC_ROOT}/Classes/Timmer.h
+        ${RUNTIME_SRC_ROOT}/Classes/UnitTest.h
+        ${RUNTIME_SRC_ROOT}/Classes/UpdateMgr.h
+        ${RUNTIME_SRC_ROOT}/Classes/ZipHelper.h
+        ${RUNTIME_SRC_ROOT}/Classes/Zipper.h
+)
+set(GAME_SOURCE 
+        ${RUNTIME_SRC_ROOT}/Classes/AppDelegate.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/CustomModule.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/lfs.c
+        ${RUNTIME_SRC_ROOT}/Classes/lsqlite3.c
+        ${RUNTIME_SRC_ROOT}/Classes/MD5.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/PixalCollisionMgr.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/Session.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/SocketClient.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/sqlite3.c
+        ${RUNTIME_SRC_ROOT}/Classes/Timmer.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/UnitTest.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/UpdateMgr.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/ZipHelper.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/Zipper.cpp
+)
 # sources need to compile info, include dirs and source files
 include_directories(
         ${RUNTIME_SRC_ROOT}/Classes
@@ -168,3 +200,8 @@ if(LINUX OR WINDOWS)
     cocos_copy_target_res(${APP_NAME} COPY_TO ${APP_RES_DIR}/res FOLDERS ${res_res_folders})
     cocos_copy_target_res(${APP_NAME} COPY_TO ${APP_RES_DIR}/src FOLDERS ${res_src_folders})
 endif()
+add_library(curl STATIC IMPORTED GLOBAL)
+set_target_properties(curl
+PROPERTIES IMPORTED_LOCATION "${COCOS2DX_ROOT_PATH}/external/curl/prebuilt/android/armeabi-v7a/libcurl.a"
+)
+target_link_libraries(${APP_NAME} curl)
