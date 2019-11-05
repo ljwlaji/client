@@ -33,7 +33,7 @@ function ViewBaseEx:onExitTransitionStart_()
 end
 
 function ViewBaseEx:onCleanup_()
-	display.getWorld():removeNodeFromSyncUpdateList(self)
+	if self._isNodeSyncUpdateEnabled == true then display.getWorld():removeNodeFromSyncUpdateList(self) end
 	if self.onCleanup then self:onCleanup() end
 end
 
@@ -56,6 +56,7 @@ end
 
 function ViewBaseEx:enableUpdate(func)
 	display.getWorld():addNodeSyncUpdate(self, func)
+	self._isNodeSyncUpdateEnabled = true
 end
 
 function ViewBaseEx:runSequence(...)
