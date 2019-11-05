@@ -50,6 +50,7 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLContext;
+import java.io.File;
 
 public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelperListener {
     // ===========================================================
@@ -116,6 +117,33 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
             System.loadLibrary(libName);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    protected void printDir(String path)
+    {
+        System.out.println("Fetching Path : " + path);
+        File Root = new File(path);
+        if (!Root.isDirectory())
+        {
+            System.out.println("It's not a Directory!");
+            return;
+        }
+        File[] subfiles = Root.listFiles();
+        if (null == subfiles)
+        {
+            System.out.println("This is an Empty Directory!");
+            return;
+        }
+        for (int i = 0; i != subfiles.length; i++)
+        {
+            if (null != subfiles[i])
+            {
+                if (subfiles[i].isDirectory())
+                    printDir(subfiles[i].getAbsolutePath());
+                else
+                    System.out.println(subfiles[i].getName());
+            }
         }
     }
     
