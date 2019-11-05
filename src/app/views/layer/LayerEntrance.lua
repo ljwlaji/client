@@ -49,8 +49,7 @@ end
 
 function LayerEntrance:onExecuteCheckVersion()
     release_print("检查是否需要初始化...")
-    dump(Utils.isFileExisted(Utils.fixDirByPlatform(Utils.getCurrentResPath().."res/datas.db")))
-	if not Utils.isFileExisted(Utils.fixDirByPlatform(Utils.getCurrentResPath().."res/version")) then 
+	if not Utils.isFileExisted(Utils.getCurrentResPath().."res/version") then 
 		self:setState(STATE_FIRST_INIT) 
 		return 
 	end
@@ -139,8 +138,8 @@ end
 
 function LayerEntrance:onEnterTryDownloadUpdates()
 	self.m_Children["textState"]:setString("STATE_TRY_DOWNLOAD_UPDATES")
-	import("app.components.Lfs").createDir(Utils.getDownloadRootPath())
-	import("app.components.Lfs").createDir(Utils.getDownloadCachePath())
+	Utils.createDirectory(Utils.getDownloadRootPath())
+	Utils.createDirectory(Utils.getDownloadCachePath())
 	
 	for k, v in pairs(self.DownloadResList) do
 		v.DownloadUrl 	= string.format("%s%s.FCZip", RemoteUpdatePath, v.versionID)
@@ -224,7 +223,7 @@ function LayerEntrance:handleUpdateFiles()
 	-- 把临时文件复制到正式目录
 	for k, v in pairs(self.CurrentTask["updateInfo"]["FileList"]) do 
 		local oldDir = string.format("%s/%s", tempDir, v.Dir)
-		Utils.bCopyFile(oldDir, string.format("%s/%s", Utils.getCurrentResPath(), v.Dir ))
+		Utils.copyFile(oldDir, string.format("%s/%s", Utils.getCurrentResPath(), v.Dir ))
 		os.remove(oldDir)
 	end
 

@@ -1,26 +1,16 @@
 local LFS 		= import("app.components.Lfs")
 local Utils 	= class("Utils")
 
-function Utils.fixDirByPlatform(str)
-	str = string.gsub(str, "\\\\", "\\")
-	str = string.gsub(str, "//", "/")
-	if device.platform == "windows" then
-		str = string.gsub(str, "/", "\\")
-	else
-		str = string.gsub(str, "\\", "/")
-	end
-	return str
-end
-
 local FileUtils 			= cc.FileUtils:getInstance()
 local writeblePath 			= FileUtils:getWritablePath()
 local pointerPath 			= "res/packagePointer"
-local currentResourcePath	= Utils.fixDirByPlatform(writeblePath)
-if device.platform == "windows" or device.platform == "mac" then
-	currentResourcePath = currentResourcePath .. "virtualDir/"
+local currentResourcePath 	= (device.platform == "windows" or device.platform == "mac") and writeblePath .. "virtualDir/" or writeblePath
+local DownloadRootPath  	= writeblePath.."Download/"
+local DownloadCachePath  	= DownloadRootPath.."Cache/"
+
+function Utils.getFilePathFromString(path)
+	return string.gsub(path, string.match(path, ".+/(.+)"), "")
 end
-local DownloadRootPath  	= Utils.fixDirByPlatform(writeblePath.."Download/")
-local DownloadCachePath  	= Utils.fixDirByPlatform(DownloadRootPath.."Cache/")
 
 function Utils.getCurrentResPath()
 	return currentResourcePath
@@ -38,57 +28,8 @@ function Utils.getDownloadCachePath()
 	return DownloadCachePath
 end
 
-function Utils.createPath(RootFile, destPath)
-	for k, v in pairs(RootFile:subFiles()) do
-		if v:isDir() then
-			local finalPath = destPath..v:getPath().."/"
-			if not FileUtils:isDirectoryExist(currPath) then
-				FileUtils:createDirectory(finalPath)
-			end
-			Utils.createPath(v, finalPath )
-		end
-	end
-end
-
-function Utils.dirCopy(RootFile, rootPath, destPath, middlePath)
-	for k, v in pairs(RootFile:subFiles()) do
-		if v:isDir() then
-			local subDirs = rootPath
-			Utils.dirCopy(v, rootPath, destPath, middlePath..v:getPath().."/")
-		else
-			local currPath = middlePath.."/"..v:getPath()
-			local currDestPath = destPath..currPath
-			local dest = io.open(currDestPath)
-			if dest then dest:close() os.remove(currDestPath) end
-			Utils.bCopyFile(rootPath..currPath, currDestPath)
-		end
-	end
-end
-
-function Utils.recursionCopy(srcPath, destPath)
-	local RootFile = LFS.getAllFilesForPath(srcPath)
-
-	if not FileUtils:isDirectoryExist(currPath) then
-		Utils.createPath(RootFile, destPath)
-	end
-
-	Utils.dirCopy(RootFile, RootFile:getPath(), destPath, "")
-end
-
-function Utils.bCopyFile(sourcefile, destinationfile)
-	local read_file =""
-	local write_file=""
-	local temp_content ="";
-	read_file = io.open(sourcefile,"rb")
-	if not read_file then
-		release_print("Failed To Read File : "..sourcefile)
-	else
-		temp_content = read_file:read("*a")
-		write_file = io.open(destinationfile,"wb")
-		write_file:write(temp_content)
-		read_file:close()
-		write_file:close()
-	end
+function Utils.createDirectory(currentDirectoryPath)
+	FileUtils:createDirectory(currentDirectoryPath)
 end
 
 function Utils.getVersionInfo()
@@ -99,6 +40,7 @@ function Utils.getVersionInfo()
 end
 
 function Utils.copyFile(src, dest)
+	Utils.createDirectory(Utils.getFilePathFromString(dest))
 	FileUtils:copyFile(src, dest)
 end
 
@@ -127,7 +69,7 @@ end
 
 function Utils.updateVersion(versionTable)
 	local Info = versionTable.updateInfo
-	local fileWrite = io.open(Utils.getCurrentResPath().."res/version","wb")
+	local fileWrite = io.open(Utils.getCurrentResPath().."res/version", "wb")
 	fileWrite:write(Utils.TableToString({
 		Date 		= Info.Date,
 		firstCommit = Info.commitBase,
