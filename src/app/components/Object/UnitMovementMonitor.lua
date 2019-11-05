@@ -63,7 +63,8 @@ function UnitMovementMonitor:jump()
 	self.m_StateMachine:setState(MovementStates.STATE_JUMP_HIGH)
 end
 
-function UnitMovementMonitor:updateDirection()
+function UnitMovementMonitor:updateDirectionByController()
+	if not self:getOwner():isControlByPlayer() then return end
 	local offset = Controller:getInstance():getHorizonOffset()
 	if offset == 0 then return end
 	self.m_Direction = offset > 0 and "right" or "left"
@@ -91,7 +92,7 @@ function UnitMovementMonitor:updateMovement(diff, isJumpping)
 	end
 	if finalState then self.m_StateMachine:setState(finalState) end
 	self:getOwner():move(finalPos)
-	self:updateDirection()
+	self:updateDirectionByController()
 end
 
 function UnitMovementMonitor:onControllerMove(diff, isJumpping)
