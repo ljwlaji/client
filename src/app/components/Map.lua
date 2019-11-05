@@ -4,6 +4,7 @@ local Camera 		= import("app.components.Camera")
 local Player        = import("app.components.Object.Player")
 local GameObject    = import("app.components.Object.GameObject")
 local Ground    	= import("app.components.Object.Ground")
+local Creature    	= import("app.components.Object.Creature")
 
 -- 需要实现的功能
 -- 无缝地图
@@ -30,10 +31,13 @@ local Ground    	= import("app.components.Object.Ground")
 local DISTANCE_FOR_SHOWN 		= 600--display.width * 1.3
 local DISTANCE_FOR_DISAPPEAR 	= 1000--display.width * 2
 
+
 function Map:ctor(Entry, chosedCharacterID)
-	self.m_Entry = Entry
-	self.m_GroundDatas = {}
-	self.m_ObjectList = {}
+	self.m_Entry 			= Entry
+	self.m_GroundDatas 		= {}
+	self.m_CreatureDatas 	= {}
+	self.m_ObjectList 		= {}
+	self.m_HotloadTimer 	= 0
 	self:onCreate(chosedCharacterID)
 end
 
@@ -46,6 +50,34 @@ function Map:onCreate(chosedCharacterID)
     self:setPlayer(plr)
     Camera:changeFocus(plr)
 	self:loadFromDB()
+	self:tryLoadNewObjects()
+	self:tryRemoveObjects()
+	self:setupEventListener()
+end
+
+function Map:setupEventListener()
+    local listener = cc.EventListenerTouchOneByOne:create()
+    listener:registerScriptHandler(handler(self, self.onTouchBegan), cc.Handler.EVENT_TOUCH_BEGAN)
+    listener:registerScriptHandler(handler(self, self.onTouchEnded), cc.Handler.EVENT_TOUCH_ENDED)
+    listener:registerScriptHandler(handler(self, self.onTouchEnded), cc.Handler.EVENT_TOUCH_CANCELLED)
+    local eventDispatcher = self:getEventDispatcher()
+    eventDispatcher:addEventListenerWithSceneGraphPriority(listener, self)
+end
+
+function Map:onTouchBegan(touch, event)
+	local canReciveTouch = false
+	local TouchPosition = self:getParent():convertToNodeSpace(touch:getLocation())
+	for k, object in pairs(self.m_ObjectList) do
+		if object:isUnit() and cc.rectContainsPoint(object:getBoundingBox(), self:convertToNodeSpace(touch:getLocation())) then
+			if object:getAI() then canReciveTouch = object:getAI():onGossipHello(self.mPlayer, object) end
+			break
+		end
+	end
+	return canReciveTouch
+end
+
+function Map:onTouchEnded(touch, event)
+	release_print("onTouchEnded")
 end
 
 function Map:loadFromDB()
@@ -65,7 +97,11 @@ function Map:loadAllGroundInfoFromDB()
 end
 
 function Map:loadAllCreatureInfoFromDB()
-
+	local sql = string.format("SELECT * FROM creature_instance AS I JOIN creature_template AS T ON I.entry == T.entry WHERE I.map_entry == %d", self:getEntry())
+	local queryResults = DataBase:query(sql)
+	for k, v in pairs(queryResults) do
+		self.m_CreatureDatas[v.guid] = v
+	end
 end
 
 function Map:loadAllGameObjectInfoFromDB()
@@ -83,9 +119,16 @@ end
 function Map:onUpdate(diff)
 	-- 更新Unit信息
 	for _, v in pairs(self.m_ObjectList) do v:onUpdate(diff) end
+
 	Camera:onUpdate(diff)
-	self:tryLoadNewObjects()
-	self:tryRemoveObjects()
+
+	if self.m_HotloadTimer >= 1000 then
+		self:tryLoadNewObjects()
+		self:tryRemoveObjects()
+		self.m_HotloadTimer = 0
+	else
+		self.m_HotloadTimer = self.m_HotloadTimer + diff
+	end
 end
 
 function Map:tryLoadNewObjects() 
@@ -94,11 +137,24 @@ function Map:tryLoadNewObjects()
 			v.instance = Ground:create(v)
 			self:addObject(v.instance)
 		end
-	end 
+	end
+	for k, v in pairs(self.m_CreatureDatas) do 
+		if not v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) < DISTANCE_FOR_SHOWN then 
+			v.instance = Creature:create(v)
+			self:addObject(v.instance)
+		end
+	end
 end
 
 function Map:tryRemoveObjects()
 	for k, v in pairs(self.m_GroundDatas) do 
+		if v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) > DISTANCE_FOR_DISAPPEAR then 
+			self:removeObject(v.instance)
+			v.instance:removeFromParent()
+			v.instance = nil
+		end
+	end 
+	for k, v in pairs(self.m_CreatureDatas) do 
 		if v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) > DISTANCE_FOR_DISAPPEAR then 
 			self:removeObject(v.instance)
 			v.instance:removeFromParent()

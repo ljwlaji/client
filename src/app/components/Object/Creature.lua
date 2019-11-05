@@ -12,6 +12,10 @@ function Creature:onCreate()
 		self:initAI(self.context.script_name)
 	end
 	self:move(self.context.x, self.context.y)
+
+	local sp = cc.Sprite:create("res/player.png"):addTo(self:getPawn().m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
+
+    self:setContentSize(sp:getContentSize())
 end
 
 function Creature:initAvatar()
@@ -33,6 +37,11 @@ end
 
 function Creature:onUpdate(diff)
 	Unit.onUpdate(self, diff)
+end
+
+function Creature:cleanUpBeforeDelete()
+	release_print("Creature : cleanUpBeforeDelete()")
+	Unit.cleanUpBeforeDelete(self)
 end
 
 

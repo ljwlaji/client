@@ -1,4 +1,4 @@
-local ScriptAI = class("ScriptAI")
+local ScriptAI 		= class("ScriptAI")
 
 function ScriptAI:ctor(me)
 	self.me = me
