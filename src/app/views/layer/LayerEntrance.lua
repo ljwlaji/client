@@ -49,6 +49,7 @@ end
 
 function LayerEntrance:onExecuteCheckVersion()
     release_print("检查是否需要初始化...")
+    dump(Utils.isFileExisted(Utils.fixDirByPlatform(Utils.getCurrentResPath().."res/datas.db")))
 	if not Utils.isFileExisted(Utils.fixDirByPlatform(Utils.getCurrentResPath().."res/version")) then 
 		self:setState(STATE_FIRST_INIT) 
 		return 
@@ -63,9 +64,9 @@ function LayerEntrance:onEnterFirstInit()
 end
 
 function LayerEntrance:onExecuteFirstInit()
-	Utils.recursionCopy(Utils.getPackagePath().."res/", Utils.getCurrentResPath().."res/")
-    Utils.recursionCopy(Utils.getPackagePath().."src/", Utils.getCurrentResPath().."src/")
-    release_print("初始化完毕...")
+    Utils.copyFile(Utils.getPackagePath().."res/version", Utils.getCurrentResPath().."res/version")
+    Utils.copyFile(Utils.getPackagePath().."res/datas.db", Utils.getCurrentResPath().."res/datas.db")
+    -- release_print("初始化完毕...")
     self:setState(STATE_CHECK_VERSION)
 end
 

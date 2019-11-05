@@ -12,7 +12,7 @@ end
 
 function DataBase:openDB()
 	if self.db then return self.db end
-    self.db = sqlite3.open(DevMode and DBPATH or Utils.getCurrentResPath()..DBPATH)
+    self.db = sqlite3.open(Utils.getCurrentResPath()..DBPATH)
 	return self.db
 end
 

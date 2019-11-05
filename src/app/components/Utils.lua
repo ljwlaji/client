@@ -42,7 +42,9 @@ function Utils.createPath(RootFile, destPath)
 	for k, v in pairs(RootFile:subFiles()) do
 		if v:isDir() then
 			local finalPath = destPath..v:getPath().."/"
-			LFS.createDir(finalPath)
+			if not FileUtils:isDirectoryExist(currPath) then
+				FileUtils:createDirectory(finalPath)
+			end
 			Utils.createPath(v, finalPath )
 		end
 	end
@@ -54,7 +56,6 @@ function Utils.dirCopy(RootFile, rootPath, destPath, middlePath)
 			local subDirs = rootPath
 			Utils.dirCopy(v, rootPath, destPath, middlePath..v:getPath().."/")
 		else
-			-- dump(table.concat(middlePath, "/"))
 			local currPath = middlePath.."/"..v:getPath()
 			local currDestPath = destPath..currPath
 			local dest = io.open(currDestPath)
@@ -65,21 +66,12 @@ function Utils.dirCopy(RootFile, rootPath, destPath, middlePath)
 end
 
 function Utils.recursionCopy(srcPath, destPath)
-	-- TODO
-	-- 生成所有目标目录的信息
-	destPath = string.gsub(destPath, "\\", "/")
-	local dirs = string.split(destPath, "/")
-	local currPath = ""
-	for k, v in pairs(dirs) do
-		if k == 1 then
-			currPath = v
-		elseif v ~= "" then 
-			currPath = Utils.fixDirByPlatform(currPath.."/"..v)
-			release_print("Try Create Path : "..currPath.." "..( LFS.createDir(currPath) and "Successed" or "Failed" ).."!")
-		end
-	end
 	local RootFile = LFS.getAllFilesForPath(srcPath)
-	Utils.createPath(RootFile, destPath)
+
+	if not FileUtils:isDirectoryExist(currPath) then
+		Utils.createPath(RootFile, destPath)
+	end
+
 	Utils.dirCopy(RootFile, RootFile:getPath(), destPath, "")
 end
 
@@ -104,6 +96,10 @@ function Utils.getVersionInfo()
 	local content = file:read("*a")
 	file:close()
 	return loadstring("return "..content)()
+end
+
+function Utils.copyFile(src, dest)
+	FileUtils:copyFile(src, dest)
 end
 
 function Utils.TableToString(table)
