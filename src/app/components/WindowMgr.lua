@@ -25,6 +25,8 @@ function WindowMgr:findWindowIndexByClassName(className)
 end
 
 function WindowMgr:removeWindow(window)
+	dump(self.m_Windows)
+	dump(window)
 	for i=1, #self.m_Windows do
 		if self.m_Windows[i] == window then
 			table.remove(self.m_Windows, i)
@@ -53,7 +55,8 @@ function WindowMgr:createWindow(path, ...)
 	local window = template:create(display.getWorld():getApp(), template.__cname, ...):addTo(display.getWorld())
 	window:setContentSize(window.resourceNode_:getContentSize())
 	window:setAnchorPoint(0.5, 0.5):move(display.center)
-	self.m_Windows[path] = window
+	table.insert(self.m_Windows, window)
+	self:sortZOrder()
 	local temp = window.onCleanup
 	window.onCleanup = function(...)
 		self:removeWindow(window)
