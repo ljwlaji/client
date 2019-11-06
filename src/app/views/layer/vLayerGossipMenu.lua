@@ -5,8 +5,9 @@ vNodeGossipMenu.RESOURCE_FILENAME = "res/csb/layer/CSB_Layer_Gossip_Menu.csb"
 vNodeGossipMenu.RESOURCE_BINDING = {
 }
 
-function vNodeGossipMenu:onCreate(GossipItems, player, creature)
-	
+function vNodeGossipMenu:onCreate(...)
+	release_print("vNodeGossipMenu:onCreate(GossipItems, player, creature)")
+	dump({...})
 end
 
 return vNodeGossipMenu

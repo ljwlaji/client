@@ -2,6 +2,7 @@ local Unit 				= import("app.components.Object.Unit")
 local DataBase 			= import("app.components.DataBase")
 local Player 			= class("Player", Unit)
 local ShareDefine 		= import("app.ShareDefine")
+local WindowMgr			= import("app.components.WindowMgr")
 
 Player.instance = nil
 
@@ -35,17 +36,17 @@ function Player:saveToDB()
 
 end
 
-function Player:sendGossipMenu(pGossipItemList, pObject)
-	display.getWorld():createView("app.views.layer.HUDLayer", pGossipItemList, self, pObject):addTo()
+function Player:sendGossipMenu(pObject)
+	WindowMgr:createWindow("app.views.layer.vLayerGossipMenu", self.m_GossipItemList, self, pObject)
 	self.m_GossipItemList = {}
 end
 
 function Player:addGossipItem(iconIndex, textOrStringID, GossipSender, GossipIndex)
 	self.m_GossipItemList[#self.m_GossipItemList + 1] = {
-		IconIndex = iconIndex,
-		textOrStringID = textOrStringID,
-		GossipSender = GossipSender,
-		GossipIndex = GossipIndex
+		IconIndex 		= iconIndex,
+		textOrStringID 	= textOrStringID,
+		GossipSender 	= GossipSender,
+		GossipIndex 	= GossipIndex
 	}
 end
 

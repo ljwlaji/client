@@ -3,10 +3,10 @@
   <Content ctype="GameProjectContent">
     <Content>
       <Animation Duration="0" Speed="1.0000" />
-      <ObjectData Name="Layer" Tag="42" ctype="GameLayerObjectData">
+      <ObjectData Name="RootNode" Tag="42" ctype="GameLayerObjectData">
         <Size X="1000.0000" Y="600.0000" />
         <Children>
-          <AbstractNodeData Name="Panel_Block_Touch" ActionTag="-824402942" Tag="43" IconVisible="False" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" ctype="PanelObjectData">
+          <AbstractNodeData Name="Panel_Block_Touch" ActionTag="-824402942" Tag="43" IconVisible="False" TouchEnable="True" ClipAble="False" BackColorAlpha="127" ComboBoxIndex="1" ColorAngle="90.0000" ctype="PanelObjectData">
             <Size X="1000.0000" Y="600.0000" />
             <Children>
               <AbstractNodeData Name="Panel_2" ActionTag="1874855000" Tag="44" IconVisible="False" LeftMargin="250.0000" RightMargin="550.0000" TopMargin="166.2526" BottomMargin="233.7474" TouchEnable="True" ClipAble="False" BackColorAlpha="102" ComboBoxIndex="1" ColorAngle="90.0000" ctype="PanelObjectData">
@@ -29,7 +29,7 @@
             <CColor A="255" R="255" G="255" B="255" />
             <PrePosition />
             <PreSize X="1.0000" Y="1.0000" />
-            <SingleColor A="255" R="150" G="200" B="255" />
+            <SingleColor A="255" R="144" G="238" B="144" />
             <FirstColor A="255" R="150" G="200" B="255" />
             <EndColor A="255" R="255" G="255" B="255" />
             <ColorVector ScaleY="1.0000" />

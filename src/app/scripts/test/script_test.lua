@@ -6,7 +6,7 @@ function script_test:onGossipHello(pPlayer, pObject)
 
 	local GossipItems = {}
 	pPlayer:addGossipItem(1, 1, 1, 1);
-	pPlayer:sendGossipMenu(GossipItems)
+	pPlayer:sendGossipMenu(pObject)
 	return true
 end
 
