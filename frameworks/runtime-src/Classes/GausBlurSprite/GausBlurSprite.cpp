@@ -107,6 +107,7 @@ void GausBlurSprite::override()
 	int TotalG = 0;
 	int TotalB = 0;				
 	int currPos = 1;
+    
 	for (int height = 0; height < m_MaxHeight; height++)
 		for (int width = 0; width < m_MaxWidth; width++)
 		{

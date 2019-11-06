@@ -14,9 +14,6 @@ function MainScene:onCreate()
 end
 
 function MainScene:onEnterTransitionFinish()
-
-    self:testGausBlurSprite()
-    do return end
     self:run()
     self:createView("layer.LayerEntrance", function() 
         self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(99999999)
@@ -73,37 +70,10 @@ end
 
 
 
-function MainScene:testGausBlurSprite()
-
-    local sp = cc.GausBlurSprite:createWithImage("player.png"):addTo(self):move(display.center)
-    local img = self:ScreenImage()
-    local ssp = cc.GausBlurSprite:createWithImage(img):addTo(self):move(display.center)
-    sp:removeFromParent()
-
-
-    self.diff = 350
-    self:onUpdate(function() 
-        if self.diff >= 300 then
-            self.diff = self.diff - 1
-            return
-        end
-        if self.diff < 0 then
-            cc.SpriteFrameCache:getInstance():removeUnusedSpriteFrames()
-            cc.Director:getInstance():getTextureCache():removeUnusedTextures()
-            return
-        end
-        if self.diff == 0 then
-            if ssp then
-                ssp:removeFromParent()
-                ssp = nil
-            end
-        else
-            if ssp then ssp:override() end
-            self.diff = self.diff - 1
-        end
-    end)
-
-    dump(cc.GausBlurSprite)
+function MainScene:testGausBlurSprite(Scale)
+    Scale = Scale or 0.2
+    local img = self:ScreenImage(Scale)
+    self.ssp = cc.GausBlurSprite:createWithImage(img):addTo(self):move(display.center):setScale(1 / Scale)
 end
 
 function MainScene:ScreenShot()
@@ -114,14 +84,17 @@ function MainScene:ScreenShot()
     texture:saveToFile("test.png", cc.IMAGE_FORMAT_PNG); 
 end
 
-function MainScene:ScreenImage()
-    local texture = cc.RenderTexture:create(display.width, display.height, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
+function MainScene:ScreenImage(scale)
+    scale = scale or 1
+    local texture = cc.RenderTexture:create(display.width * scale, display.height * scale, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
     local img = nil
+    self:setScale(scale)
     texture:beginWithClear(0, 0, 0, 0)
     display.getRunningScene():visit()
     texture:endToLua()
     cc.Director:getInstance():drawScene();
     img = texture:newImage()
+    self:setScale(1)
     return img
 end
 
@@ -219,32 +192,107 @@ function MainScene:testPixalCollisionMgr()
     end
 end
 
-function MainScene:testShader()
-    local prog = cc.GLProgram:create("res/shader/base.vsh","res/shader/gblur.fsh")
-    prog:link()
-    prog:updateUniforms()
-    local progStat= cc.GLProgramState:create(prog)
- 
-    --[[]]
-    local sp = cc.Sprite:create("HelloWorld.png")
-                        :move(display.cx, display.cy)
-                        :addTo(self)
-                        :setScale(1)
-                        :setAnchorPoint(0.5, 0.5)
- 
-    sp:setGLProgram(prog)
-    sp:setGLProgramState(progStat)
-    prog:updateUniforms()
- 	self.modiplyer = 1
- 	self.sp = sp
- 	self.progStat = progStat
- 	self.prog = prog
+local vertSource = "\n"..
+    "attribute vec4 a_position; \n" ..
+    "attribute vec2 a_texCoord; \n" ..
+    "attribute vec4 a_color; \n" ..
+    "#ifdef GL_ES \n" .. 
+    "varying lowp vec4 v_fragmentColor;\n" ..
+    "varying mediump vec2 v_texCoord;\n" ..
+    "#else \n" ..
+    "varying vec4 v_fragmentColor;\n" ..
+    "varying vec2 v_texCoord;\n" ..
+    "#endif\n" ..
+    "void main()\n" ..
+    "{\n" .. 
+    " gl_Position = CC_PMatrix * a_position;\n"..
+    " v_fragmentColor = a_color;\n"..
+    " v_texCoord = a_texCoord;\n" ..
+"}\n"
+
+
+local fragSource =  "\n" ..
+"#ifdef GL_ES \n" ..
+"precision mediump float; \n" ..
+"#endif \n" ..
+"varying vec4 v_fragmentColor; \n" ..
+"varying vec2 v_texCoord; \n" ..
+"uniform vec2 resolution; \n" ..
+"uniform float blurRadius;\n" ..
+"uniform float sampleNum; \n" ..
+"vec4 blur(vec2);\n" ..
+"\n" ..
+
+"void main(void)\n" ..
+"{\n" ..
+"    vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;\n" ..
+"    gl_FragColor = vec4(col) * v_fragmentColor;\n" ..
+"}\n" ..
+"\n" ..
+
+"vec4 blur(vec2 p)\n" ..
+"{\n" ..
+"    if (blurRadius > 0.0 && sampleNum > 1.0)\n" ..
+"    {\n" ..
+"        vec4 col = vec4(0);\n" ..
+"        vec2 unit = 1.0 / resolution.xy;\n" ..
+" \n" ..       
+"        float r = blurRadius;\n" ..
+"        float sampleStep = r / sampleNum;\n" ..
+"\n" ..        
+"        float count = 0.0;\n" ..
+"\n" ..        
+"        for(float x = -r; x < r; x += sampleStep)\n" ..
+"        {\n" ..
+"            for(float y = -r; y < r; y += sampleStep)\n" ..
+"            {\n" ..
+"                float weight = (r - abs(x)) * (r - abs(y));\n" ..
+"                col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;\n" ..
+"                count += weight;\n" ..
+"            }\n" ..
+"        }\n" ..
+"\n" ..        
+"        return col / count;\n" ..
+"    }\n" ..
+"\n" .. 
+"    return texture2D(CC_Texture0, p);\n" ..
+"}\n"
+
+function MainScene:setShader(spr)
+    local maskOpacity = 0.1
+    local pProgram = cc.GLProgram:createWithByteArrays(vertSource,fragSource)
+    -- local pProgram = cc.GLProgram:create("res/shader/base.vsh","res/shader/gblur.fsh")
+    local glprogramstate = cc.GLProgramState:getOrCreateWithGLProgram(pProgram)
+    local size = spr:getTexture():getContentSizeInPixels()
+    spr.m_GLPrograme = pProgram
+    spr.m_GLProgrameState = glprogramstate
+    spr:setGLProgramState(glprogramstate)
+    glprogramstate:setUniformVec2("resolution", cc.p(size.width, size.height));
+    glprogramstate:setUniformFloat("blurRadius", 0);
+    glprogramstate:setUniformFloat("sampleNum", 0)
 end
 
-function MainScene:testting()
-    self.progStat:setUniformVec2(self.prog:getUniform("blurSize").location, cc.p(250, 250));
-    self.prog:updateUniforms()
 
+function MainScene:testShader(sp)
+
+    self:setShader(sp)
+    local size = sp:getTexture():getContentSizeInPixels()
+
+    local blurRadius = 0
+    local sampleNum = 0
+    local resolution = cc.p(size.width, size.height)
+    local i = 2
+    sp:onUpdate(function()
+            if blurRadius > 15 then return end
+            blurRadius = blurRadius + 0.2
+            release_print(blurRadius)
+            local glprogramstate = sp.m_GLProgrameState
+            local prog = sp.m_GLPrograme
+
+            glprogramstate:setUniformVec2(prog:getUniform("resolution").location, resolution);
+            glprogramstate:setUniformFloat(prog:getUniform("blurRadius").location, blurRadius);
+            glprogramstate:setUniformFloat(prog:getUniform("sampleNum").location, 5)
+    end)
 end
 
 return MainScene

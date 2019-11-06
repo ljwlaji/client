@@ -1,4 +1,4 @@
-local Controller    = import("app.views.node.vNodeController")
+local Controller    = import("app.views.node.vNodeControllerNew")
 local HUDButtons 	= import("app.views.node.vNodeSkillButtons")
 local ViewBaseEX 	= import("app.views.ViewBaseEx")
 local HUDLayer 		= class("HUDLayer", ViewBaseEX)

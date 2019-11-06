@@ -1,6 +1,6 @@
 local AudioMgr				= import("app.components.AudioMgr")
 local StateMachine 			= import("app.components.StateMachine")
-local Controller 			= import("app.views.node.vNodeController")
+local Controller 			= import("app.views.node.vNodeControllerNew")
 local UnitMovementMonitor 	= class("UnitMovementMonitor")
 
 

@@ -6,7 +6,7 @@
       <ObjectData Name="Layer" ctype="GameLayerObjectData">
         <Size X="1334.0000" Y="750.0000" />
         <Children>
-          <AbstractNodeData Name="node_Left" ActionTag="-953523401" Tag="14" IconVisible="False" LeftMargin="437.3944" RightMargin="696.6056" TopMargin="12.7757" BottomMargin="537.2243" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
+          <AbstractNodeData Name="node_Left" ActionTag="-953523401" Tag="14" IconVisible="False" LeftMargin="437.3944" RightMargin="696.6056" TopMargin="12.7757" BottomMargin="537.2243" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
             <Size X="200.0000" Y="200.0000" />
             <AnchorPoint />
             <Position X="437.3944" Y="537.2243" />
@@ -19,7 +19,7 @@
             <EndColor A="255" R="255" G="255" B="255" />
             <ColorVector ScaleY="1.0000" />
           </AbstractNodeData>
-          <AbstractNodeData Name="node_Center_Up" ActionTag="706752099" Tag="16" IconVisible="False" LeftMargin="21.4047" RightMargin="1112.5953" TopMargin="293.3582" BottomMargin="256.6418" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
+          <AbstractNodeData Name="node_Center_Up" ActionTag="706752099" Tag="16" IconVisible="False" LeftMargin="21.4047" RightMargin="1112.5953" TopMargin="293.3582" BottomMargin="256.6418" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
             <Size X="200.0000" Y="200.0000" />
             <AnchorPoint />
             <Position X="21.4047" Y="256.6418" />
@@ -32,7 +32,7 @@
             <EndColor A="255" R="255" G="255" B="255" />
             <ColorVector ScaleY="1.0000" />
           </AbstractNodeData>
-          <AbstractNodeData Name="node_Center_Buttom" ActionTag="-927353968" Tag="20" IconVisible="False" LeftMargin="417.3385" RightMargin="716.6615" TopMargin="541.8231" BottomMargin="8.1769" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
+          <AbstractNodeData Name="node_Center_Buttom" ActionTag="-927353968" Tag="20" IconVisible="False" LeftMargin="417.3385" RightMargin="716.6615" TopMargin="541.8231" BottomMargin="8.1769" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
             <Size X="200.0000" Y="200.0000" />
             <AnchorPoint />
             <Position X="417.3385" Y="8.1769" />
@@ -45,7 +45,7 @@
             <EndColor A="255" R="255" G="255" B="255" />
             <ColorVector ScaleY="1.0000" />
           </AbstractNodeData>
-          <AbstractNodeData Name="node_Right_Buttom" ActionTag="-1919837243" Tag="21" IconVisible="False" LeftMargin="904.0200" RightMargin="-50.0200" TopMargin="254.0272" BottomMargin="15.9728" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
+          <AbstractNodeData Name="node_Right_Buttom" ActionTag="-1919837243" Tag="21" IconVisible="False" LeftMargin="904.0200" RightMargin="-50.0200" TopMargin="254.0272" BottomMargin="15.9728" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
             <Size X="480.0000" Y="480.0000" />
             <AnchorPoint />
             <Position X="904.0200" Y="15.9728" />

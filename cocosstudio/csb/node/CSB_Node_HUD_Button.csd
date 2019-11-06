@@ -25,7 +25,7 @@
             <Position X="238.8809" Y="0.0001" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <PrePosition X="0.4977" Y="0.0000" />
+            <PrePosition X="0.4977" />
             <PreSize X="0.3333" Y="0.3333" />
             <SingleColor A="255" R="150" G="200" B="255" />
             <FirstColor A="255" R="150" G="200" B="255" />

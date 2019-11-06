@@ -39,6 +39,12 @@ function Map:ctor(Entry, chosedCharacterID)
 	self.m_ObjectList 		= {}
 	self.m_HotloadTimer 	= 0
 	self:onCreate(chosedCharacterID)
+
+	--For Testting
+	self.m_BG = cc.Sprite:create("cloud.png"):addTo(display.getWorld()):setAnchorPoint(0, 0):setLocalZOrder(-99999999)
+	self.m_Sky = cc.Sprite:create("sky.jpg"):addTo(display.getWorld()):setAnchorPoint(0, 0):setLocalZOrder(-99999999 - 1):setScale(0.7)
+	self.m_Sky = cc.Sprite:create("Sun.png"):addTo(display.getWorld()):setAnchorPoint(0, 1):setLocalZOrder(-99999998):move(0, display.height)
+	-- self.m_Sky = cc.Sprite:create("skyring.png"):addTo(display.getWorld()):setAnchorPoint(0, 0):setLocalZOrder(-99999998):setScale(2.9)
 end
 
 function Map:getEntry()
@@ -65,10 +71,12 @@ function Map:setupEventListener()
 end
 
 function Map:onTouchBegan(touch, event)
+	release_print("TouchBegan On Map")
 	local canReciveTouch = false
 	local TouchPosition = self:getParent():convertToNodeSpace(touch:getLocation())
 	for k, object in pairs(self.m_ObjectList) do
 		if object:isUnit() and cc.rectContainsPoint(object:getBoundingBox(), self:convertToNodeSpace(touch:getLocation())) then
+			release_print("Try Fetch Touch Npc")
 			if object:getAI() then canReciveTouch = object:getAI():onGossipHello(self.mPlayer, object) end
 			break
 		end
@@ -229,6 +237,8 @@ function Map:tryFixPosition(unit, offset)
 		end
 	end
 
+	-- Out Of Left Edge
+	if nextPos.x < 10 then nextPos.x = 10 end
 	return nextPos, hitGround
 end
 

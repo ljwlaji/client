@@ -37,10 +37,13 @@ function Unit:onCreate(objType)
 	self.m_Attrs = {}
 	self.m_MovementMonitor = MovementMonitor:create(self)
 	self:setAttrToBase()
-	self:regiestCustomEventListenter("onTouchButtonX", function() release_print("onTouchButtonX") end)
+	self:regiestCustomEventListenter("onTouchButtonX", function() release_print("onTouchButtonX") 
+		display.getWorld():testGausBlurSprite(1) display.getWorld().currentMap:setVisible(false)
+		display.getWorld():testShader(display.getWorld().ssp)
+	end)
 	self:regiestCustomEventListenter("onTouchButtonY", function() release_print("onTouchButtonY") end)
 	self:regiestCustomEventListenter("onTouchButtonA", function() release_print("onTouchButtonA") end)
-	self:regiestCustomEventListenter("onTouchButtonB", function() if self:isControlByPlayer() then self.m_MovementMonitor:jump() end end)
+	self:regiestCustomEventListenter("onControllerJump", function() if self:isControlByPlayer() then self.m_MovementMonitor:jump() end end)
 	Object.onCreate(self, objType)
 end
 

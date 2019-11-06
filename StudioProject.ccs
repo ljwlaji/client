@@ -8,6 +8,7 @@
             <Project Name="CSB_HUD_Layer.csd" Type="Layer" />
             <Project Name="CSB_Layer_Entrance.csd" Type="Layer" />
             <Project Name="CSB_Layer_Inventory.csd" Type="Layer" />
+            <Project Name="CSB_Layer_Gossip_Menu.csd" Type="Layer" />
           </Folder>
           <Folder Name="maps">
             <Project Name="0.csd" Type="Layer" />
@@ -16,19 +17,16 @@
             <Project Name="CSB_Node_Controller.csd" Type="Layer" />
             <Project Name="CSB_Node_HUD_Button.csd" Type="Layer" />
             <Project Name="CSB_Node_Pawn.csd" Type="Node" />
+            <Project Name="CSB_Node_Controller_New.csd" Type="Layer" />
           </Folder>
-          <Folder Name="scene" />
         </Folder>
         <Folder Name="ui">
-          <Folder Name="common" />
           <Folder Name="csb">
             <Folder Name="layer">
               <Folder Name="Layer_Entrance">
                 <Image Name="loadingBar.png" />
               </Folder>
             </Folder>
-            <Folder Name="node" />
-            <Folder Name="scene" />
           </Folder>
           <Folder Name="GameObject">
             <Image Name="1.png" />

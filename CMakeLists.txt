@@ -52,36 +52,40 @@ endif()
 set(GAME_HEADER 
         ${RUNTIME_SRC_ROOT}/Classes/AppDelegate.h
         ${RUNTIME_SRC_ROOT}/Classes/CustomModule.h
-        ${RUNTIME_SRC_ROOT}/Classes/lfs.h
-        ${RUNTIME_SRC_ROOT}/Classes/lsqlite3.h
         ${RUNTIME_SRC_ROOT}/Classes/lua_module_register.h
         ${RUNTIME_SRC_ROOT}/Classes/MD5.h
         ${RUNTIME_SRC_ROOT}/Classes/PixalCollisionMgr.h
         ${RUNTIME_SRC_ROOT}/Classes/Session.h
         ${RUNTIME_SRC_ROOT}/Classes/ShareDefine.h
         ${RUNTIME_SRC_ROOT}/Classes/SocketClient.h
-        ${RUNTIME_SRC_ROOT}/Classes/sqlite3.h
         ${RUNTIME_SRC_ROOT}/Classes/Timmer.h
         ${RUNTIME_SRC_ROOT}/Classes/UnitTest.h
         ${RUNTIME_SRC_ROOT}/Classes/UpdateMgr.h
         ${RUNTIME_SRC_ROOT}/Classes/ZipHelper.h
         ${RUNTIME_SRC_ROOT}/Classes/Zipper.h
+        ${RUNTIME_SRC_ROOT}/Classes/lfs.h
+        ${RUNTIME_SRC_ROOT}/Classes/GausBlurSprite/GausBlurSprite.h
+
+        ${RUNTIME_SRC_ROOT}/Classes/sqlite3/lsqlite3.h
 )
 set(GAME_SOURCE 
         ${RUNTIME_SRC_ROOT}/Classes/AppDelegate.cpp
         ${RUNTIME_SRC_ROOT}/Classes/CustomModule.cpp
-        ${RUNTIME_SRC_ROOT}/Classes/lfs.c
-        ${RUNTIME_SRC_ROOT}/Classes/lsqlite3.c
         ${RUNTIME_SRC_ROOT}/Classes/MD5.cpp
         ${RUNTIME_SRC_ROOT}/Classes/PixalCollisionMgr.cpp
         ${RUNTIME_SRC_ROOT}/Classes/Session.cpp
         ${RUNTIME_SRC_ROOT}/Classes/SocketClient.cpp
-        ${RUNTIME_SRC_ROOT}/Classes/sqlite3.c
         ${RUNTIME_SRC_ROOT}/Classes/Timmer.cpp
         ${RUNTIME_SRC_ROOT}/Classes/UnitTest.cpp
         ${RUNTIME_SRC_ROOT}/Classes/UpdateMgr.cpp
         ${RUNTIME_SRC_ROOT}/Classes/ZipHelper.cpp
         ${RUNTIME_SRC_ROOT}/Classes/Zipper.cpp
+        ${RUNTIME_SRC_ROOT}/Classes/lfs.c
+
+        ${RUNTIME_SRC_ROOT}/Classes/GausBlurSprite/GausBlurSprite.cpp
+
+        ${RUNTIME_SRC_ROOT}/Classes/sqlite3/sqlite3secure.c
+        ${RUNTIME_SRC_ROOT}/Classes/sqlite3/lsqlite3.c
 )
 # sources need to compile info, include dirs and source files
 include_directories(

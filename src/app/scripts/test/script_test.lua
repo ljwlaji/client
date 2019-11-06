@@ -3,6 +3,10 @@ local script_test = class("script_test", ScriptAI)
 
 function script_test:onGossipHello(pPlayer, pObject)
 	release_print("onGossipHello")
+
+	local GossipItems = {}
+	pPlayer:addGossipItem(1, 1, 1, 1);
+	pPlayer:sendGossipMenu(GossipItems)
 	return true
 end
 

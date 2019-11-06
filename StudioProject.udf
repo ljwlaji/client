@@ -4,15 +4,7 @@
       <Value ctype="CocosRecentOperation">
         <LastPublishType Value="Resource" />
         <IsLastPublish Value="True" />
-        <LastRunType Value="Windows" />
-      </Value>
-    </Item>
-    <Item Key="TabsParamsKey">
-      <Value ctype="TabsInfo">
-        <OpenedDocuments>
-          <FilePathData Path="csb/maps/0.csd" />
-        </OpenedDocuments>
-        <ActiveDocument Path="csb/maps/0.csd" />
+        <LastRunType Value="Mac" />
       </Value>
     </Item>
   </Properties>

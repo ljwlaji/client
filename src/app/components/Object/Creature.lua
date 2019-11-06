@@ -36,7 +36,7 @@ function Creature:onCreate()
 		end, sp.EventType.ANIMATION_COMPLETE)  
 	end, function(...) dump({...}) end)
 	-- End of testting
-
+	
     self:setContentSize(50, 90)
     self:debugDraw()
 end
