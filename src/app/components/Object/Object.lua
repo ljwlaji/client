@@ -76,14 +76,27 @@ function Object:createModelByID(model_id)
 	local model = nil
 	local currModelData = self:getModelDataByModelID(model_id)
 	if currModelData.model_type == "image" then
-		model = cc.Sprite:create(string.format("res/model/%s", currModelData.file_path))
+		model = cc.Sprite:create(string.format("res/model/image/%s", currModelData.file_path))
 	elseif currModelData.model_type == "spine" then
-
+		xpcall(function() 
+			model = sp.SkeletonAnimation:createWithJsonFile(string.format("res/model/spine/%s", currModelData.json_path), string.format("res/model/spine/%s", currModelData.altas_path))
+		end, function(...)	dump({...}) end)
 	elseif currModelData.model_type == "animation" then
 		
 	end
-	-- self.m_Model = 
+
 	return model
+end
+
+function Object:debugDraw()
+	if self.__drawNode then self.__drawNode:removeFromParent() end
+	local myDrawNode=cc.DrawNode:create()
+    self:addChild(myDrawNode)
+    myDrawNode:setPosition(0, 0)
+    local size = cc.p(self:getContentSize().width, self:getContentSize().height)
+    myDrawNode:drawSolidRect(cc.p(0, 0), size, cc.c4f(1,1,1,1))
+    myDrawNode:setLocalZOrder(-10)
+    self.__drawNode = myDrawNode
 end
 
 return Object

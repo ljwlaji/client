@@ -1,0 +1,279 @@
+
+daqiao.png
+size: 464,259
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+B-Armor
+  rotate: false
+  xy: 146, 74
+  size: 60, 36
+  orig: 60, 36
+  offset: 0, 0
+  index: -1
+B-Pendant01
+  rotate: false
+  xy: 0, 18
+  size: 101, 88
+  orig: 101, 88
+  offset: 0, 0
+  index: -1
+B-Pendant02
+  rotate: false
+  xy: 111, 114
+  size: 97, 126
+  orig: 97, 126
+  offset: 0, 0
+  index: -1
+B-Pendant03
+  rotate: false
+  xy: 212, 151
+  size: 113, 89
+  orig: 113, 89
+  offset: 0, 0
+  index: -1
+B-Pendant04
+  rotate: false
+  xy: 0, 110
+  size: 107, 130
+  orig: 107, 130
+  offset: 0, 0
+  index: -1
+Body
+  rotate: false
+  xy: 105, 65
+  size: 37, 37
+  orig: 37, 37
+  offset: 0, 0
+  index: -1
+Cloak
+  rotate: false
+  xy: 366, 65
+  size: 79, 99
+  orig: 79, 99
+  offset: 0, 0
+  index: -1
+Eye
+  rotate: false
+  xy: 364, 30
+  size: 39, 11
+  orig: 39, 11
+  offset: 0, 0
+  index: -1
+Eye-beiji
+  rotate: false
+  xy: 0, 3
+  size: 46, 11
+  orig: 46, 11
+  offset: 0, 0
+  index: -1
+Eye-fennu
+  rotate: false
+  xy: 366, 45
+  size: 42, 16
+  orig: 42, 16
+  offset: 0, 0
+  index: -1
+Eye-shengli
+  rotate: false
+  xy: 364, 15
+  size: 37, 11
+  orig: 37, 11
+  offset: 0, 0
+  index: -1
+Eye-siwang
+  rotate: false
+  xy: 50, 6
+  size: 46, 8
+  orig: 46, 8
+  offset: 0, 0
+  index: -1
+Head
+  rotate: false
+  xy: 356, 168
+  size: 95, 91
+  orig: 95, 91
+  offset: 0, 0
+  index: -1
+L-Fair
+  rotate: false
+  xy: 105, 0
+  size: 46, 61
+  orig: 46, 61
+  offset: 0, 0
+  index: -1
+L-Forearm
+  rotate: false
+  xy: 433, 20
+  size: 14, 16
+  orig: 14, 16
+  offset: 0, 0
+  index: -1
+L-Hand
+  rotate: false
+  xy: 349, 151
+  size: 13, 13
+  orig: 13, 13
+  offset: 0, 0
+  index: -1
+L-Leg
+  rotate: false
+  xy: 227, 16
+  size: 25, 56
+  orig: 25, 56
+  offset: 0, 0
+  index: -1
+L-Skirt
+  rotate: false
+  xy: 338, 59
+  size: 24, 43
+  orig: 24, 43
+  offset: 0, 0
+  index: -1
+L-Upperarm
+  rotate: false
+  xy: 329, 156
+  size: 16, 26
+  orig: 16, 26
+  offset: 0, 0
+  index: -1
+LD-Armor
+  rotate: false
+  xy: 433, 0
+  size: 18, 16
+  orig: 18, 16
+  offset: 0, 0
+  index: -1
+LU-Armor
+  rotate: false
+  xy: 276, 79
+  size: 58, 23
+  orig: 58, 23
+  offset: 0, 0
+  index: -1
+Mouth
+  rotate: false
+  xy: 227, 0
+  size: 23, 12
+  orig: 23, 12
+  offset: 0, 0
+  index: -1
+Mouth-beiji
+  rotate: false
+  xy: 323, 1
+  size: 19, 13
+  orig: 19, 13
+  offset: 0, 0
+  index: -1
+Mouth-fennu
+  rotate: false
+  xy: 412, 40
+  size: 31, 21
+  orig: 31, 21
+  offset: 0, 0
+  index: -1
+Mouth-shengli
+  rotate: false
+  xy: 338, 18
+  size: 22, 15
+  orig: 22, 15
+  offset: 0, 0
+  index: -1
+Mouth-siwang
+  rotate: false
+  xy: 256, 7
+  size: 19, 10
+  orig: 19, 10
+  offset: 0, 0
+  index: -1
+Neck
+  rotate: false
+  xy: 305, 0
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+R-Fair01
+  rotate: false
+  xy: 280, 43
+  size: 46, 32
+  orig: 46, 32
+  offset: 0, 0
+  index: -1
+R-Fair02
+  rotate: false
+  xy: 155, 8
+  size: 68, 62
+  orig: 68, 62
+  offset: 0, 0
+  index: -1
+R-Forearm
+  rotate: false
+  xy: 338, 37
+  size: 21, 18
+  orig: 21, 18
+  offset: 0, 0
+  index: -1
+R-Hand
+  rotate: false
+  xy: 455, 247
+  size: 9, 12
+  orig: 9, 12
+  offset: 0, 0
+  index: -1
+R-Leg
+  rotate: false
+  xy: 329, 186
+  size: 20, 54
+  orig: 20, 54
+  offset: 0, 0
+  index: -1
+R-Skirt01
+  rotate: false
+  xy: 280, 0
+  size: 21, 39
+  orig: 21, 39
+  offset: 0, 0
+  index: -1
+R-Skirt02
+  rotate: false
+  xy: 256, 21
+  size: 20, 51
+  orig: 20, 51
+  offset: 0, 0
+  index: -1
+R-Upperarm
+  rotate: false
+  xy: 407, 19
+  size: 22, 17
+  orig: 22, 17
+  offset: 0, 0
+  index: -1
+RD-Armor
+  rotate: false
+  xy: 305, 18
+  size: 29, 21
+  orig: 29, 21
+  offset: 0, 0
+  index: -1
+RU-Armor
+  rotate: false
+  xy: 210, 76
+  size: 62, 26
+  orig: 62, 26
+  offset: 0, 0
+  index: -1
+Weapon
+  rotate: false
+  xy: 0, 244
+  size: 352, 15
+  orig: 352, 15
+  offset: 0, 0
+  index: -1
+shadow
+  rotate: false
+  xy: 212, 106
+  size: 150, 41
+  orig: 150, 41
+  offset: 0, 0
+  index: -1

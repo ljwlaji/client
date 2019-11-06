@@ -1,4 +1,3 @@
-local LFS 		= import("app.components.Lfs")
 local Utils 	= class("Utils")
 
 local FileUtils 			= cc.FileUtils:getInstance()

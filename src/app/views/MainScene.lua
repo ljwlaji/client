@@ -14,6 +14,9 @@ function MainScene:onCreate()
 end
 
 function MainScene:onEnterTransitionFinish()
+
+    self:testGausBlurSprite()
+    do return end
     self:run()
     self:createView("layer.LayerEntrance", function() 
         self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(99999999)
@@ -67,6 +70,62 @@ end
 
 
 
+
+
+
+function MainScene:testGausBlurSprite()
+
+    local sp = cc.GausBlurSprite:createWithImage("player.png"):addTo(self):move(display.center)
+    local img = self:ScreenImage()
+    local ssp = cc.GausBlurSprite:createWithImage(img):addTo(self):move(display.center)
+    sp:removeFromParent()
+
+
+    self.diff = 350
+    self:onUpdate(function() 
+        if self.diff >= 300 then
+            self.diff = self.diff - 1
+            return
+        end
+        if self.diff < 0 then
+            cc.SpriteFrameCache:getInstance():removeUnusedSpriteFrames()
+            cc.Director:getInstance():getTextureCache():removeUnusedTextures()
+            return
+        end
+        if self.diff == 0 then
+            if ssp then
+                ssp:removeFromParent()
+                ssp = nil
+            end
+        else
+            if ssp then ssp:override() end
+            self.diff = self.diff - 1
+        end
+    end)
+
+    dump(cc.GausBlurSprite)
+end
+
+function MainScene:ScreenShot()
+    local texture = cc.RenderTexture:create(display.width, display.height, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
+    texture:beginWithClear(0, 0, 0, 0)
+    display.getRunningScene():visit()
+    texture:endToLua()
+    texture:saveToFile("test.png", cc.IMAGE_FORMAT_PNG); 
+end
+
+function MainScene:ScreenImage()
+    local texture = cc.RenderTexture:create(display.width, display.height, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
+    local img = nil
+    texture:beginWithClear(0, 0, 0, 0)
+    display.getRunningScene():visit()
+    texture:endToLua()
+    cc.Director:getInstance():drawScene();
+    img = texture:newImage()
+    return img
+end
+
+
 function MainScene:testGridView()
     local datas = {}
     for i=1, 100 do
@@ -74,8 +133,8 @@ function MainScene:testGridView()
     end
 
     local gridView = GridView:create({
-        viewSize    = { width = display.width, height = display.height},
-        cellSize    = { width = display.width / 10,  height = display.height / 10 },
+        viewSize    = { width = display.width,          height = display.height},
+        cellSize    = { width = display.width / 10,     height = display.height / 10 },
         rowCount    = 10,
         fieldCount  = 10,
         VGAP        = 5,

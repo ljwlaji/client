@@ -8,14 +8,37 @@ function Creature:onCreate()
 	self:setAlive(self.context.alive)
 	self.m_Entry = self.context.entry
 	self:resetAttr()
-	if self.context.script_name then
+	if self.context.script_name and self.context.script_name ~= "" then
 		self:initAI(self.context.script_name)
 	end
 	self:move(self.context.x, self.context.y)
 
-	local sp = cc.Sprite:create("res/player.png"):addTo(self:getPawn().m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
+	self.m_Model = self:createModelByID(self.context.model_id)
+	self.m_Model:addTo(self):setAnchorPoint(0.5, 0)
 
-    self:setContentSize(sp:getContentSize())
+	-- For Testting
+	local anims = {
+		"attack",
+		"celebrate",
+		"combskill",
+		"death",
+		"dizzy",
+		"dodge",
+		"injured",
+		"skill",
+		"stand",
+	}
+	xpcall(function() 
+		self.m_Model:setAnimation(0, "attack", false)
+		self.m_Model:registerSpineEventHandler(function(event) 
+			local index = math.random(1, #anims)
+			self.m_Model:setAnimation(0, anims[index], false)
+		end, sp.EventType.ANIMATION_COMPLETE)  
+	end, function(...) dump({...}) end)
+	-- End of testting
+
+    self:setContentSize(50, 90)
+    self:debugDraw()
 end
 
 function Creature:initAvatar()

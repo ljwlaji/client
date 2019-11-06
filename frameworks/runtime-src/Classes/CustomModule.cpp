@@ -8,6 +8,7 @@
 #include "Timmer.h"
 #include "MD5.h"
 #include "Zipper.h"
+#include "GausBlurSprite/GausBlurSprite.h"
 
 
 int tolua_firecore_timmer_create(lua_State* L)
@@ -923,6 +924,116 @@ int register_fire_Zipper_module(lua_State* L)
 	return 1;
 }
 
+
+int lua_cocos2dx_GausBlurSprite_createWithImage(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+
+
+    tolua_Error tolua_err;
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertable(tolua_S,1,"cc.GausBlurSprite",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+
+    if (argc == 1)
+    {
+        std::string arg0;
+        CCImage* iamge = nullptr;
+        ok = tolua_isusertype(tolua_S,2,"cc.Image",0, &tolua_err);
+        if(ok)
+        {
+            iamge = (CCImage*)tolua_tousertype(tolua_S,2,0);
+            GausBlurSprite* ret = GausBlurSprite::createWithImage(iamge);
+            object_to_luaval<GausBlurSprite>(tolua_S, "cc.GausBlurSprite",(GausBlurSprite*)ret);
+            return 1;
+        }
+        
+        ok = luaval_to_std_string(tolua_S, 2, &arg0, "cc.GausBlurSprite:createWithImage");
+        if(ok)
+        {
+            GausBlurSprite* ret = GausBlurSprite::createWithImage(arg0.c_str());
+            object_to_luaval<GausBlurSprite>(tolua_S, "cc.GausBlurSprite",(GausBlurSprite*)ret);
+            return 1;
+        }
+        
+        tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_GausBlurSprite_createWithImage'", nullptr);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.GausBlurSprite:createWithImage",argc, 1);
+    return 0;
+
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_GausBlurSprite_createWithImage'.",&tolua_err);
+
+    return 0;
+}
+
+
+int lua_cocos2dx_GausBlurSprite_override(lua_State* tolua_S)
+{
+    int argc = 0;
+    GausBlurSprite* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.GausBlurSprite",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (GausBlurSprite*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_GausBlurSprite_override'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0)
+    {
+        auto beg_t = std::chrono::system_clock::now();
+        cobj->override();
+        auto end_t = std::chrono::system_clock::now();
+        auto t = std::chrono::duration_cast<std::chrono::milliseconds>(end_t - beg_t).count();
+        log("%d ms(s)", (int)t);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.GausBlurSprite:override",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_GausBlurSprite_override'.",&tolua_err);
+#endif
+
+    return 0;
+}
+
+
+int regiest_fire_core_gausblur_sprite(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,        "cc.GausBlurSprite");
+    tolua_cclass(tolua_S,        "GausBlurSprite", "cc.GausBlurSprite", "cc.Sprite", nullptr);
+    tolua_beginmodule(tolua_S,    "GausBlurSprite");
+        tolua_function(tolua_S, "createWithImage",    lua_cocos2dx_GausBlurSprite_createWithImage);
+        tolua_function(tolua_S, "override",            lua_cocos2dx_GausBlurSprite_override);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(GausBlurSprite).name();
+    g_luaType[typeName] = "cc.GausBlurSprite";
+    g_typeCast["GausBlurSprite"] = "cc.GausBlurSprite";
+    return 1;
+}
+
 int register_fire_core_modules(lua_State* L)
 {
 	register_fire_Zipper_module(L);
@@ -930,5 +1041,6 @@ int register_fire_core_modules(lua_State* L)
 	register_fire_timmer_module(L);
 	register_fire_core_assets_manager_module(L);
 	register_fire_core_md5_module(L);
+    regiest_fire_core_gausblur_sprite(L);
 	return 1;
 }

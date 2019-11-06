@@ -18,7 +18,7 @@ function Ground:construct()
 	self:move(context.x, context.y)
 	self:setLocalZOrder(ShareDefine:getObjectZOrderByType(self:getType()))
 	if context.pixal_collision == 1 then
-		local path = string.format("res/model/%s", self:getModelDataByModelID(context.model_id).file_path)
+		local path = string.format("res/model/image/%s", self:getModelDataByModelID(context.model_id).file_path)
 		assert(Utils.isFileExisted(path))
 		self.m_PixalCollisionPath = path
 		cc.PixalCollisionMgr:getInstance():loadPNGData(path)

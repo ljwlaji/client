@@ -27,7 +27,7 @@
 #include "cocos2d.h"
 #include "scripting/lua-bindings/manual/lua_module_register.h"
 #include "UnitTest.h"
-#include "lsqlite3.h"
+#include "sqlite3/lsqlite3.h"
 #include "lfs.h"
 
 // #define USE_AUDIO_ENGINE 1
@@ -95,6 +95,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     lua_State* L = engine->getLuaStack()->getLuaState();
 	//添加 cjson https://www.cnblogs.com/zhangdw/p/6824350.html
 	//Lua 文件读取在 Cocos2dxLuaLoader.cpp 这边 加密可以考虑在这边搞
+    //Sqlite3 https://www.cnblogs.com/leehongee/p/4094700.html
     lua_module_register(L);
     luaopen_lsqlite3(L);
 	luaopen_lfs(L);
