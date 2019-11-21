@@ -30,6 +30,12 @@
 #include "sqlite3/lsqlite3.h"
 #include "lfs.h"
 
+// å¯¼å…¥å¤´æ–‡ä»¶ CrashReport.h
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#include "TencentBugly/CrashReport.h"
+#include "TencentBugly/lua/BuglyLuaAgent.h"
+#endif
+
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -77,7 +83,7 @@ void AppDelegate::initGLContextAttrs()
     GLView::setGLContextAttrs(glContextAttrs);
 }
 
-// if you want to use the package manager to install more packages, 
+// if you want to use the package manager to install more packages,
 // don't modify or remove this function
 static int register_all_packages()
 {
@@ -91,14 +97,19 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     // register lua module
     auto engine = LuaEngine::getInstance();
+    // For Bugly Issus
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    CrashReport::initCrashReport("86536930d0", false);
+    BuglyLuaAgent::registerLuaExceptionHandler(engine);
+#endif
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
     lua_State* L = engine->getLuaStack()->getLuaState();
-	//Ìí¼Ó cjson https://www.cnblogs.com/zhangdw/p/6824350.html
-	//Lua ÎÄ¼þ¶ÁÈ¡ÔÚ Cocos2dxLuaLoader.cpp Õâ±ß ¼ÓÃÜ¿ÉÒÔ¿¼ÂÇÔÚÕâ±ß¸ã
+    //ÃƒÃŒÂºâ€ cjson https://www.cnblogs.com/zhangdw/p/6824350.html
+    //Lua Å’Æ’ÂºË›âˆ‚Â¡Â»Â°â€˜â„ Cocos2dxLuaLoader.cpp â€™â€šÂ±ï¬‚ Âºâ€âˆšâ€¹Ã¸â€¦â€œâ€˜Ã¸ÂºÂ¬Â«â€˜â„â€™â€šÂ±ï¬‚âˆâ€ž
     //Sqlite3 https://www.cnblogs.com/leehongee/p/4094700.html
     lua_module_register(L);
     luaopen_lsqlite3(L);
-	luaopen_lfs(L);
+    luaopen_lfs(L);
     register_all_packages();
 
     LuaStack* stack = engine->getLuaStack();
@@ -108,13 +119,13 @@ bool AppDelegate::applicationDidFinishLaunching()
     //LuaStack* stack = engine->getLuaStack();
     //register_custom_function(stack->getLuaState());
     
-	std::string writeblePath = FileUtils::getInstance()->getWritablePath().c_str();
+    std::string writeblePath = FileUtils::getInstance()->getWritablePath().c_str();
     CCLOG("%s", writeblePath.c_str());
 #ifdef WIN32
-	writeblePath += "virtualDir/";
+    writeblePath += "virtualDir/";
 #endif
     
-    FileUtils::getInstance()->addSearchPath(writeblePath + "src"); 
+    FileUtils::getInstance()->addSearchPath(writeblePath + "src");
     FileUtils::getInstance()->addSearchPath(writeblePath + "res");
      #if CC_64BITS
      FileUtils::getInstance()->addSearchPath("src/64bit");
