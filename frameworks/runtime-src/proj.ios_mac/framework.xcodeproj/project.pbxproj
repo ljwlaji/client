@@ -73,7 +73,6 @@
 		7267CC7523729955004EC500 /* GausBlurSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7267CC7323729955004EC500 /* GausBlurSprite.cpp */; };
 		7267CC7623729955004EC500 /* GausBlurSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7267CC7323729955004EC500 /* GausBlurSprite.cpp */; };
 		72DAFE0A2386E33500B93FAE /* Bugly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE072386E33500B93FAE /* Bugly.framework */; };
-		72DAFE0B2386E33500B93FAE /* Bugly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE072386E33500B93FAE /* Bugly.framework */; };
 		72DAFE0D2386E36500B93FAE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE0C2386E36500B93FAE /* SystemConfiguration.framework */; };
 		72DAFE0F2386E36E00B93FAE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE0E2386E36E00B93FAE /* Security.framework */; };
 		72DAFE162386E59100B93FAE /* CrashReport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 72DAFE142386E59100B93FAE /* CrashReport.mm */; };
@@ -321,7 +320,6 @@
 				5023814117EBBCE400990C9B /* AudioToolbox.framework in Frameworks */,
 				72DAFE1A2386E5ED00B93FAE /* libBuglyAgent.a in Frameworks */,
 				5023814417EBBCE400990C9B /* Foundation.framework in Frameworks */,
-				72DAFE0B2386E33500B93FAE /* Bugly.framework in Frameworks */,
 				5023814517EBBCE400990C9B /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
