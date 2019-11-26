@@ -1,6 +1,7 @@
-local WindowMgr = class("WindowMgr")
+local WindowMgr 	= class("WindowMgr")
+local ShareDefine 	= import("app.ShareDefine")
 
-WindowMgr.instance = nil
+WindowMgr.instance 	= nil
 
 function WindowMgr:ctor()
 	self.m_Windows = {}
@@ -25,8 +26,6 @@ function WindowMgr:findWindowIndexByClassName(className)
 end
 
 function WindowMgr:removeWindow(window)
-	dump(self.m_Windows)
-	dump(window)
 	for i=1, #self.m_Windows do
 		if self.m_Windows[i] == window then
 			table.remove(self.m_Windows, i)
@@ -34,11 +33,12 @@ function WindowMgr:removeWindow(window)
 		end
 	end
 	self:sortZOrder()
+	dump(self.m_Windows)
 end
 
 function WindowMgr:sortZOrder()
 	for i=1, #self.m_Windows do
-		self.m_Windows[i]:setLocalZOrder(i)
+		self.m_Windows[i]:setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_WINDOW_START"))
 	end
 end
 
@@ -53,8 +53,6 @@ function WindowMgr:createWindow(path, ...)
         return
     end
 	local window = template:create(display.getWorld():getApp(), template.__cname, ...):addTo(display.getWorld())
-	window:setContentSize(window.resourceNode_:getContentSize())
-	window:setAnchorPoint(0.5, 0.5):move(display.center)
 	table.insert(self.m_Windows, window)
 	self:sortZOrder()
 	local temp = window.onCleanup

@@ -4,6 +4,7 @@ local Camera        = import("app.components.Camera")
 local GridView      = import("app.components.GridView")
 local LayerEntrance = import("app.views.layer.LayerEntrance")
 local Map           = import("app.components.Map")
+local ShareDefine   = import("app.ShareDefine")
 
 local updateCount = 0
 local totalMS = 0
@@ -16,7 +17,7 @@ end
 function MainScene:onEnterTransitionFinish()
     self:run()
     self:createView("layer.LayerEntrance", function() 
-        self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(99999999)
+        self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
         self:startGame(1)
     end):addTo(self)
 end

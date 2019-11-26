@@ -1,5 +1,6 @@
 local Unit = import("app.components.Object.Unit")
 local ShareDefine = import("app.ShareDefine")
+local DataBase = import("app.components.DataBase")
 local Creature = class("Creature", Unit)
 
 function Creature:onCreate()
@@ -15,6 +16,7 @@ function Creature:onCreate()
 
 	self.m_Model = self:createModelByID(self.context.model_id)
 	self.m_Model:addTo(self):setAnchorPoint(0.5, 0)
+	self:setName(DataBase:getStringByID(self.context.name_id))
 
 	-- For Testting
 	local anims = {

@@ -41,7 +41,7 @@ function GameObject:resetView(context)
 	self.m_View = self:createModelByID(context.model_id):addTo(self):setAnchorPoint(0, 0)
 	self:setContentSize(self.m_View:getContentSize())
 	self:move(context.x, context.y)
-	local ZOrder = context.zorder == 0 and ShareDefine:getObjectZOrderByType(context.object_type) or context.zorder
+	local ZOrder = context.zorder == 0 and ShareDefine.getObjectZOrderByType(context.object_type) or context.zorder
 	self:setLocalZOrder(ZOrder)
 	self:setScaleX(context.scale_x)
 	self:setScaleY(context.scale_y)

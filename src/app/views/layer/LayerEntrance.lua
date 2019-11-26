@@ -145,6 +145,7 @@ function LayerEntrance:onEnterTryDownloadUpdates()
 		v.DownloadUrl 	= string.format("%s%s.FCZip", RemoteUpdatePath, v.versionID)
 		release_print(string.format("添加下载任务: [%s]", v.DownloadUrl))
 	end
+	self.m_Children["progressBar"]:setPercent(0)
 end
 
 function LayerEntrance:onExecuteTryDownloadUpdates(diff)
@@ -189,7 +190,7 @@ function LayerEntrance:onDownloadProgress()
 	local nowDownloaded 	= UpdateMgr:getDownloadedSize()
 	local totalToDownload 	= UpdateMgr:getTotalSize()
 	release_print(string.format("%s/%s", nowDownloaded, totalToDownload))
-	self.m_Children["progressBar"]:setPercent(nowDownloaded / totalToDownload)
+	self.m_Children["progressBar"]:setPercent(nowDownloaded / totalToDownload * 100)
 	if UpdateMgr:isStopped() then
 		--验证/解压 等后续处理
 		self:handleUpdateFiles()

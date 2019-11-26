@@ -22,25 +22,32 @@ local MAP_Z_ORDERS = {
 	ZORDER_PLAYER			= ZORDER_START + 500, --✔
 	ZORDER_LOOT 			= ZORDER_START + 600, --✔
 	ZORDER_FRONT_GROUND		= ZORDER_START + 700, --✔
+	ZORDER_HUD_LAYER		= ZORDER_START + 800, --✔
+	ZORDER_WINDOW_START		= ZORDER_START + 900, --✔
 }
 
-function ShareDefine:playerType()
+function ShareDefine.getZOrderByType(t_Type)
+	if not MAP_Z_ORDERS[t_Type] then assert(false) end
+	return MAP_Z_ORDERS[t_Type]
+end
+
+function ShareDefine.playerType()
 	return TYPE_PLAYER
 end
 
-function ShareDefine:creatureType()
+function ShareDefine.creatureType()
 	return TYPE_CREATURE
 end
 
-function ShareDefine:gameObjectType()
+function ShareDefine.gameObjectType()
 	return TYPE_GAME_OBJECT
 end
 
-function ShareDefine:groundType()
+function ShareDefine.groundType()
 	return TYPE_GROUND
 end
 
-function ShareDefine:getObjectZOrderByType(OBType)
+function ShareDefine.getObjectZOrderByType(OBType)
 	local ret = 0
 	if OBType == TYPE_GROUND then
 		ret = MAP_Z_ORDERS.ZORDER_GROUND

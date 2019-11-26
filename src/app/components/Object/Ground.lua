@@ -16,7 +16,7 @@ function Ground:construct()
 	self.m_View = self:createModelByID(context.model_id):addTo(self):setAnchorPoint(0, 0)
 	self:setContentSize(self.m_View:getContentSize())
 	self:move(context.x, context.y)
-	self:setLocalZOrder(ShareDefine:getObjectZOrderByType(self:getType()))
+	self:setLocalZOrder(ShareDefine.getObjectZOrderByType(self:getType()))
 	if context.pixal_collision == 1 then
 		local path = string.format("res/model/image/%s", self:getModelDataByModelID(context.model_id).file_path)
 		assert(Utils.isFileExisted(path))

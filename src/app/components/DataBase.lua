@@ -16,6 +16,12 @@ function DataBase:openDB()
 	return self.db
 end
 
+function DataBase:getStringByID(id)
+    local location = "zh_cn"
+    local queryResult = self:query("SELECT * FROM string_template WHERE id = "..id)
+    return #queryResult == 1 and queryResult[1][location] or "NullString"
+end
+
 function DataBase.getInstance()
 	if DataBase.instance == nil then
 		DataBase.instance = DataBase:create()
