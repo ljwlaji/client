@@ -3,6 +3,9 @@
   <SolutionFolder>
     <Group ctype="ResourceGroup">
       <RootFolder Name=".">
+        <Folder Name="anim">
+          <Folder Name="warrior" />
+        </Folder>
         <Folder Name="csb">
           <Folder Name="layer">
             <Project Name="CSB_HUD_Layer.csd" Type="Layer" />

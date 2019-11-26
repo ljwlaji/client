@@ -12,7 +12,12 @@ function script_test:onGossipHello(pPlayer, pObject)
 end
 
 function script_test:onGossipSelect(pPlayer, pObject, pSender, pIndex)
-	release_print(pSender, pIndex)
+	local maxindex = math.random(1, 3)
+
+	for i=1, maxindex do
+		pPlayer:addGossipItem(math.random(1, 3), 2, 1, math.random(1, 3))
+	end
+	pPlayer:sendGossipMenu(pObject, 1)
 end
 
 
