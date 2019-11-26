@@ -51,6 +51,7 @@ end
 
 function Object:setName(nameString)
 	self.m_Name = nameString
+	self:getPawn():setName(self.m_Name)
 end
 
 function Object:getName()

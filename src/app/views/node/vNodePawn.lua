@@ -19,5 +19,9 @@ function vNodePawn:setFlippedX(value)
 	self.m_Children["Node_Character"]:setScaleX( value and -1 or 1 )
 end
 
+function vNodePawn:setName(name)
+	self.m_Children["Label_Name"]:setString(name)
+end
+
 
 return vNodePawn

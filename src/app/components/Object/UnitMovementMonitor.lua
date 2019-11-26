@@ -63,16 +63,15 @@ function UnitMovementMonitor:jump()
 	self.m_StateMachine:setState(MovementStates.STATE_JUMP_HIGH)
 end
 
-function UnitMovementMonitor:updateDirectionByController()
-	if not self:getOwner():isControlByPlayer() then return end
-	local offset = Controller:getInstance():getHorizonOffset()
+function UnitMovementMonitor:updateDirection()
+	local offset = self:getOwner():isControlByPlayer() and Controller:getInstance():getHorizonOffset() or self.m_MoveSpeed
 	if offset == 0 then return end
 	self.m_Direction = offset > 0 and "right" or "left"
 	self:getOwner():getPawn():setFlippedX(self.m_Direction == "left" and true or false)
 end
 
 function UnitMovementMonitor:updateMovement(diff, isJumpping)
-	local offset = self:getOwner():isControlByPlayer() and self:onControllerMove(diff, isJumpping) or self:onAIMove(diff, isJumpping)
+	local offset = self:onHorizonMove(diff, isJumpping)
 	local currState = self.m_StateMachine:getCurrentState()
 	local finalState = nil
 	if currState == MovementStates.STATE_JUMP_HIGH then
@@ -92,22 +91,22 @@ function UnitMovementMonitor:updateMovement(diff, isJumpping)
 	end
 	if finalState then self.m_StateMachine:setState(finalState) end
 	self:getOwner():move(finalPos)
-	self:updateDirectionByController()
+	self:updateDirection()
 end
 
-function UnitMovementMonitor:onControllerMove(diff, isJumpping)
+function UnitMovementMonitor:onHorizonMove(diff, isJumpping)
 	if isJumpping then
 		self.m_MoveSpeed = self.m_JumpDirection == "left" and -math.abs(self.m_MoveSpeed) or math.abs(self.m_MoveSpeed)
 	else
-		local _c = Controller:getInstance()
-		self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION + (_c and _c:getHorizonOffset() or 0)
+		if self:getOwner():isControlByPlayer() then
+			local _c = Controller:getInstance()
+			self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION + (_c and _c:getHorizonOffset() or 0)
+		else
+			self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION + (self:getOwner():getAI() and self:getOwner():getAI():onAIMove(diff) or 0)
+		end
 		if math.abs(self.m_MoveSpeed) <= 0.1 then self.m_MoveSpeed = 0 end
 	end
 	return cc.p(self.m_MoveSpeed, 0)
-end
-
-function UnitMovementMonitor:onAIMove()
-	return cc.p(0, 0)
 end
 
 
@@ -119,7 +118,7 @@ function UnitMovementMonitor:onEnterIdle()
 end
 
 function UnitMovementMonitor:onExecuteIdle(diff)
-	self:updateMovement()
+	self:updateMovement(diff)
 end
 
 function UnitMovementMonitor:onExitIdle()

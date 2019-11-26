@@ -37,10 +37,7 @@ function Unit:onCreate(objType)
 	self.m_Attrs = {}
 	self.m_MovementMonitor = MovementMonitor:create(self)
 	self:setAttrToBase()
-	self:regiestCustomEventListenter("onTouchButtonX", function() release_print("onTouchButtonX") 
-		display.getWorld():testGausBlurSprite(1) display.getWorld().currentMap:setVisible(false)
-		display.getWorld():testShader(display.getWorld().ssp)
-	end)
+	self:regiestCustomEventListenter("onTouchButtonX", function() release_print("onTouchButtonX") end)
 	self:regiestCustomEventListenter("onTouchButtonY", function() release_print("onTouchButtonY") end)
 	self:regiestCustomEventListenter("onTouchButtonA", function() release_print("onTouchButtonA") end)
 	self:regiestCustomEventListenter("onControllerJump", function() if self:isControlByPlayer() then self.m_MovementMonitor:jump() end end)
@@ -57,7 +54,7 @@ end
 function Unit:initAI(AIName)
 	local currAITemplate = import(string.format("app.scripts.%s", AIName))
 	assert(currAITemplate, "Cannot Find Current AI By Path Named: ["..AIName.."]")
-	self:setAI(currAITemplate:create())
+	self:setAI(currAITemplate:create(self))
 end
 			--------------------
 			-- For Attr Issus --
@@ -125,6 +122,7 @@ end
 			-----------------------
 
 function Unit:castSpell(target, spellID)
+	if self.m_CasttingSpell then release_print("Already Castting a Spell !") return end
 	local spellTemplate = SpellMgr:getSpellTemplate(spellID)
 	if not spellTemplate then release_print("Cannot Find SpellTemplate By SpellID : "..spellID) return end
 
@@ -146,6 +144,9 @@ end
 			-- End Of Pawn Issus --
 			-----------------------
 
+function Unit:getMovementMonitor()
+	return self.m_MovementMonitor
+end
 function Unit:getMaxMoveSpeed()
 	return self:getBaseAttr("moveSpeed")
 end

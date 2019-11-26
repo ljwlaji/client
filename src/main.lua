@@ -9,7 +9,7 @@ __G__TRACKBACK__ = function(msg)
 
     -- auto genretated
     local msg = debug.traceback(msg, 3)
-    print(msg)
+    release_print(msg)
 
     -- report lua exception
     buglyReportLuaException(tostring(message), debug.traceback())
@@ -21,7 +21,6 @@ end
 
 local function main()
     require("app.MyApp"):create():run()
-	__G__TRACKBACK__("This is a test message for tencent bugly....")
 end
 
 local status, msg = xpcall(main, __G__TRACKBACK__)
