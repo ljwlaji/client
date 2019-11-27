@@ -51,8 +51,8 @@ function Map:getEntry()
 	return self.m_Entry
 end
 
-function Map:onCreate(chosedCharacterID)
-	local plr = Player:create(chosedCharacterID)
+function Map:onCreate(characterGuid)
+	local plr = Player:create(characterGuid)
     self:setPlayer(plr)
     Camera:changeFocus(plr)
 	self:loadFromDB()

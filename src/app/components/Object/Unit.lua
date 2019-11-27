@@ -33,6 +33,14 @@ function Unit:onCreate(objType)
 		moveSpeed				= 7.0,
 		jumpForce				= 8,
 		attackSpeed 			= 1000,
+
+		strength				= 0,
+		agility					= 0,
+		intelligence 			= 0,
+		spirit 					= 0,
+		stamina					= 0,
+
+
 	}
 	self.m_Attrs = {}
 	self.m_MovementMonitor = MovementMonitor:create(self)

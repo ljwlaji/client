@@ -5,12 +5,21 @@ local ShareDefine = import("app.ShareDefine")
 function Object:ctor(context)
 	self.context = context
 	self.m_Type = 0
+	self.m_Guid = 0
 	self:onNodeEvent("cleanup", handler(self, self.cleanUpBeforeDelete))
 	if self.onCreate then self:onCreate() end
 end
 
 function Object:onCreate(objType)
 	self.getType = function() return objType end
+end
+
+function Object:setGuid(guid)
+	self.m_Guid = guid
+end
+
+function Object:getGuid(guid)
+	return self.m_Guid
 end
 
 function Object:isUnit()

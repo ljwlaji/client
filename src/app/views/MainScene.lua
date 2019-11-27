@@ -156,7 +156,7 @@ function MainScene:testMapExtractor()
 end
 
 function MainScene:startGame(chosedCharacterID)
-    local MapEntry = import("app.components.DataBase"):query(string.format("SELECT * FROM character WHERE character_id = %d", chosedCharacterID))[1]["curr_map_entry"]
+    local MapEntry = import("app.components.DataBase"):query(string.format("SELECT * FROM character_instance WHERE guid = %d", chosedCharacterID))[1]["map"]
     self:tryEnterMap(MapEntry, chosedCharacterID)
 end
 

@@ -26,6 +26,30 @@ local MAP_Z_ORDERS = {
 	ZORDER_WINDOW_START		= ZORDER_START + 900, --✔
 }
 
+local INVENTORY_SLOTS = {
+	SLOT_BEGIN 			= 1,
+	SLOT_EQUIP_BEGIN 	= 1,
+
+	SLOT_HEAD			= 1,
+	SLOT_NECKLACE		= 2,
+	SLOT_SHOULDER		= 3,
+	SLOT_BACK			= 4,
+	SLOT_CHEST			= 5,
+	SLOT_WRIST			= 6,
+	SLOT_HAND			= 7,
+	SLOT_BELT			= 8,
+	SLOT_PANTS			= 9,
+	SLOT_SHOES			= 10,
+	SLOT_RING			= 11,
+	SLOT_MAIN_HAND		= 12,
+	SLOT_OFF_HAND		= 13,
+	SLOT_RANGE			= 14,
+	SLOT_EQUIP_END		= 14,
+
+	SLOT_BAG_BEGIN		= 15,
+	SLOT_BAG_END		= 143,
+}
+
 function ShareDefine.getZOrderByType(t_Type)
 	if not MAP_Z_ORDERS[t_Type] then assert(false) end
 	return MAP_Z_ORDERS[t_Type]
