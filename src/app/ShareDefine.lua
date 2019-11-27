@@ -26,29 +26,79 @@ local MAP_Z_ORDERS = {
 	ZORDER_WINDOW_START		= ZORDER_START + 900, --✔
 }
 
+local ITEM_TYPES = {
+	-- 布甲 锁甲 匕首 饰品 等
+	FABRIC 	= 1, 	--布甲
+	LEATHER = 2, 	--皮甲
+	MAIL	= 3, 	--锁甲
+	PLATE 	= 4,	--板甲
+
+	ONE_HAND_BEGIN 	= 5,
+	ONE_HAND_AXE 	= 5,	--单手斧
+	ONE_HAND_HAMMER = 6,	--单手锤
+	ONE_HAND_HAND	= 7,	--拳套
+	ONE_HAND_SWORD	= 8,	--单手剑
+	ONE_HAND_BAGGER	= 9,	--匕首
+	ONE_HAND_END	= 9,
+
+	STAFF	= 20, --魔杖
+	-- HALBERD
+}
+
 local INVENTORY_SLOTS = {
 	SLOT_BEGIN 			= 1,
 	SLOT_EQUIP_BEGIN 	= 1,
 
-	SLOT_HEAD			= 1,
+	SLOT_HELMET			= 1,
 	SLOT_NECKLACE		= 2,
 	SLOT_SHOULDER		= 3,
 	SLOT_BACK			= 4,
 	SLOT_CHEST			= 5,
-	SLOT_WRIST			= 6,
-	SLOT_HAND			= 7,
+	SLOT_BRACER			= 6,
+	SLOT_GAUNTLETS		= 7,
 	SLOT_BELT			= 8,
 	SLOT_PANTS			= 9,
-	SLOT_SHOES			= 10,
-	SLOT_RING			= 11,
-	SLOT_MAIN_HAND		= 12,
-	SLOT_OFF_HAND		= 13,
-	SLOT_RANGE			= 14,
-	SLOT_EQUIP_END		= 14,
+	SLOT_BOOTS			= 10,
+	SLOT_RING_A			= 11,
+	SLOT_RING_B			= 12,
+	SLOT_MAIN_HAND		= 13,
+	SLOT_OFF_HAND		= 14,
+	SLOT_RANGE			= 15,
+	SLOT_EQUIP_END		= 15,
 
-	SLOT_BAG_BEGIN		= 15,
+	SLOT_BAG_BEGIN		= 16,
 	SLOT_BAG_END		= 143,
 }
+
+local CHANGE_STATES = {
+	UNCHANGED 	= 0,
+	CHANGED		= 1,
+}
+
+function ShareDefine.getInventorySlotDefination()
+	return INVENTORY_SLOTS
+end
+
+function ShareDefine.isOneHandWeapon(itemType)
+	return itemType >= ITEM_TYPES.ONE_HAND_BEGIN and itemType <= ITEM_TYPES.ONE_HAND_END
+end
+
+function ShareDefine.getItemRequireSpell(itemType)
+	return itemType + 100
+end
+
+function ShareDefine.isEquipSlot(slot_id)
+	return slot_id >= INVENTORY_SLOTS.SLOT_EQUIP_BEGIN and slot_id <= INVENTORY_SLOTS.SLOT_EQUIP_END
+end
+
+function ShareDefine.UnChangeState()
+	return CHANGE_STATES["UNCHANGED"]
+end
+
+function ShareDefine.changedState()
+	return CHANGE_STATES["CHANGED"]
+end
+
 
 function ShareDefine.getZOrderByType(t_Type)
 	if not MAP_Z_ORDERS[t_Type] then assert(false) end

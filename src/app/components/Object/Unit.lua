@@ -1,3 +1,4 @@
+local DataBase 			= import("app.components.DataBase")
 local Object 			= import("app.components.Object.Object")
 local Pawn 				= import("app.views.node.vNodePawn")
 local MovementMonitor 	= import("app.components.Object.UnitMovementMonitor")
@@ -45,9 +46,9 @@ function Unit:onCreate(objType)
 	self.m_Attrs = {}
 	self.m_MovementMonitor = MovementMonitor:create(self)
 	self:setAttrToBase()
-	self:regiestCustomEventListenter("onTouchButtonX", function() release_print("onTouchButtonX") end)
-	self:regiestCustomEventListenter("onTouchButtonY", function() release_print("onTouchButtonY") end)
-	self:regiestCustomEventListenter("onTouchButtonA", function() release_print("onTouchButtonA") end)
+	self:regiestCustomEventListenter("onTouchButtonX", function() end)
+	self:regiestCustomEventListenter("onTouchButtonY", function() end)
+	self:regiestCustomEventListenter("onTouchButtonA", function() end)
 	self:regiestCustomEventListenter("onControllerJump", function() if self:isControlByPlayer() then self.m_MovementMonitor:jump() end end)
 	Object.onCreate(self, objType)
 end
@@ -57,6 +58,26 @@ function Unit:onUpdate(diff)
 	-- end of testting --
 	Object.onUpdate(self, diff)
 	self.m_MovementMonitor:update(diff)
+end
+
+function Unit:setClass(class)
+	self.m_Class = class
+end
+
+function Unit:getClass()
+	return self.m_Class
+end
+
+function Unit:getLevel()
+	return self.m_Level
+end
+
+function Unit:setLevel(lvl)
+	self.m_Level = lvl
+end
+
+function Unit:getClassString()
+	return DataBase:getStringByID(self:getClass() + 100)
 end
 
 function Unit:initAI(AIName)

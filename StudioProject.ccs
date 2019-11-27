@@ -10,8 +10,9 @@
           <Folder Name="layer">
             <Project Name="CSB_HUD_Layer.csd" Type="Layer" />
             <Project Name="CSB_Layer_Entrance.csd" Type="Layer" />
-            <Project Name="CSB_Layer_Gossip_Menu.csd" Type="Layer" />
             <Project Name="CSB_Layer_Inventory.csd" Type="Layer" />
+            <Project Name="CSB_Layer_Gossip_Menu.csd" Type="Node" />
+            <Project Name="CSB_Layer_Equipment.csd" Type="Node" />
           </Folder>
           <Folder Name="maps">
             <Project Name="0.csd" Type="Layer" />
@@ -19,12 +20,20 @@
           <Folder Name="node">
             <Project Name="CSB_Node_Controller.csd" Type="Layer" />
             <Project Name="CSB_Node_Controller_New.csd" Type="Layer" />
+            <Project Name="CSB_Node_GossipItem.csd" Type="Node" />
             <Project Name="CSB_Node_HUD_Button.csd" Type="Layer" />
             <Project Name="CSB_Node_Pawn.csd" Type="Node" />
-            <Project Name="CSB_Node_GossipItem.csd" Type="Node" />
           </Folder>
         </Folder>
         <Folder Name="ui">
+          <Folder Name="common">
+            <Image Name="icon_Compose.png" />
+            <Image Name="icon_Disenchant.png" />
+            <Image Name="Icon_Enchant.png" />
+            <Image Name="Icon_Pet.png" />
+            <Image Name="x_anxia.png" />
+            <Image Name="yellow.png" />
+          </Folder>
           <Folder Name="csb">
             <Folder Name="layer">
               <Folder Name="Layer_Entrance">
@@ -33,6 +42,15 @@
               <Folder Name="Layer_Gossip_Menu">
                 <Image Name="bg_specal.png" />
               </Folder>
+              <Folder Name="Layer_Inventory">
+                <Image Name="helmet.png" />
+                <Image Name="necklace.png" />
+                <Image Name="boots.png" />
+                <Image Name="misc.png" />
+                <Image Name="chest.png" />
+                <Image Name="yupei2.png" />
+                <Image Name="weapon.png" />
+              </Folder>
             </Folder>
           </Folder>
           <Folder Name="GameObject">
@@ -40,14 +58,6 @@
           </Folder>
           <Image Name="Controller.jpg" />
           <Image Name="Controller_BG.jpg" />
-          <Folder Name="common">
-            <Image Name="Icon_Pet.png" />
-            <Image Name="Icon_Enchant.png" />
-            <Image Name="icon_Compose.png" />
-            <Image Name="icon_Disenchant.png" />
-            <Image Name="x_anxia.png" />
-            <Image Name="yellow.png" />
-          </Folder>
         </Folder>
       </RootFolder>
     </Group>

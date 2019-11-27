@@ -34,7 +34,6 @@ end
 
 function ViewBaseEx:onCleanup_()
 	if self._isNodeSyncUpdateEnabled == true then display.getWorld():removeNodeFromSyncUpdateList(self) end
-	rawset(self.class, "inDisplay", nil)
 	if self.onCleanup then self:onCleanup() end
 end
 

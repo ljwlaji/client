@@ -8,6 +8,24 @@ local DBPATH    = "res/datas.db"
 
 function DataBase:ctor()
 	self:openDB()
+    self.m_ItemTemplate = nil
+end
+
+function DataBase:fetchItemTemplate()
+    local queryResult = self:query("SELECT * FROM item_template")
+    local itemTmeplate = {}
+    for k, v in pairs(queryResult) do
+        v.attrs = loadstring("return "..v.attrs)()
+        v.spells = loadstring("return "..v.spells)()
+        itemTmeplate[v.entry] = v
+    end
+
+    return itemTmeplate
+end
+
+function DataBase:getItemTemplateByEntry(itemEntry)
+    self.m_ItemTemplate = self.m_ItemTemplate or self:fetchItemTemplate()
+    return self.m_ItemTemplate[itemEntry]
 end
 
 function DataBase:openDB()

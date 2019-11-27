@@ -13,6 +13,7 @@ end
 function Player:onCreate()
 	Unit.onCreate(self, ShareDefine:playerType())
 	self.m_InventoryData = {}
+	self.m_ActivatedSpells = {} --Activated Spells 当身上有相同法术存留的时候只覆盖
 	self:setAlive(true)
 	self:loadFromDB()
 	self:initAvatar()
@@ -28,32 +29,39 @@ function Player:loadFromDB()
 	local queryResult = nil
 	local sql = "SELECT * FROM character_instance AS I JOIN character_template AS T ON I.class = T.class AND I.gender = T.gender WHERE I.guid = %d"
 	queryResult = DataBase:query(string.format(sql, self.context))[1]
+	self:setClass(queryResult.class)
+	self:setLevel(queryResult.level)
+	self:setName(queryResult.name)
 	self:setGuid(queryResult.guid)
 	self.context = queryResult
 	self:loadInventoryFromDB()
+	self:loadActivatedSpellFromDB()
+end
 
-	-- Create Current Item Instances
+function Player:loadActivatedSpellFromDB()
+	local sql = "SELECT * FROM spell_activated WHERE character_guid = '%d'"
+	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
+	for k, v in pairs(queryResult) do
+		self.m_ActivatedSpells[v.spell_id] = v
+	end
+end
 
-	dump(self.m_InventoryData)
+function Player:saveActivatedSpellFromDB()
+	local sql = "DELETE * FROM spell_activated WHERE character_guid = %d"
+	DataBase:query(string.format(sql, self:getGuid()))
+	sql = "REPLACE INTO spell_activated(character_guid, spell_id, time_left) VALUES('%d', '%d', '%d')"
+	for k, v in pairs(self.m_ActivatedSpells) do
+		DataBase:query(string.format(sql, self:getGuid(), v.spell_id, v.time_left))
+	end 
 end
 
 function Player:loadInventoryFromDB()
 	local sql = "SELECT * FROM character_inventory WHERE character_guid = %d"
 	local queryResult = DataBase:query(string.format(sql, self.context.guid)) or {}
 	for k, v in pairs(queryResult) do
+		v.template = DataBase:getItemTemplateByEntry(v.item_entry)
 		self.m_InventoryData[v.slot_id] = v
 	end
-end
-
-function Player:initAvatar()
-	local sp = cc.Sprite:create("res/player.png"):addTo(self:getPawn().m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
-    self:move(self.context.pos_x, self.context.pos_y)
-    	:setLocalZOrder(1)
-    	:setContentSize(sp:getContentSize())
-end
-
-function Player:onUpdate(diff)
-	Unit.onUpdate(self, diff)
 end
 
 function Player:saveToDB()
@@ -66,17 +74,40 @@ function Player:saveToDB()
 									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY()))
 
 	self:saveInventoryToDB()
+	self:saveActivatedSpellFromDB()
 end
 
 function Player:saveInventoryToDB()
 	--											  
-	local sql = [[REPLACE INTO character_inventory(character_guid, slot_id, item_entry, item_guid, item_amount) 
-											VALUES('%d', 		   '%d',	'%d',		'%d',	   '%d')]]
+	local sql = [[REPLACE INTO character_inventory(character_guid, slot_id, item_entry, item_guid, item_amount, enchant, durable) 
+											VALUES('%d', 		   '%d',	'%d',		'%d',	   '%d',		%d,		 %d)]]
 	for k, v in pairs(self.m_InventoryData) do
-		DataBase:query(string.format( sql, v.character_guid, v.slot_id, v.item_entry, v.item_guid, v.item_amount ))
-		-- Need Save Item Instance To DB
-		-- alater...
+		DataBase:query(string.format( sql, v.character_guid, v.slot_id, v.item_entry, v.item_guid, v.item_amount, v.enchant, v.durable ))
 	end
+end
+
+function Player:getInventoryData()
+	return self.m_InventoryData
+end
+
+function Player:initAvatar()
+	local sp = cc.Sprite:create("res/player.png"):addTo(self:getPawn().m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
+    self:move(self.context.pos_x, self.context.pos_y)
+    	:setLocalZOrder(1)
+    	:setContentSize(sp:getContentSize())
+end
+
+function Player:canEquip(itemData)
+	local itemTemplate = itemData.template
+	if itemTemplate.require_class then return false end
+
+
+
+	return true
+end
+
+function Player:onUpdate(diff)
+	Unit.onUpdate(self, diff)
 end
 
 function Player:resetGossipList()

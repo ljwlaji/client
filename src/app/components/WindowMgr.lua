@@ -33,7 +33,6 @@ function WindowMgr:removeWindow(window)
 		end
 	end
 	self:sortZOrder()
-	dump(self.m_Windows)
 end
 
 function WindowMgr:sortZOrder()
@@ -46,17 +45,20 @@ function WindowMgr:createWindow(path, ...)
 	local template = import(path)
 	if rawget(template, "DisableDuplicateCreation") == true and rawget(template, "inDisplay") then 
         print("\nModule <"..template.__cname.."> Was Disabled For Duplicate Creation, Call onReset Instead.")
-        local currentWindow, index = self:findWindowByClassName(template.__cname)
+        local currentWindow, index = self:findWindowIndexByClassName(template.__cname)
         if currentWindow and currentWindow.onReset then currentWindow:onReset(...) end
         table.insert(self.m_Windows, table.remove(self.m_Windows, index))
         self:sortZOrder()
         return
     end
 	local window = template:create(display.getWorld():getApp(), template.__cname, ...):addTo(display.getWorld())
+	rawset(template, "inDisplay", true)
+    window:setAnchorPoint(0.5, 0.5):move(display.center)
 	table.insert(self.m_Windows, window)
 	self:sortZOrder()
 	local temp = window.onCleanup
 	window.onCleanup = function(...)
+		rawset(template, "inDisplay", nil)
 		self:removeWindow(window)
 		if temp then temp(...) end
 	end
