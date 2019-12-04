@@ -24,6 +24,7 @@ end
 function SkillButtons:onTouchButtonY(e)
 	if e.name ~= "ended" then return end
 	self:sendAppMsg("onTouchButtonY")
+	WindowMgr:createWindow("app.views.layer.vLayerInventory")
 end
 
 function SkillButtons:onTouchButtonA(e)

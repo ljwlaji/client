@@ -45,10 +45,11 @@ local ITEM_TYPES = {
 	-- HALBERD
 }
 
-local INVENTORY_SLOTS = {
-	SLOT_BEGIN 			= 1,
-	SLOT_EQUIP_BEGIN 	= 1,
 
+local INVENTORY_BASE_SLOT_COUNT = 16
+
+local INVENTORY_SLOTS = {
+	SLOT_EQUIP_BEGIN 	= 1,
 	SLOT_HELMET			= 1,
 	SLOT_NECKLACE		= 2,
 	SLOT_SHOULDER		= 3,
@@ -66,8 +67,12 @@ local INVENTORY_SLOTS = {
 	SLOT_RANGE			= 15,
 	SLOT_EQUIP_END		= 15,
 
+	SLOT_CONTAINER_BEGIN = 16,
+	SLOT_CONTAINER_END	 = 23,
+
+	SLOT_INVENTORY_BEGIN = 24,
+
 	SLOT_BAG_BEGIN		= 16,
-	SLOT_BAG_END		= 143,
 }
 
 local CHANGE_STATES = {
@@ -75,8 +80,32 @@ local CHANGE_STATES = {
 	CHANGED		= 1,
 }
 
-function ShareDefine.getInventorySlotDefination()
-	return INVENTORY_SLOTS
+function ShareDefine.getItemIconPath(template)
+	return string.format("res/ui/icon/%s", template.icon)
+end
+
+function ShareDefine.containerSlotBegin()
+	return INVENTORY_SLOTS.SLOT_CONTAINER_BEGIN
+end
+
+function ShareDefine.containerSlotEnd()
+	return INVENTORY_SLOTS.SLOT_CONTAINER_END
+end
+
+function ShareDefine.inventoryBaseSlotCount()
+	return INVENTORY_BASE_SLOT_COUNT
+end
+
+function ShareDefine.inventorySlotBegin()
+	return INVENTORY_SLOTS.SLOT_INVENTORY_BEGIN
+end
+
+function ShareDefine.equipSlotBegin()
+	return INVENTORY_SLOTS.SLOT_EQUIP_BEGIN
+end
+
+function ShareDefine.equipSlotEnd()
+	return INVENTORY_SLOTS.SLOT_EQUIP_END
 end
 
 function ShareDefine.isOneHandWeapon(itemType)

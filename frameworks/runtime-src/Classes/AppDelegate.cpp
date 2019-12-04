@@ -31,7 +31,7 @@
 #include "lfs.h"
 
 // 导入头文件 CrashReport.h
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 #include "TencentBugly/CrashReport.h"
 #include "TencentBugly/lua/BuglyLuaAgent.h"
 #endif
@@ -53,6 +53,9 @@ using namespace CocosDenshion;
 
 USING_NS_CC;
 using namespace std;
+
+const char* luaKey = "19900530Aa";
+const char* luaSign = "firecore";
 
 AppDelegate::AppDelegate()
 {
@@ -98,7 +101,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     // register lua module
     auto engine = LuaEngine::getInstance();
     // For Bugly Issus
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     CrashReport::initCrashReport("86536930d0", false);
     BuglyLuaAgent::registerLuaExceptionHandler(engine);
 #endif
@@ -113,7 +116,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     register_all_packages();
 
     LuaStack* stack = engine->getLuaStack();
-    stack->setXXTEAKeyAndSign("2dxLua", strlen("2dxLua"), "XXTEA", strlen("XXTEA"));
+    stack->setXXTEAKeyAndSign(luaKey, strlen(luaKey), luaSign, strlen(luaSign));
 
     //register custom function
     //LuaStack* stack = engine->getLuaStack();

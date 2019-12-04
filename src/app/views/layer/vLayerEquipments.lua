@@ -11,8 +11,6 @@ vLayerEquipments.RESOURCE_BINDING = {
 	ButtonExit = "Exit"
 }
 
-local InventorySlots = ShareDefine.getInventorySlotDefination()
-
 function vLayerEquipments:onCreate()
 
 end
@@ -26,7 +24,7 @@ function vLayerEquipments:onReset()
 			self.datas[slot_id] = itemData
 		end
 	end
-	for slotID = InventorySlots.SLOT_EQUIP_BEGIN, InventorySlots.SLOT_EQUIP_END do
+	for slotID = ShareDefine.equipSlotBegin(), ShareDefine.equipSlotEnd() do
 		self.m_Children["Slot_"..slotID]:removeAllChildren()
 	end
 	self:refreshAllSlots()
@@ -36,7 +34,7 @@ end
 function vLayerEquipments:refreshAllSlots()
 	for slotID, v in pairs(self.datas) do
 		local slot = self.m_Children["Slot_"..slotID]
-		cc.Sprite:create(string.format("res/ui/icon/%s", v.template.icon))
+		cc.Sprite:create(ShareDefine.getItemIconPath(v.template))
 				 :addTo(slot)
 				 :move(slot:getContentSize().width * 0.5, slot:getContentSize().height * 0.5)
 	end

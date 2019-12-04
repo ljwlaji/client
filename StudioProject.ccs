@@ -10,9 +10,10 @@
           <Folder Name="layer">
             <Project Name="CSB_HUD_Layer.csd" Type="Layer" />
             <Project Name="CSB_Layer_Entrance.csd" Type="Layer" />
-            <Project Name="CSB_Layer_Inventory.csd" Type="Layer" />
-            <Project Name="CSB_Layer_Gossip_Menu.csd" Type="Node" />
             <Project Name="CSB_Layer_Equipment.csd" Type="Node" />
+            <Project Name="CSB_Layer_Gossip_Menu.csd" Type="Node" />
+            <Project Name="CSB_Layer_Inventory.csd" Type="Node" />
+            <Project Name="CSB_Layer_Talent.csd" Type="Node" />
           </Folder>
           <Folder Name="maps">
             <Project Name="0.csd" Type="Layer" />
@@ -23,6 +24,9 @@
             <Project Name="CSB_Node_GossipItem.csd" Type="Node" />
             <Project Name="CSB_Node_HUD_Button.csd" Type="Layer" />
             <Project Name="CSB_Node_Pawn.csd" Type="Node" />
+            <Project Name="CSB_Node_InventorySlot.csd" Type="Node" />
+            <Project Name="CSB_Node_InventoryCatagory.csd" Type="Node" />
+            <Project Name="CSB_Node_ItemIcon.csd" Type="Node" />
           </Folder>
         </Folder>
         <Folder Name="ui">
@@ -30,6 +34,7 @@
             <Image Name="icon_Compose.png" />
             <Image Name="icon_Disenchant.png" />
             <Image Name="Icon_Enchant.png" />
+            <Image Name="icon_frame.png" />
             <Image Name="Icon_Pet.png" />
             <Image Name="x_anxia.png" />
             <Image Name="yellow.png" />
@@ -43,13 +48,19 @@
                 <Image Name="bg_specal.png" />
               </Folder>
               <Folder Name="Layer_Inventory">
-                <Image Name="helmet.png" />
-                <Image Name="necklace.png" />
+                <Image Name="bg_inv.png" />
                 <Image Name="boots.png" />
-                <Image Name="misc.png" />
                 <Image Name="chest.png" />
-                <Image Name="yupei2.png" />
+                <Image Name="helmet.png" />
+                <Image Name="inv_catagory_bg.png" />
+                <Image Name="misc.png" />
+                <Image Name="necklace.png" />
                 <Image Name="weapon.png" />
+                <Image Name="yupei2.png" />
+              </Folder>
+              <Folder Name="Layer_Talent">
+                <Image Name="nationa_day_bg.png" />
+                <Image Name="zhu.png" />
               </Folder>
             </Folder>
           </Folder>
