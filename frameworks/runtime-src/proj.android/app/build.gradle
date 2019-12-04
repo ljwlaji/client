@@ -159,9 +159,20 @@ def compileLua(srcDir, dstDir, doCompile, is64bit, doEncrypt) {
     }
 }
 
+// 编译命令        cd到prj.android目录 && chmod 777 ./app/get_environment.sh
+// 编译debug      ./gradlew assembledebug
+// 编译release    ./gradlew assemblerelease
 android.applicationVariants.all { variant ->
-    def project_root_folder = "${buildDir}/../../../../"
+    def project_root_folder = "/Users/ljw/WorkSpace/client"
+
     def dest_assets_folder = "${buildDir}/intermediates/merged_assets/${variant.dirName}/out"
+    if (variant.name.compareTo('release') == 0)
+        dest_assets_folder = "${buildDir}/intermediates/merged_assets/${variant.dirName}/mergeReleaseAssets/out"
+    else
+        dest_assets_folder = "${buildDir}/intermediates/merged_assets/${variant.dirName}/mergeDebugAssets/out"
+
+    println(variant.name)
+    println("Folder : " + dest_assets_folder);
     // ${buildDir}/intermediates/assets/${variant.dirName}/
 
     // delete previous files first
@@ -177,17 +188,12 @@ android.applicationVariants.all { variant ->
             from project_root_folder + "/src"
             into dest_assets_folder + "/src"
         }
-        // copy {
-        //     from "${buildDir}/../../../../cocos2d-x/cocos/scripting/lua-bindings/script"
-        //     into  dest_assets_folder + "/src/cocos"
-        // }
 
         // compile & encrypt the scripts if necessary
         def compileScript = (variant.name.compareTo('release') == 0)
         if (project.hasProperty('PROP_COMPILE_SCRIPT')) {
             compileScript = (PROP_COMPILE_SCRIPT.compareTo('1') == 0)
         }
-
         def encryptLua = project.hasProperty('PROP_LUA_ENCRYPT') && (PROP_LUA_ENCRYPT.compareTo('1') == 0)
         if (compileScript || encryptLua) {
             // -1 means not build bytecode
@@ -219,21 +225,20 @@ android.applicationVariants.all { variant ->
                     buildType = 0
                 }
             }
-
             // invoke cocos command to compile & encrypt the lua files
             switch (buildType) {
                 case -1:
-                    compileLua(dest_assets_folder + "/src",
+                    compileLua(project_root_folder + "/src",
                             dest_assets_folder + "/src",
                             false, false, encryptLua)
                     break
                 case 0:
-                    compileLua(dest_assets_folder + "/src",
+                    compileLua(project_root_folder + "/src",
                             dest_assets_folder + "/src",
                             true, false, encryptLua)
                     break
                 case 1:
-                    compileLua(dest_assets_folder + "/src",
+                    compileLua(project_root_folder + "/src",
                             dest_assets_folder + "/src/64bit",
                             true, true, encryptLua)
 
@@ -244,10 +249,10 @@ android.applicationVariants.all { variant ->
                     delete dest_assets_folder + "/src/cocos"
                     break
                 case 2:
-                    compileLua(dest_assets_folder + "/src",
+                    compileLua(project_root_folder + "/src",
                             dest_assets_folder + "/src/64bit",
                             true, true, encryptLua)
-                    compileLua(dest_assets_folder + "/src",
+                    compileLua(project_root_folder + "/src",
                             dest_assets_folder + "/src",
                             true, false, encryptLua)
                     break
