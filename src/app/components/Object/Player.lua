@@ -14,6 +14,7 @@ function Player:onCreate()
 	Unit.onCreate(self, ShareDefine:playerType())
 	self.m_InventoryData = {}
 	self.m_ActivatedSpells = {} --Activated Spells 当身上有相同法术存留的时候只覆盖
+	self.m_LearnedSpells = {}
 	self:setAlive(true)
 	self:loadFromDB()
 	self:initAvatar()
@@ -35,7 +36,29 @@ function Player:loadFromDB()
 	self:setGuid(queryResult.guid)
 	self.context = queryResult
 	self:loadInventoryFromDB()
+	self:loadAllLearnedSpellsFromDB()
 	self:loadActivatedSpellFromDB()
+end
+
+function Player:getLearnedSpells()
+	return self.m_LearnedSpells
+end
+
+function Player:loadAllLearnedSpellsFromDB()
+	local sql = "SELECT * FROM character_spells WHERE character_guid = '%d'"
+	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
+	for _, singleData in pairs(queryResult) do
+		table.insert(self.m_LearnedSpells, singleData.spell_id)
+	end
+end
+
+function Player:saveAllLearnedSpellToDB()
+	local sql = "DELETE * FROM character_spells WHERE character_guid = %d"
+	DataBase:query(sql)
+	sql = "REPLACE INTO character_spells(character_guid, spell_id) VALUES('%d', '%d')"
+	for _, spell_id in pairs(self.m_LearnedSpells) do
+		DataBase:query(string.format(sql, self:getGuid(), spell_id))
+	end
 end
 
 function Player:loadActivatedSpellFromDB()
@@ -75,6 +98,7 @@ function Player:saveToDB()
 
 	self:saveInventoryToDB()
 	self:saveActivatedSpellFromDB()
+	self:saveAllLearnedSpellToDB()
 end
 
 function Player:saveInventoryToDB()
@@ -100,7 +124,6 @@ end
 function Player:canEquip(itemData)
 	local itemTemplate = itemData.template
 	if itemTemplate.require_class then return false end
-
 
 
 	return true

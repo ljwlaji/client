@@ -16,7 +16,7 @@ end
 
 function MainScene:onEnterTransitionFinish()
     self:run()
-    self:createView("layer.LayerEntrance", function() 
+    self:createView("layer.LayerEntrance", function()
         self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
         self:startGame(1)
     end):addTo(self)
@@ -156,6 +156,7 @@ function MainScene:testMapExtractor()
 end
 
 function MainScene:startGame(chosedCharacterID)
+    import("app.components.SpellMgr"):loadFromDB()
     local MapEntry = import("app.components.DataBase"):query(string.format("SELECT * FROM character_instance WHERE guid = %d", chosedCharacterID))[1]["map"]
     self:tryEnterMap(MapEntry, chosedCharacterID)
 end

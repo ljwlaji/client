@@ -1,3 +1,4 @@
+local DataBase = import("app.components.DataBase")
 local SpellMgr = class("SpellMgr")
 
 SpellMgr.instance = nil
@@ -9,8 +10,17 @@ function SpellMgr:getInstance()
 	return SpellMgr.instance
 end
 
-function SpellMgr:loadFromDB()
+function SpellMgr:ctor()
+	self.m_SpellTemplates = {}
+end
 
+function SpellMgr:loadFromDB()
+	local queryResult = DataBase:query("SELECT * FROM spell_template")
+	for k, v in pairs(queryResult) do
+		self.m_SpellTemplates[v.entry] = v
+	end
+
+	dump(self.m_SpellTemplates)
 end
 
 function SpellMgr:getSpellTemplate(spellID)

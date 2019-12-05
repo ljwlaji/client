@@ -30,6 +30,7 @@ end
 function SkillButtons:onTouchButtonA(e)
 	if e.name ~= "ended" then return end
 	self:sendAppMsg("onTouchButtonA")
+	WindowMgr:createWindow("app.views.layer.vLayerSpellBook")
 end
 
 function SkillButtons:onTouchButtonB(e)

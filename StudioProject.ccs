@@ -14,6 +14,8 @@
             <Project Name="CSB_Layer_Gossip_Menu.csd" Type="Node" />
             <Project Name="CSB_Layer_Inventory.csd" Type="Node" />
             <Project Name="CSB_Layer_Talent.csd" Type="Node" />
+            <Project Name="CSB_Layer_GameLoading.csd" Type="Layer" />
+            <Project Name="CSB_Layer_SpellBook.csd" Type="Node" />
           </Folder>
           <Folder Name="maps">
             <Project Name="0.csd" Type="Layer" />
@@ -23,10 +25,11 @@
             <Project Name="CSB_Node_Controller_New.csd" Type="Layer" />
             <Project Name="CSB_Node_GossipItem.csd" Type="Node" />
             <Project Name="CSB_Node_HUD_Button.csd" Type="Layer" />
-            <Project Name="CSB_Node_Pawn.csd" Type="Node" />
-            <Project Name="CSB_Node_InventorySlot.csd" Type="Node" />
             <Project Name="CSB_Node_InventoryCatagory.csd" Type="Node" />
+            <Project Name="CSB_Node_InventorySlot.csd" Type="Node" />
             <Project Name="CSB_Node_ItemIcon.csd" Type="Node" />
+            <Project Name="CSB_Node_Pawn.csd" Type="Node" />
+            <Project Name="CSB_Node_SpellBookCell.csd" Type="Node" />
           </Folder>
         </Folder>
         <Folder Name="ui">
@@ -61,6 +64,12 @@
               <Folder Name="Layer_Talent">
                 <Image Name="nationa_day_bg.png" />
                 <Image Name="zhu.png" />
+              </Folder>
+              <Folder Name="Layer_GameLoading">
+                <Image Name="bg_gameloading.png" />
+              </Folder>
+              <Folder Name="Layer_SpellBook">
+                <Image Name="bg_spellbook.png" />
               </Folder>
             </Folder>
           </Folder>

@@ -80,6 +80,10 @@ local CHANGE_STATES = {
 	CHANGED		= 1,
 }
 
+function ShareDefine.getLanguageMode()
+	return device.language == "cn" and "zh_cn" or "en_us"
+end
+
 function ShareDefine.getItemIconPath(template)
 	return string.format("res/ui/icon/%s", template.icon)
 end

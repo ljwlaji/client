@@ -1,9 +1,12 @@
-local Utils = import("app.components.Utils")
-local DataBase = class("DataBase")
+local Utils             = import("app.components.Utils")
+local ShareDefine       = import("app.ShareDefine")
+local DataBase          = class("DataBase")
 
 DataBase.instance = nil
-local DevMode   = import("app.ShareDefine"):isDevMode()
-local DBPATH    = "res/datas.db"
+
+local languageMode  = ShareDefine.getLanguageMode()
+local DevMode       = ShareDefine.isDevMode()
+local DBPATH        = "res/datas.db"
 
 
 function DataBase:ctor()
@@ -35,9 +38,8 @@ function DataBase:openDB()
 end
 
 function DataBase:getStringByID(id)
-    local location = "zh_cn"
-    local queryResult = self:query("SELECT * FROM string_template WHERE id = "..id)
-    return #queryResult == 1 and queryResult[1][location] or "NullString"
+    local queryResult = self:query(string.format("SELECT * FROM string_template WHERE id = %d", id))
+    return #queryResult == 1 and queryResult[1][languageMode] or "NullString"
 end
 
 function DataBase.getInstance()
