@@ -1,5 +1,6 @@
 local ViewBaseEx 			= import("app.views.ViewBaseEx")
 local ShareDefine			= import("app.ShareDefine")
+local WindowMgr				= import("app.components.WindowMgr")
 local vNodeInventorySlot 	= class("vNodeInventorySlot", ViewBaseEx)
 
 vNodeInventorySlot.RESOURCE_FILENAME = "res/csb/node/CSB_Node_InventorySlot.csb"
@@ -22,9 +23,16 @@ function vNodeInventorySlot:onReset(context)
 end
 
 function vNodeInventorySlot:onTouchSlot(e)
-	if e.name ~= "ended" then return end
-	if cc.pGetDistance(e.target:getTouchBeganPosition(), e.target:getTouchEndPosition()) > 20 then return end
-	release_print("onTouchSlot")
+	if e.name ~= "ended" or self.context == "null" then return end
+	WindowMgr:createWindow("app.views.layer.vLayerItemDetail", self.context)
+	do return end
+	local window = WindowMgr:findWindowIndexByClassName("vLayerItemDetail")
+	if e.name == "ended" or e.name == "cancelled" then
+		if window then window:removeFromParent() end
+		return 
+	end
+	if window then return end
+	WindowMgr:createWindow("app.views.layer.vLayerItemDetail"):onReset(self.context)
 end
 
 return vNodeInventorySlot

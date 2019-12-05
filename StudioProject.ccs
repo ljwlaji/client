@@ -16,6 +16,7 @@
             <Project Name="CSB_Layer_Talent.csd" Type="Node" />
             <Project Name="CSB_Layer_GameLoading.csd" Type="Layer" />
             <Project Name="CSB_Layer_SpellBook.csd" Type="Node" />
+            <Project Name="CSB_Layer_ItemDetail.csd" Type="Node" />
           </Folder>
           <Folder Name="maps">
             <Project Name="0.csd" Type="Layer" />
@@ -30,6 +31,8 @@
             <Project Name="CSB_Node_ItemIcon.csd" Type="Node" />
             <Project Name="CSB_Node_Pawn.csd" Type="Node" />
             <Project Name="CSB_Node_SpellBookCell.csd" Type="Node" />
+            <Project Name="CSB_Node_ItemDetail_Upper.csd" Type="Node" />
+            <Project Name="CSB_Node_ItemDetail_Line.csd" Type="Node" />
           </Folder>
         </Folder>
         <Folder Name="ui">

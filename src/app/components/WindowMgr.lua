@@ -16,9 +16,11 @@ end
 
 function WindowMgr:findWindowIndexByClassName(className)
 	local ret = nil
+	local index = nil
 	for i=1, #self.m_Windows do
 		if self.m_Windows[i].__cname == className then
 			ret = self.m_Windows[i]
+			index = i
 			break
 		end
 	end
@@ -37,7 +39,7 @@ end
 
 function WindowMgr:sortZOrder()
 	for i=1, #self.m_Windows do
-		self.m_Windows[i]:setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_WINDOW_START"))
+		self.m_Windows[i]:setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_WINDOW_START") + i)
 	end
 end
 

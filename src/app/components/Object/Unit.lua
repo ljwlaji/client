@@ -40,8 +40,6 @@ function Unit:onCreate(objType)
 		intelligence 			= 0,
 		spirit 					= 0,
 		stamina					= 0,
-
-
 	}
 	self.m_Attrs = {}
 	self.m_MovementMonitor = MovementMonitor:create(self)

@@ -28,20 +28,27 @@ local MAP_Z_ORDERS = {
 
 local ITEM_TYPES = {
 	-- 布甲 锁甲 匕首 饰品 等
-	FABRIC 	= 1, 	--布甲
-	LEATHER = 2, 	--皮甲
-	MAIL	= 3, 	--锁甲
-	PLATE 	= 4,	--板甲
+	AMMOR_TYPE_BEGIN 	= 1,
+	FABRIC 				= 1, 	--布甲
+	LEATHER 			= 2, 	--皮甲
+	MAIL				= 3, 	--锁甲
+	PLATE 				= 4,	--板甲
+	AMMOR_TYPE_END 		= 4,
 
-	ONE_HAND_BEGIN 	= 5,
-	ONE_HAND_AXE 	= 5,	--单手斧
-	ONE_HAND_HAMMER = 6,	--单手锤
-	ONE_HAND_HAND	= 7,	--拳套
-	ONE_HAND_SWORD	= 8,	--单手剑
-	ONE_HAND_BAGGER	= 9,	--匕首
-	ONE_HAND_END	= 9,
+	ONE_HAND_BEGIN 		= 5,
+	ONE_HAND_AXE 		= 5,	--单手斧
+	ONE_HAND_HAMMER 	= 6,	--单手锤
+	ONE_HAND_HAND		= 7,	--拳套
+	ONE_HAND_SWORD		= 8,	--单手剑
+	ONE_HAND_BAGGER		= 9,	--匕首
+	ONE_HAND_END		= 9,
 
-	STAFF	= 20, --魔杖
+	RANGE_BEGIN			= 10,
+	STAFF				= 10, --魔杖
+
+	RANGE_END			= 13,
+
+	CONTAINER 			= 20,
 	-- HALBERD
 }
 
@@ -60,7 +67,7 @@ local INVENTORY_SLOTS = {
 	SLOT_BELT			= 8,
 	SLOT_PANTS			= 9,
 	SLOT_BOOTS			= 10,
-	SLOT_RING_A			= 11,
+	SLOT_RING_A			= 11, -- database type
 	SLOT_RING_B			= 12,
 	SLOT_MAIN_HAND		= 13,
 	SLOT_OFF_HAND		= 14,
@@ -75,10 +82,57 @@ local INVENTORY_SLOTS = {
 	SLOT_BAG_BEGIN		= 16,
 }
 
+local STATE_INDEXES = {
+	maxHealth 				= 1,
+	maxMana 				= 2,
+	maxRage					= 3,
+	maxEnergy				= 4,
+	attackPower 			= 5,
+	magicAttackPower 		= 6,
+	defence 				= 7,
+	magicDefence 			= 8,
+	moveSpeed				= 9,
+	jumpForce				= 10,
+	attackSpeed 			= 11,
+	strength				= 12,
+	agility					= 13,
+	intelligence 			= 14,
+	spirit 					= 15,
+	stamina					= 16,
+}
+
 local CHANGE_STATES = {
 	UNCHANGED 	= 0,
 	CHANGED		= 1,
 }
+
+function ShareDefine.getQualityColor(quality)
+	local ret = cc.c3b(200,200,200)
+	if quality == 1 then
+		ret = cc.c3b(255,255,255)
+	elseif quality == 2 then
+		ret = cc.c3b(118,249,75)
+	elseif quality == 3 then
+		ret = cc.c3b(40,112,215)
+	elseif quality == 3 then
+		ret = cc.c3b(148,117,230)
+	elseif quality == 3 then
+		ret = cc.c3b(148,117,230)
+	end
+	return ret
+end
+
+function ShareDefine.getStateIndexByStateName(stateName)
+	return STATE_INDEXES[stateName] + 400
+end
+
+function ShareDefine.getStateStringByStateName(stateName)
+	return import("app.components.DataBase"):getStringByID(ShareDefine.getStateIndexByStateName(stateName))
+end
+
+function ShareDefine.isAmmorType(itemType)
+	return itemType >= ITEM_TYPES.AMMOR_TYPE_BEGIN and itemType <= ITEM_TYPES.AMMOR_TYPE_END
+end
 
 function ShareDefine.getLanguageMode()
 	return device.language == "cn" and "zh_cn" or "en_us"
