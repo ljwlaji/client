@@ -1,0 +1,111 @@
+
+character_warrior_male.png
+size: 2048,2048
+format: RGBA4444
+filter: Linear,Linear
+repeat: none
+WarriorMale_idle2_warriormale_idle_0000
+  rotate: false
+  xy: 2, 1290
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_idle2_warriormale_idle_0002
+  rotate: false
+  xy: 2, 968
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_idle2_warriormale_idle_0003
+  rotate: false
+  xy: 324, 1290
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_idle2_warriormale_idle_0004
+  rotate: false
+  xy: 2, 646
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_idle2_warriormale_idle_0005
+  rotate: false
+  xy: 324, 968
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_idle2_warriormale_idle_0006
+  rotate: false
+  xy: 646, 1290
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_idle2_warriormale_idle_0007
+  rotate: false
+  xy: 2, 324
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_move_warriormale_move0000
+  rotate: false
+  xy: 324, 646
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_move_warriormale_move0001
+  rotate: false
+  xy: 646, 968
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_move_warriormale_move0002
+  rotate: false
+  xy: 968, 1290
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_move_warriormale_move0003
+  rotate: false
+  xy: 2, 2
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_move_warriormale_move0004
+  rotate: false
+  xy: 324, 324
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_move_warriormale_move0005
+  rotate: false
+  xy: 646, 646
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_move_warriormale_move0006
+  rotate: false
+  xy: 968, 968
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1
+WarriorMale_move_warriormale_move0007
+  rotate: false
+  xy: 1290, 1290
+  size: 320, 320
+  orig: 320, 320
+  offset: 0, 0
+  index: -1

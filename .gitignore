@@ -23,6 +23,17 @@ ucrtbased.dll
 Download/
 virtualDir/
 Update/
-res/ui/icon
+# res/ui/icon
 spineWorkSpace
 spineOutput
+frameworks/runtime-src/proj.android/.idea
+frameworks/cocos2d-x/build/cocos2d_libs.xcodeproj/xcuserdata/ljw.xcuserdatad/xcschemes/xcschememanagement.plist
+frameworks/cocos2d-x/cocos/platform/android/libcocos2dx/libcocos2dx.iml
+frameworks/cocos2d-x/cocos/scripting/lua-bindings/proj.ios_mac/cocos2d_lua_bindings.xcodeproj/xcuserdata/ljw.xcuserdatad/xcschemes/xcschememanagement.plist
+frameworks/runtime-src/proj.android/proj.android.iml
+frameworks/runtime-src/proj.android/app/framework.iml
+frameworks/runtime-src/proj.ios_mac/GoogleService-Info.plist
+frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcshareddata/xcschemes/framework-desktop.xcscheme
+frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcshareddata/xcschemes/framework-mobile.xcscheme
+frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcuserdata/ljw.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
+frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcuserdata/ljw.xcuserdatad/xcschemes/xcschememanagement.plist
