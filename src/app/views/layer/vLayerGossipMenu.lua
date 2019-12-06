@@ -49,7 +49,9 @@ end
 function vLayerGossipMenu:onTouchedGossipItem(context)
 	local ai = self.sender:getAI()
 	if ai and ai.onGossipSelect then
-		ai:onGossipSelect(self.player, self.sender, context.GossipSender, context.GossipIndex)
+		if ai:onGossipSelect(self.player, self.sender, context.GossipSender, context.GossipIndex) then
+			pPlayer:sendGossipMenu(pObject, 1)
+		end
 	end
 end
 

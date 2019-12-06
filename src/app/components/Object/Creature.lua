@@ -55,8 +55,12 @@ function Creature:isVendor()
 	return self.context.isVendor > 0
 end
 
-function Creature.isTrainer()
+function Creature:isTrainer()
 	return self.context.isTrainer > 0
+end
+
+function Creature:isQuestGiver()
+	return #self.m_QuestList > 0
 end
 
 function Creature:fetchQuest()
@@ -65,12 +69,6 @@ function Creature:fetchQuest()
 	for k, v in pairs(queryResult) do
 		self.m_QuestList[v.entry] = v
 	end
-end
-
-function Creature:tryTriggerFeature(pPlayer)
-	local canTrigger = #self.m_QuestList > 0 or self:isVendor()
-	if canTrigger then pPlayer:sendGossipMenu(self, 1) end
-	return canTrigger
 end
 
 function Creature:onUpdate(diff)
