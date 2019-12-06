@@ -227,15 +227,15 @@ function Node:onCleanup_()
     self:onCleanupCallback_()
 end
 
-
 function Node:regiestCustomEventListenter(id, callBack)
     self.___eventListeners = self.___eventListeners or {}
     local listener = cc.EventListenerCustom:create(id, callBack)
     table.insert(self.___eventListeners, listener)
     self:getEventDispatcher():addEventListenerWithFixedPriority(listener, 1)
     if not self.___isExitEventRegiested then
-        self:onNodeEvent("exit", function(event)
+        self:onNodeEvent("cleanup", function(event)
             for k, v in pairs(self.___eventListeners) do
+                release_print("Remove listener : "..id)
                 self:getEventDispatcher():removeEventListener(v)
             end
             self.___eventListeners = {}

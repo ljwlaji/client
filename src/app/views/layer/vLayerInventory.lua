@@ -21,6 +21,7 @@ function vLayerInventory:onCreate()
 	self.m_Catagory = CATAGORYS.ALL
 	self.m_Children["Text_Title"]:setString(DataBase:getStringByID(100001))
 	self:onReset()
+	self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", handler(self, self.onReset))
 end
 
 function vLayerInventory:onReset()
@@ -93,7 +94,7 @@ function vLayerInventory:fetchInventoryDatas()
 	local retDatas = {}
 
 	local fetchSlotBegin 	= ShareDefine.inventorySlotBegin()
-	local fetchSlotEnd 		= fetchSlotBegin + self:getPlayerInventorySlotCount(datas)
+	local fetchSlotEnd 		= fetchSlotBegin + currPlr:getInventorySlotCount()
 
 	for slot_id = fetchSlotBegin, fetchSlotEnd do
 		local currData = datas[slot_id] or "null"

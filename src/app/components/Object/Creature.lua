@@ -18,6 +18,7 @@ function Creature:onCreate()
 	self.m_Model:addTo(self):setAnchorPoint(0.5, 0)
 	self:setName(DataBase:getStringByID(self.context.name_id))
 
+	self:updateAttrs()
 	-- For Testting
 	local anims = {
 		"attack",

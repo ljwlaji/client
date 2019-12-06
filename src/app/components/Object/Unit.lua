@@ -19,6 +19,7 @@ local Unit 				= class("Unit", Object)
 
 -- 关于攀爬 其实就是左右移动偏移值变成了上下移动偏移值
 function Unit:onCreate(objType)
+	Object.onCreate(self, objType)
 	self.m_ControlByPlayer = false
 	self.m_Alive = true
 	self.m_Pawn = Pawn:create():addTo(self)
@@ -43,12 +44,10 @@ function Unit:onCreate(objType)
 	}
 	self.m_Attrs = {}
 	self.m_MovementMonitor = MovementMonitor:create(self)
-	self:setAttrToBase()
 	self:regiestCustomEventListenter("onTouchButtonX", function() end)
 	self:regiestCustomEventListenter("onTouchButtonY", function() end)
 	self:regiestCustomEventListenter("onTouchButtonA", function() end)
 	self:regiestCustomEventListenter("onControllerJump", function() if self:isControlByPlayer() then self.m_MovementMonitor:jump() end end)
-	Object.onCreate(self, objType)
 end
 
 function Unit:onUpdate(diff)
@@ -102,6 +101,11 @@ end
 
 function Unit:isAlive()
 	return self.m_Alive
+end
+
+function Unit:updateAttrs()
+	dump(self.context)
+	self:setAttrToBase()
 end
 
 function Unit:setBaseAttr(attrName, value)

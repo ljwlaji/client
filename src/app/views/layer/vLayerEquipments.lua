@@ -16,6 +16,8 @@ function vLayerEquipments:onCreate()
 	for slotID = ShareDefine.equipSlotBegin(), ShareDefine.equipSlotEnd() do
 		self.m_Children["Slot_"..slotID]:onTouch(handler(self, self.onTouchEquiptmentSlot))
 	end
+	self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", handler(self, self.onReset))
+	self:onReset()
 end
 
 function vLayerEquipments:onReset()
@@ -53,7 +55,7 @@ function vLayerEquipments:onTouchEquiptmentSlot(e)
 	if e.name ~= "ended" then return end
 	local slotData = self.datas[e.target:getTag()]
 	if not slotData then return end
-	WindowMgr:createWindow("app.views.layer.vLayerItemDetail", slotData)
+	WindowMgr:createWindow("app.views.layer.vLayerItemDetail", slotData, 1)
 	
 	do return end
 	local window = WindowMgr:findWindowIndexByClassName("vLayerItemDetail")
@@ -62,11 +64,7 @@ function vLayerEquipments:onTouchEquiptmentSlot(e)
 		return 
 	end
 	if window then return end
-	WindowMgr:createWindow("app.views.layer.vLayerItemDetail"):onReset(slotData)
-end
-
-function vLayerEquipments:onEnterTransitionFinish()
-	self:onReset()
+	WindowMgr:createWindow("app.views.layer.vLayerItemDetail"):onReset(slotData, 1)
 end
 
 function vLayerEquipments:Exit()

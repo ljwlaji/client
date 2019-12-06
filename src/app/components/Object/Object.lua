@@ -107,6 +107,12 @@ function Object:createModelByID(model_id)
 	return model
 end
 
+function Object:sendAppMsg(msgID, ...)
+    local pEvent = cc.EventCustom:new(msgID)
+    pEvent.parameters = {...}
+    cc.Director:getInstance():getEventDispatcher():dispatchEvent(pEvent)
+end
+
 function Object:debugDraw()
 	if self.__drawNode then self.__drawNode:removeFromParent() end
 	local myDrawNode=cc.DrawNode:create()

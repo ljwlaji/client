@@ -24,7 +24,7 @@ end
 
 function vNodeInventorySlot:onTouchSlot(e)
 	if e.name ~= "ended" or self.context == "null" then return end
-	WindowMgr:createWindow("app.views.layer.vLayerItemDetail", self.context)
+	WindowMgr:createWindow("app.views.layer.vLayerItemDetail", self.context, 2)
 	do return end
 	local window = WindowMgr:findWindowIndexByClassName("vLayerItemDetail")
 	if e.name == "ended" or e.name == "cancelled" then
@@ -32,7 +32,7 @@ function vNodeInventorySlot:onTouchSlot(e)
 		return 
 	end
 	if window then return end
-	WindowMgr:createWindow("app.views.layer.vLayerItemDetail"):onReset(self.context)
+	WindowMgr:createWindow("app.views.layer.vLayerItemDetail"):onReset(self.context, 2)
 end
 
 return vNodeInventorySlot

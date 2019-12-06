@@ -20,7 +20,11 @@ function Player:onCreate()
 	self:initAvatar()
 	self:setControlByPlayer(true)
 	self:resetGossipList()
+	self:updateAttrs()
 	Player.instance = self
+
+	-- self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", function() end)
+
 end
 
 function Player:loadFromDB()
@@ -53,7 +57,7 @@ function Player:loadAllLearnedSpellsFromDB()
 end
 
 function Player:saveAllLearnedSpellToDB()
-	local sql = "DELETE * FROM character_spells WHERE character_guid = %d"
+	local sql = "DELETE FROM character_spells WHERE character_guid = %d"
 	DataBase:query(sql)
 	sql = "REPLACE INTO character_spells(character_guid, spell_id) VALUES('%d', '%d')"
 	for _, spell_id in pairs(self.m_LearnedSpells) do
@@ -70,7 +74,7 @@ function Player:loadActivatedSpellFromDB()
 end
 
 function Player:saveActivatedSpellFromDB()
-	local sql = "DELETE * FROM spell_activated WHERE character_guid = %d"
+	local sql = "DELETE FROM spell_activated WHERE character_guid = %d"
 	DataBase:query(string.format(sql, self:getGuid()))
 	sql = "REPLACE INTO spell_activated(character_guid, spell_id, time_left) VALUES('%d', '%d', '%d')"
 	for k, v in pairs(self.m_ActivatedSpells) do
@@ -85,6 +89,63 @@ function Player:loadInventoryFromDB()
 		v.template = DataBase:getItemTemplateByEntry(v.item_entry)
 		self.m_InventoryData[v.slot_id] = v
 	end
+end
+
+function Player:getInventorySlotCount()
+	local count = ShareDefine.inventoryBaseSlotCount()
+	for i = ShareDefine.containerSlotBegin(), ShareDefine.containerSlotEnd() do
+		local container = self.m_InventoryData[i]
+		if container then
+			local extraCount = container.template.container_slot_count
+			count = count + extraCount
+		end
+	end
+	return count - 1
+end
+
+function Player:getEmptyInventorySlot()
+	local slotBegin 	= ShareDefine.inventorySlotBegin()
+	local slotEnded 	= slotBegin + self:getInventorySlotCount()
+	local emptySlotIndex = nil
+	for i = slotBegin, slotEnded do
+		if not self.m_InventoryData[i] then emptySlotIndex = i break end
+	end
+	return emptySlotIndex
+end
+
+
+function Player:tryUnEquipItem(itemSlot)
+	local emptySlotIndex = self:getEmptyInventorySlot()
+	if not emptySlotIndex then return end
+	local itemData = self.m_InventoryData[itemSlot]
+	assert(itemData, "Cannot Find Current ItemData In Slot : "..itemSlot.."!")
+	itemData.slot_id = emptySlotIndex
+	self.m_InventoryData[emptySlotIndex] = table.remove(self.m_InventoryData, itemSlot)
+	self:onInventoryDataChanged()
+end
+
+function Player:tryEquipItem(itemSlot)
+	local replacement = self.m_InventoryData[itemSlot]
+	assert(replacement, "Cannot Find Current ItemData In Slot : "..itemSlot.."!")
+	local equipmentSlot = replacement.template.equip_slot
+	local temp = nil
+	if not self:canEquip(replacement) then return end
+
+	replacement.slot_id = equipmentSlot
+	local oldEquiupData = self.m_InventoryData[equipmentSlot]
+	if oldEquiupData then oldEquiupData.slot_id = itemSlot end
+
+	temp = self.m_InventoryData[itemSlot]
+	self.m_InventoryData[itemSlot] = oldEquiupData
+	self.m_InventoryData[equipmentSlot] = temp
+	self:onInventoryDataChanged()
+end
+
+function Player:onInventoryDataChanged()
+	self:saveInventoryToDB()
+	self:updateAttrs()
+	self:sendAppMsg("MSG_INVENTORY_DATA_CHANGED")
+	-- if self:getAI() then self:getAI():onInventoryDataChanged() end
 end
 
 function Player:saveToDB()
@@ -102,8 +163,10 @@ function Player:saveToDB()
 end
 
 function Player:saveInventoryToDB()
+	local sql = "DELETE FROM character_inventory WHERE character_guid = '%d'"
+	DataBase:query(string.format(sql, self:getGuid()))
 	--											  
-	local sql = [[REPLACE INTO character_inventory(character_guid, slot_id, item_entry, item_guid, item_amount, enchant, durable) 
+	sql = [[REPLACE INTO character_inventory(character_guid, slot_id, item_entry, item_guid, item_amount, enchant, durable) 
 											VALUES('%d', 		   '%d',	'%d',		'%d',	   '%d',		%d,		 %d)]]
 	for k, v in pairs(self.m_InventoryData) do
 		DataBase:query(string.format( sql, v.character_guid, v.slot_id, v.item_entry, v.item_guid, v.item_amount, v.enchant, v.durable ))
@@ -122,8 +185,8 @@ function Player:initAvatar()
 end
 
 function Player:canEquip(itemData)
-	local itemTemplate = itemData.template
-	if itemTemplate.require_class then return false end
+	-- local itemTemplate = itemData.template
+	-- if itemTemplate.require_class then return false end
 
 
 	return true
