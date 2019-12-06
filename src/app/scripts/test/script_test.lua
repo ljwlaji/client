@@ -7,7 +7,6 @@ function script_test:onReset()
 end
 
 function script_test:onGossipHello(pPlayer, pObject)
-	local GossipItems = {}
 	pPlayer:addGossipItem(1, 2, 1, 1);
 	pPlayer:addGossipItem(2, 2, 1, 2);
 	pPlayer:addGossipItem(3, 2, 1, 3);

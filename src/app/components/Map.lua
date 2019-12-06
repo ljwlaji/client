@@ -71,13 +71,11 @@ function Map:setupEventListener()
 end
 
 function Map:onTouchBegan(touch, event)
-	release_print("TouchBegan On Map")
 	local canReciveTouch = false
 	local TouchPosition = self:getParent():convertToNodeSpace(touch:getLocation())
 	for k, object in pairs(self.m_ObjectList) do
-		if object:isUnit() and cc.rectContainsPoint(object:getBoundingBox(), self:convertToNodeSpace(touch:getLocation())) then
-			release_print("Try Fetch Touch Npc")
-			if object:getAI() then canReciveTouch = object:getAI():onGossipHello(self.mPlayer, object) end
+		if object:isCreature() and cc.rectContainsPoint(object:getBoundingBox(), self:convertToNodeSpace(touch:getLocation())) then
+			canReciveTouch = object:tryTriggerFeature() or (object:getAI() and object:getAI():onGossipHello(self.mPlayer, object))
 			break
 		end
 	end

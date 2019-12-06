@@ -106,6 +106,28 @@ local CHANGE_STATES = {
 	CHANGED		= 1,
 }
 
+local QUEST_TYPE = {
+	NORMAIL 	= 1,
+	DAILY 		= 2,
+	WEEKLY 		= 3,
+}
+
+function ShareDefine.DAY()
+	return 80000
+end
+
+function ShareDefine.WEEK()
+	return 560000
+end
+
+function ShareDefine.weeklyQuest()
+	return QUEST_TYPE.WEEKLY
+end
+
+function ShareDefine.dailyQuest()
+	return QUEST_TYPE.DAILY
+end
+
 function ShareDefine.getQualityColor(quality)
 	local ret = cc.c3b(200,200,200)
 	if quality == 1 then

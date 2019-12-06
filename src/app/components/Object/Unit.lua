@@ -61,6 +61,14 @@ function Unit:onUpdate(diff)
 	self.m_MovementMonitor:update(diff)
 end
 
+function Unit:setFaction(faction)
+	self.m_Faction = faction
+end
+
+function Unit:getFaction()
+	return self.m_Faction
+end
+
 function Unit:setClass(class)
 	self.m_Class = class
 end

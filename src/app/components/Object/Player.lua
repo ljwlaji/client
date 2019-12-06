@@ -6,6 +6,8 @@ local Player 			= class("Player", Unit)
 
 Player.instance = nil
 
+local QUEST_COMPLISHED = 1
+
 function Player.getInstance()
 	return Player.instance
 end
@@ -14,6 +16,7 @@ function Player:onCreate()
 	Unit.onCreate(self, ShareDefine:playerType())
 	self.m_InventoryData = {}
 	self.m_LearnedSpells = {}
+	self.m_QuestDatas = {}
 	self:setAlive(true)
 	self:loadFromDB()
 	self:initAvatar()
@@ -41,7 +44,63 @@ function Player:loadFromDB()
 	self:loadInventoryFromDB()
 	self:loadAllLearnedSpellsFromDB()
 	self:loadActivatedSpellFromDB()
+
+	self:loadQuestFromDB()
 end
+
+--[[ For Quest Issus ]]
+
+function Player:loadQuestFromDB()
+	local sql = "SELECT * FROM character_quest WHERE character_guid = '%d'"
+	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
+	for k, v in pairs(queryResult) do
+		self.m_QuestDatas[v.quest_entry] = v
+	end
+end
+
+function Player:saveQuestToDB()
+	local sql = "DELETE FROM character_quest WHERE character_guid = '%d'"
+	DataBase:query(sql)
+	sql = "REPLACE INTO character_quest(character_guid, quest_entry, complished, complished_date) VALUES('%d', '%d', '%d', '%d')"
+	for k, v in pairs(self.m_QuestDatas) do
+		DataBase:query(string.format(sql, self:getGuid(), v.quest_entry, complished, complished_date))
+	end
+end
+
+function Player:isQuestComplished(questEntry)
+	return self.m_QuestDatas[questEntry] and self.m_QuestDatas[questEntry].complished == QUEST_COMPLISHED
+end
+
+function Player:canSubmitQuest(questEntry)
+	if not self.m_QuestDatas[questEntry] then return false end
+	if self.m_QuestDatas[questEntry].complished == QUEST_COMPLISHED then return false end --已完成过相同任务
+	local canSubmit = true
+	for item_entry, item_amount in pairs(questTemplate.quest_targets) do
+		if self:getItemCount(item_entry) < item_amount then
+			canSubmit = false
+			break
+		end
+	end
+	return canSubmit
+end
+
+function Player:canAcceptQuest(questTemplate)
+	if self.m_QuestDatas[questTemplate.entry] then return false end
+	if self.m_QuestDatas[questTemplate.previous_quest_entry].complished ~= QUEST_COMPLISHED then return false end --未完成前置任务
+	if questTemplate.require_level > self:getLevel() then return false end -- 等级不足
+	if questTemplate.require_class ~= self:getClass() then return false end
+
+	local nextTime = 0
+	if questTemplate.quest_type == ShareDefine.dailyQuest() then
+		nextTime = self.m_QuestDatas[questTemplate.entry].complished_date + ShareDefine.DAY()
+	elseif questTemplate.quest_type == ShareDefine.weeklyQuest() then
+		nextTime = self.m_QuestDatas[questTemplate.entry].complished_date + ShareDefine.WEEK()
+	end
+
+	return nextTime <= os.time()
+end
+
+--[[ End Quest Issus ]]
 
 function Player:getLearnedSpells()
 	return self.m_LearnedSpells
@@ -112,6 +171,16 @@ function Player:getEmptyInventorySlot()
 	return emptySlotIndex
 end
 
+function Player:getItemCount(pItemEntry)
+	local count = 0
+	for itemEntry, itemData in pairs(self.m_InventoryData) do
+		if itemEntry == pItemEntry then
+			count = count + itemData.item_amount
+		end
+	end
+	return count
+end
+
 function Player:updateEquipmentAttrs()
 	local extraValues = {
 		["strength"] 		= 0,
@@ -180,6 +249,7 @@ function Player:saveToDB()
 	self:saveInventoryToDB()
 	self:saveActivatedSpellFromDB()
 	self:saveAllLearnedSpellToDB()
+	self:saveQuestToDB()
 end
 
 function Player:saveInventoryToDB()

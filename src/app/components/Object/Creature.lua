@@ -1,13 +1,17 @@
-local Unit = import("app.components.Object.Unit")
-local ShareDefine = import("app.ShareDefine")
-local DataBase = import("app.components.DataBase")
-local Creature = class("Creature", Unit)
+local Unit 			= import("app.components.Object.Unit")
+local Player        = import("app.components.Object.Player")
+local ShareDefine 	= import("app.ShareDefine")
+local DataBase 		= import("app.components.DataBase")
+local Creature 		= class("Creature", Unit)
 
 function Creature:onCreate()
 	Unit.onCreate(self, ShareDefine:creatureType())
-	self.m_Faction = self.context.faction
+
+	self.m_QuestList = {}
+
+	self:setGuid(self.context.guid)
+	self:setFaction(self.context.faction)
 	self:setAlive(self.context.alive)
-	self.m_Entry = self.context.entry
 	if self.context.script_name and self.context.script_name ~= "" then
 		self:initAI(self.context.script_name)
 	end
@@ -43,8 +47,30 @@ function Creature:onCreate()
     self:debugDraw()
 end
 
-function Creature:initAvatar()
+function Creature:getEntry()
+	return self.context.entry
+end
 
+function Creature:isVendor()
+	return self.context.isVendor > 0
+end
+
+function Creature.isTrainer()
+	return self.context.isTrainer > 0
+end
+
+function Creature:fetchQuest()
+	local sql = "SELECT * FROM quest_template WHERE accept_npc == '%d' or submit_npc == '%d'"
+	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
+	for k, v in pairs(queryResult) do
+		self.m_QuestList[v.entry] = v
+	end
+end
+
+function Creature:tryTriggerFeature(pPlayer)
+	local canTrigger = #self.m_QuestList > 0 or self:isVendor()
+	if canTrigger then pPlayer:sendGossipMenu(self, 1) end
+	return canTrigger
 end
 
 function Creature:onUpdate(diff)

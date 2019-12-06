@@ -7,6 +7,8 @@ function ScriptAI:ctor(me)
 end
 
 function ScriptAI:onGossipHello(pPlayer, pObject)
+	-- release_print("onGossipHello")
+	-- pPlayer:sendGossipMenu(pObject, 1)
 	return false
 end
 
