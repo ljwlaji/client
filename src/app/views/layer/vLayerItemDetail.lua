@@ -23,6 +23,7 @@ function vLayerItemDetail:onCreate(...)
 end
 
 function vLayerItemDetail:onReset(itemData, slotType)
+	local plr = Player:getInstance()
 	self.slotType = slotType
 	self.itemData = itemData
 	self.m_Children["Text_Equip"]:setString(DataBase:getStringByID(slotType + 280))
@@ -52,7 +53,7 @@ function vLayerItemDetail:onReset(itemData, slotType)
 	end
 
 	if itemTemplate.require_class > 0 then
-		self:newLine(string.format( DataBase:getStringByID(294), DataBase:getStringByID(itemTemplate.require_class + 100) ))
+		self:newLine(string.format(DataBase:getStringByID(294), DataBase:getStringByID(itemTemplate.require_class + 100)), itemTemplate.require_class == plr:getClass() and cc.c3b(255,255,255) or cc.c3b(255,50,50))
 	end
 
 	if itemTemplate.require_level > 0 then
@@ -64,11 +65,12 @@ function vLayerItemDetail:onReset(itemData, slotType)
 
 end
 
-function vLayerItemDetail:newLine(str)
+function vLayerItemDetail:newLine(str, color)
 	import("app.views.node.vNodeItemDetailLine"):create()
 												:addTo(self.m_Children["Panel_Detail"])
 												:setPositionY(self.m_OffsetY)
-												:onReset(str)
+												:onReset(str, color)
+
 	self.m_OffsetY = self.m_OffsetY - SINGLE_LINE_HEIGHT
 end
 

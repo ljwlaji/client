@@ -13,7 +13,6 @@ end
 function Player:onCreate()
 	Unit.onCreate(self, ShareDefine:playerType())
 	self.m_InventoryData = {}
-	self.m_ActivatedSpells = {} --Activated Spells 当身上有相同法术存留的时候只覆盖
 	self.m_LearnedSpells = {}
 	self:setAlive(true)
 	self:loadFromDB()
@@ -113,6 +112,27 @@ function Player:getEmptyInventorySlot()
 	return emptySlotIndex
 end
 
+function Player:updateEquipmentAttrs()
+	local extraValues = {
+		["strength"] 		= 0,
+		["intelligence"] 	= 0,
+		["agility"] 		= 0,
+		["spirit"] 			= 0,
+		["stamina"] 		= 0,
+	}
+	for i = ShareDefine.equipSlotBegin(), ShareDefine.equipSlotEnd() do
+		local equipment = self.m_InventoryData[i]
+		if equipment then
+			-- 计算基础的属性增幅
+			for attrName, value in pairs(equipment.template.attrs) do
+				extraValues[attrName] = extraValues[attrName] + value
+			end
+		end
+	end
+	for attrName, value in pairs(extraValues) do
+		self:setBaseAttr(attrName, self:getBaseAttr(attrName) + value)
+	end
+end
 
 function Player:tryUnEquipItem(itemSlot)
 	local emptySlotIndex = self:getEmptyInventorySlot()
@@ -186,7 +206,9 @@ end
 
 function Player:canEquip(itemData)
 	-- local itemTemplate = itemData.template
+	-- 职业检查
 	-- if itemTemplate.require_class then return false end
+	-- 耐久检查
 
 
 	return true

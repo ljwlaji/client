@@ -255,6 +255,83 @@
                 <OutlineColor A="255" R="255" G="0" B="0" />
                 <ShadowColor A="255" R="110" G="110" B="110" />
               </AbstractNodeData>
+              <AbstractNodeData Name="Text_strength" ActionTag="-888444949" Tag="161" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="132.0000" RightMargin="256.0000" TopMargin="231.5000" BottomMargin="345.5000" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
+                <AnchorPoint ScaleY="0.5000" />
+                <Position X="132.0000" Y="357.0000" />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <PrePosition X="0.2750" Y="0.5950" />
+                <PreSize X="0.1917" Y="0.0383" />
+                <OutlineColor A="255" R="255" G="0" B="0" />
+                <ShadowColor A="255" R="110" G="110" B="110" />
+              </AbstractNodeData>
+              <AbstractNodeData Name="Text_agility" ActionTag="1352062819" Tag="162" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="132.0000" RightMargin="256.0000" TopMargin="259.5000" BottomMargin="317.5000" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
+                <AnchorPoint ScaleY="0.5000" />
+                <Position X="132.0000" Y="329.0000" />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <PrePosition X="0.2750" Y="0.5483" />
+                <PreSize X="0.1917" Y="0.0383" />
+                <OutlineColor A="255" R="255" G="0" B="0" />
+                <ShadowColor A="255" R="110" G="110" B="110" />
+              </AbstractNodeData>
+              <AbstractNodeData Name="Text_intelligence" ActionTag="941542227" Tag="163" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="132.0000" RightMargin="256.0000" TopMargin="288.5000" BottomMargin="288.5000" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
+                <AnchorPoint ScaleY="0.5000" />
+                <Position X="132.0000" Y="300.0000" />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <PrePosition X="0.2750" Y="0.5000" />
+                <PreSize X="0.1917" Y="0.0383" />
+                <OutlineColor A="255" R="255" G="0" B="0" />
+                <ShadowColor A="255" R="110" G="110" B="110" />
+              </AbstractNodeData>
+              <AbstractNodeData Name="Text_spirit" ActionTag="1325616917" Tag="164" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="132.0000" RightMargin="256.0000" TopMargin="320.5000" BottomMargin="256.5000" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
+                <AnchorPoint ScaleY="0.5000" />
+                <Position X="132.0000" Y="268.0000" />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <PrePosition X="0.2750" Y="0.4467" />
+                <PreSize X="0.1917" Y="0.0383" />
+                <OutlineColor A="255" R="255" G="0" B="0" />
+                <ShadowColor A="255" R="110" G="110" B="110" />
+              </AbstractNodeData>
+              <AbstractNodeData Name="Text_stamina" ActionTag="-2075479662" Tag="165" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="132.0000" RightMargin="256.0000" TopMargin="357.5000" BottomMargin="219.5000" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
+                <AnchorPoint ScaleY="0.5000" />
+                <Position X="132.0000" Y="231.0000" />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <PrePosition X="0.2750" Y="0.3850" />
+                <PreSize X="0.1917" Y="0.0383" />
+                <OutlineColor A="255" R="255" G="0" B="0" />
+                <ShadowColor A="255" R="110" G="110" B="110" />
+              </AbstractNodeData>
+              <AbstractNodeData Name="Text_maxHealth" ActionTag="-1188605331" Tag="166" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="132.0000" RightMargin="256.0000" TopMargin="384.5000" BottomMargin="192.5000" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
+                <AnchorPoint ScaleY="0.5000" />
+                <Position X="132.0000" Y="204.0000" />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <PrePosition X="0.2750" Y="0.3400" />
+                <PreSize X="0.1917" Y="0.0383" />
+                <OutlineColor A="255" R="255" G="0" B="0" />
+                <ShadowColor A="255" R="110" G="110" B="110" />
+              </AbstractNodeData>
+              <AbstractNodeData Name="Text_maxMana" ActionTag="-99191216" Tag="167" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="132.0000" RightMargin="256.0000" TopMargin="411.5000" BottomMargin="165.5000" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
+                <AnchorPoint ScaleY="0.5000" />
+                <Position X="132.0000" Y="177.0000" />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <PrePosition X="0.2750" Y="0.2950" />
+                <PreSize X="0.1917" Y="0.0383" />
+                <OutlineColor A="255" R="255" G="0" B="0" />
+                <ShadowColor A="255" R="110" G="110" B="110" />
+              </AbstractNodeData>
             </Children>
             <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <Position />

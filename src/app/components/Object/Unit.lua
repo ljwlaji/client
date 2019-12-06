@@ -20,20 +20,24 @@ local Unit 				= class("Unit", Object)
 -- 关于攀爬 其实就是左右移动偏移值变成了上下移动偏移值
 function Unit:onCreate(objType)
 	Object.onCreate(self, objType)
+	self.m_ActivatedSpells = {} --Activated Spells 当身上有相同法术存留的时候只覆盖
 	self.m_ControlByPlayer = false
 	self.m_Alive = true
 	self.m_Pawn = Pawn:create():addTo(self)
 	self.m_BaseAttrs = {
-		maxHealth 				= 1,
-		maxMana 				= 1,
-		maxRage					= 1,
-		maxEnergy				= 1,
+		maxHealth 				= 100,
+		maxMana 				= 100,
+		maxRage					= 100,
+		maxEnergy				= 100,
+
 		attackPower 			= 1,
 		magicAttackPower 		= 1,
 		defence 				= 1,
 		magicDefence 			= 1,
+
 		moveSpeed				= 7.0,
 		jumpForce				= 8,
+
 		attackSpeed 			= 1000,
 
 		strength				= 0,
@@ -90,8 +94,13 @@ function Unit:setAttrToBase()
 	for k, v in pairs(self.m_BaseAttrs) do
 		self.m_Attrs[k] = v
 	end
-	self.m_Attrs["health"] 	= self.m_BaseAttrs["maxHealth"]
-	self.m_Attrs["mana"] 	= self.m_BaseAttrs["maxMana"]
+	if self:isPlayer() then
+		self.m_Attrs["health"]	= self.context.current_health
+		self.m_Attrs["mana"]	= self.context.current_mana
+	else
+		self.m_Attrs["health"] 	= self.m_BaseAttrs["maxHealth"]
+		self.m_Attrs["mana"] 	= self.m_BaseAttrs["maxMana"]
+	end
 end
 
 function Unit:setAlive(alive)
@@ -104,8 +113,21 @@ function Unit:isAlive()
 end
 
 function Unit:updateAttrs()
-	dump(self.context)
+	for k, v in pairs(self.m_BaseAttrs) do
+		if self.context[k] then
+			self:setBaseAttr(k, self.context[k])
+		end
+	end
+	if self:isPlayer() then
+		local lvl = self.context.level - 1
+		for _, attrName in pairs({"maxHealth", "maxMana", "strength", "intelligence", "agility", "spirit", "stamina"}) do
+			local extraValue = self.context[string.format("%s_per_lvl", attrName)] * lvl
+			self:setBaseAttr(attrName, self:getBaseAttr(attrName) + extraValue)
+		end
+		self:updateEquipmentAttrs()
+	end
 	self:setAttrToBase()
+	self:getPawn():modifyHealth(self:getAttr("health"), self:getAttr("maxHealth"))
 end
 
 function Unit:setBaseAttr(attrName, value)

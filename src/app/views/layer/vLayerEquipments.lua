@@ -12,6 +12,16 @@ vLayerEquipments.RESOURCE_BINDING = {
 	ButtonExit = "Exit"
 }
 
+local BaseAttrs = {
+	"maxHealth",
+	"maxMana",
+	"strength",
+	"agility",
+	"intelligence",
+	"spirit",
+	"stamina",
+}
+
 function vLayerEquipments:onCreate()
 	for slotID = ShareDefine.equipSlotBegin(), ShareDefine.equipSlotEnd() do
 		self.m_Children["Slot_"..slotID]:onTouch(handler(self, self.onTouchEquiptmentSlot))
@@ -31,6 +41,11 @@ function vLayerEquipments:onReset()
 	end
 	for slotID = ShareDefine.equipSlotBegin(), ShareDefine.equipSlotEnd() do
 		self.m_Children["Slot_"..slotID]:removeAllChildren()
+	end
+	
+	for k, v in pairs(BaseAttrs) do
+		local child = self.m_Children[string.format("Text_%s", v)]
+		if child then child:setString(string.format("%s : %s", ShareDefine.getStateStringByStateName(v), currPlr:getBaseAttr(v))) end
 	end
 	self:refreshAllSlots()
 	self:refreshStrings()
