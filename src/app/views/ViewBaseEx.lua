@@ -20,12 +20,6 @@ function ViewBaseEx:autoAlgin()
 	end)
 end
 
-function ViewBaseEx:sendAppMsg(msgID, ...)
-    local pEvent = cc.EventCustom:new(msgID)
-    pEvent.parameters = {...}
-    cc.Director:getInstance():getEventDispatcher():dispatchEvent(pEvent)
-end
-
 function ViewBaseEx:debugDraw(parent, color, size)
 	if parent.__drawNode then parent.__drawNode:removeFromParent() end
 	local myDrawNode=cc.DrawNode:create()

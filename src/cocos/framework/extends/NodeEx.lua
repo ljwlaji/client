@@ -241,3 +241,9 @@ function Node:regiestCustomEventListenter(id, callback)
         self.___isExitEventRegiested = true
     end
 end
+
+function Node:sendAppMsg(msgID, ...)
+    local pEvent = cc.EventCustom:new(msgID)
+    pEvent.parameters = {...}
+    cc.Director:getInstance():getEventDispatcher():dispatchEvent(pEvent)
+end
