@@ -199,7 +199,6 @@ function Map:cleanUpBeforeDelete()
 	local obj = nil
 	while #self.m_ObjectList > 0 do
 		obj = table.remove(self.m_ObjectList)
-		obj:cleanUpBeforeDelete()
 		obj:removeFromParent()
 	end
 end

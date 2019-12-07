@@ -33,11 +33,6 @@ function ViewBaseEx:onExitTransitionStart_()
 end
 
 function ViewBaseEx:onCleanup_()
-	if self.___eventListeners then
-		for k, v in pairs(self.___eventListeners) do
-	        self:getEventDispatcher():removeEventListener(v)
-	    end
-	end
 	if self._isNodeSyncUpdateEnabled == true then display.getWorld():removeNodeFromSyncUpdateList(self) end
 	if self.onCleanup then self:onCleanup() end
 end
@@ -66,13 +61,6 @@ end
 
 function ViewBaseEx:runSequence(...)
 	self:runAction( cc.Sequence:create( ... ) )
-end
-
-function ViewBaseEx:regiestCustomEventListenter(id, callBack)
-    self.___eventListeners = self.___eventListeners or {}
-    local listener = cc.EventListenerCustom:create(id, callBack)
-    table.insert(self.___eventListeners, listener)
-    self:getEventDispatcher():addEventListenerWithFixedPriority(listener, 1)
 end
 
 return ViewBaseEx

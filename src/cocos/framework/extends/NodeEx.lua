@@ -129,15 +129,20 @@ Node.scheduleUpdate = Node.onUpdate
 
 function Node:onNodeEvent(eventName, callback)
     if "enter" == eventName then
-        self.onEnterCallback_ = callback
+        self.onEnterCallback_ = self.onEnterCallback_ or {}
+        table.insert(self.onEnterCallback_, callback)
     elseif "exit" == eventName then
-        self.onExitCallback_ = callback
+        self.onExitCallback_ = self.onExitCallback_ or {}
+        table.insert(self.onExitCallback_, callback)
     elseif "enterTransitionFinish" == eventName then
-        self.onEnterTransitionFinishCallback_ = callback
+        self.onEnterTransitionFinishCallback_ = self.onEnterTransitionFinishCallback_ or {}
+        table.insert(self.onEnterTransitionFinishCallback_, callback)
     elseif "exitTransitionStart" == eventName then
-        self.onExitTransitionStartCallback_ = callback
+        self.onExitTransitionStartCallback_ = self.onExitTransitionStartCallback_ or {}
+        table.insert(self.onExitTransitionStartCallback_, callback)
     elseif "cleanup" == eventName then
-        self.onCleanupCallback_ = callback
+        self.onCleanupCallback_ = self.onCleanupCallback_ or {}
+        table.insert(self.onCleanupCallback_, callback)
     end
     self:enableNodeEvents()
 end
@@ -189,54 +194,47 @@ end
 
 function Node:onEnter_()
     self:onEnter()
-    if not self.onEnterCallback_ then
-        return
-    end
-    self:onEnterCallback_()
+    if not self.onEnterCallback_ then return end
+    for k, v in pairs(self.onEnterCallback_) do v() end
 end
 
 function Node:onExit_()
     self:onExit()
-    if not self.onExitCallback_ then
-        return
-    end
-    self:onExitCallback_()
+    if not self.onExitCallback_ then return end
+    for k, v in pairs(self.onExitCallback_) do v() end
 end
 
 function Node:onEnterTransitionFinish_()
     self:onEnterTransitionFinish()
-    if not self.onEnterTransitionFinishCallback_ then
-        return
-    end
-    self:onEnterTransitionFinishCallback_()
+    if not self.onEnterTransitionFinishCallback_ then return end
+    for k, v in pairs(self.onEnterTransitionFinishCallback_) do v() end
 end
 
 function Node:onExitTransitionStart_()
     self:onExitTransitionStart()
-    if not self.onExitTransitionStartCallback_ then
-        return
-    end
-    self:onExitTransitionStartCallback_()
+    if not self.onExitTransitionStartCallback_ then return end
+    for k, v in pairs(self.onExitTransitionStartCallback_) do v() end
 end
 
 function Node:onCleanup_()
     self:onCleanup()
-    if not self.onCleanupCallback_ then
-        return
-    end
-    self:onCleanupCallback_()
+    if not self.onCleanupCallback_ then return end
+    for k, v in pairs(self.onCleanupCallback_) do v() end
 end
 
-function Node:regiestCustomEventListenter(id, callBack)
+function Node:regiestCustomEventListenter(id, callback)
     self.___eventListeners = self.___eventListeners or {}
-    local listener = cc.EventListenerCustom:create(id, callBack)
-    table.insert(self.___eventListeners, listener)
+    local listener = cc.EventListenerCustom:create(id, callback)
+    table.insert(self.___eventListeners, {
+        id = id,
+        listener = listener
+    })
     self:getEventDispatcher():addEventListenerWithFixedPriority(listener, 1)
     if not self.___isExitEventRegiested then
         self:onNodeEvent("cleanup", function(event)
             for k, v in pairs(self.___eventListeners) do
-                release_print("Remove listener : "..id)
-                self:getEventDispatcher():removeEventListener(v)
+                release_print("Remove listener : "..v.id)
+                self:getEventDispatcher():removeEventListener(v.listener)
             end
             self.___eventListeners = {}
         end)
