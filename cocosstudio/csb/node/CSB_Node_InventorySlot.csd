@@ -12,7 +12,7 @@
               <AbstractNodeData Name="Panel_Icon" ActionTag="1925895020" VisibleForFrame="False" Tag="66" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="8.0000" RightMargin="8.0000" TopMargin="8.0000" BottomMargin="8.0000" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Enable="True" LeftEage="21" RightEage="21" TopEage="21" BottomEage="21" Scale9OriginX="21" Scale9OriginY="21" Scale9Width="22" Scale9Height="22" ctype="PanelObjectData">
                 <Size X="64.0000" Y="64.0000" />
                 <Children>
-                  <AbstractNodeData Name="Sprite_Icon" ActionTag="16171158" Tag="67" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="9.0000" RightMargin="9.0000" TopMargin="9.0000" BottomMargin="9.0000" ctype="SpriteObjectData">
+                  <AbstractNodeData Name="Sprite_Icon" ActionTag="16171158" Tag="67" RotationSkewX="1.0330" RotationSkewY="1.0330" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="9.0000" RightMargin="9.0000" TopMargin="9.0000" BottomMargin="9.0000" ctype="SpriteObjectData">
                     <Size X="46.0000" Y="46.0000" />
                     <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
                     <Position X="32.0000" Y="32.0000" />

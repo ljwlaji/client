@@ -88,5 +88,64 @@ if not Utils.getPackagePath then
     dump(Utils.getPackagePath(), "PackagePath : ")
 end
 
+function Utils.changeParent( child, parent )
+    assert(parent and child:getParent(), "Error! Parent Not Found...")
+    child:retain():removeFromParent():addTo(parent):release()
+    return child
+end
+
+function Utils.autoAlginChildrenH(parent, GAPH)
+    local maxWidth      = 0
+    local maxHeight     = 0
+    local currWidth     = 0
+    local currHeight    = 0
+    for k, v in pairs(parent:getChildren()) do
+        if v:isVisible() then
+            currWidth = v:getContentSize().width
+            currHeight = v:getContentSize().height
+            if maxHeight < currHeight then maxHeight = currHeight end
+            v:setAnchorPoint(0, 0):move(maxWidth, 0)
+            maxWidth = maxWidth + currWidth + GAPH
+        end
+    end
+    return maxWidth, maxHeight
+end
+
+function Utils.createScrollableLayouter(baseNode, onNotEnoughWidth)
+    assert(not baseNode.__scrollableLayouter, "\n Try Call CommonUtils.createScrollableLayouter Twice !\nFor Refresh Case Please Use node.startScroll(scrollTime, waitTime) Instead.")
+    local layouter = ccui.Layout:create()
+                                :addTo(baseNode:getParent())
+                                :setAnchorPoint(baseNode:getAnchorPoint().x, baseNode:getAnchorPoint().y)
+                                :setContentSize(baseNode:getContentSize().width, baseNode:getContentSize().height)
+                                :move(baseNode:getPositionX(), baseNode:getPositionY())
+                                :setClippingEnabled(true)
+
+    Utils.changeParent(baseNode, layouter)
+    baseNode.__scrollableLayouter = layouter
+
+    baseNode.startScroll = function(time, waitTime)
+        baseNode:setContentSize(Utils.autoAlginChildrenH(baseNode))
+                :setAnchorPoint(0, 0)
+                :stopAllActions()
+                :pos(0, 0)
+        if layouter:getContentSize().width - baseNode:getContentSize().width > 0 then
+            if onNotEnoughWidth then onNotEnoughWidth(baseNode) end
+            return
+        end
+        waitTime    = waitTime  or 1
+        time        = time      or 2
+        baseNode:runAction( 
+            cc.RepeatForever:create( 
+                cc.Sequence:create(
+                    cc.MoveTo:create(time, cc.p(layouter:getContentSize().width - baseNode:getContentSize().width ,0)),
+                    cc.DelayTime:create(waitTime),
+                    cc.MoveTo:create(time, cc.p(0, 0)),
+                    cc.DelayTime:create(waitTime)
+                )
+             )
+         )
+    end
+end
+
 
 return Utils

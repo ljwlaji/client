@@ -14,8 +14,10 @@ vLayerItemDetail.RESOURCE_BINDING = {
 
 local SINGLE_LINE_HEIGHT = 30
 
-local SLOT_TYPE_EQUIPMENT = 1
-local SLOT_TYPE_INVENTORY = 2
+-- 0 for preview
+local SLOT_TYPE_PREVIEW 	= 0
+local SLOT_TYPE_EQUIPMENT 	= 1
+local SLOT_TYPE_INVENTORY 	= 2
 
 function vLayerItemDetail:onCreate(...)
 	self:onReset(...)
@@ -26,7 +28,6 @@ function vLayerItemDetail:onReset(itemData, slotType)
 	local plr = Player:getInstance()
 	self.slotType = slotType
 	self.itemData = itemData
-	self.m_Children["Text_Equip"]:setString(DataBase:getStringByID(slotType + 280))
 	self.m_OffsetY = 0
 	self.m_Children["Panel_Detail"]:removeAllChildren()
 	local itemTemplate = itemData.template
@@ -49,7 +50,7 @@ function vLayerItemDetail:onReset(itemData, slotType)
 
 	-- 耐久度
 	if itemTemplate.max_durable > 0 then
-		self:newLine(string.format( DataBase:getStringByID(295), itemData.durable, itemTemplate.max_durable ))
+		self:newLine(string.format( DataBase:getStringByID(295), itemData.durable or itemTemplate.max_durable, itemTemplate.max_durable ))
 	end
 
 	if itemTemplate.require_class > 0 then
@@ -60,8 +61,14 @@ function vLayerItemDetail:onReset(itemData, slotType)
 		self:newLine(string.format( DataBase:getStringByID(293), itemTemplate.require_level))
 	end
 
-	self.m_Children["Panel_Detail"]:setPositionY(-self.m_OffsetY + 130)
-	self.m_Children["Panel_Frame"]:setContentSize(400, -self.m_OffsetY + 130 + 130)
+	local offset = self.slotType ~= 0 and 130 or 0
+	self.m_Children["Panel_Detail"]:setPositionY(-self.m_OffsetY + offset)
+	self.m_Children["Panel_Frame"]:setContentSize(400, -self.m_OffsetY + 130 + offset)
+
+	if self.slotType then
+		self.m_Children["Text_Equip"]:setString(DataBase:getStringByID(slotType + 280))
+	end
+	self.m_Children["Panel_Buttom"]:setVisible(self.slotType ~= 0)
 
 end
 

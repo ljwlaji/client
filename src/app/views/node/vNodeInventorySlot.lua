@@ -12,8 +12,9 @@ function vNodeInventorySlot:onCreate()
 	self.m_Children["Panel_Slot"]:setSwallowTouches(false)
 end
 
-function vNodeInventorySlot:onReset(context)
+function vNodeInventorySlot:onReset(context, forPreview)
 	self.context = context
+	self.forPreview = forPreview
 	if context == "null" then
 		self.m_Children["Panel_Icon"]:setVisible(false) 
 		return
@@ -24,7 +25,7 @@ end
 
 function vNodeInventorySlot:onTouchSlot(e)
 	if e.name ~= "ended" or self.context == "null" then return end
-	WindowMgr:createWindow("app.views.layer.vLayerItemDetail", self.context, 2)
+	WindowMgr:createWindow("app.views.layer.vLayerItemDetail", self.context, self.forPreview and 0 or 2)
 	do return end
 	local window = WindowMgr:findWindowIndexByClassName("vLayerItemDetail")
 	if e.name == "ended" or e.name == "cancelled" then

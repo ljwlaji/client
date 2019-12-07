@@ -64,6 +64,7 @@ function WindowMgr:createWindow(path, ...)
 		self:removeWindow(window)
 		if temp then temp(...) end
 	end
+	release_print(string.format("create Window : [%s]", path))
 	return window
 end
 

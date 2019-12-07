@@ -112,6 +112,16 @@ local QUEST_TYPE = {
 	WEEKLY 		= 3,
 }
 
+local GOSSIP_SENDER_TYPES = {
+	TYPE_QUEST 		= -1,
+	TYPE_TRAINER 	= -2,
+	TYPE_VENDOR 	= -3,
+}
+
+function ShareDefine.gossipSenderTypes()
+	return GOSSIP_SENDER_TYPES
+end
+
 function ShareDefine.DAY()
 	return 80000
 end

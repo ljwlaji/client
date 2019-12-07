@@ -12,9 +12,14 @@ function Creature:onCreate()
 	self:setGuid(self.context.guid)
 	self:setFaction(self.context.faction)
 	self:setAlive(self.context.alive)
+	self:fetchQuest()
+
 	if self.context.script_name and self.context.script_name ~= "" then
 		self:initAI(self.context.script_name)
+	else
+		self:initAI("ScriptAI")
 	end
+
 	self:move(self.context.x, self.context.y)
 
 	self.m_Model = self:createModelByID(self.context.model_id)
@@ -59,13 +64,24 @@ function Creature:isTrainer()
 	return self.context.isTrainer > 0
 end
 
+function Creature:getQuestList()
+	return self.m_QuestList
+end
+
 function Creature:isQuestGiver()
 	return #self.m_QuestList > 0
 end
 
+function Creature:onTouched(pPlayer)
+	-- 判断阵营
+	-- 判断声望
+	-- 判断生死情况
+	return self:getAI():onGossipHello(pPlayer, self)
+end
+
 function Creature:fetchQuest()
 	local sql = "SELECT * FROM quest_template WHERE accept_npc == '%d' or submit_npc == '%d'"
-	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
+	local queryResult = DataBase:query(string.format(sql, self:getGuid(), self:getGuid()))
 	for k, v in pairs(queryResult) do
 		self.m_QuestList[v.entry] = v
 	end

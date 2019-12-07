@@ -7,6 +7,9 @@ vNodeGossipItem.RESOURCE_BINDING = {
 }
 
 local MenuIcons = {
+	[-1] = "icon_Compose.png",
+	[-2] = "icon_Compose.png",
+	[-3] = "icon_Compose.png",
 	[1] = "icon_Compose.png",
 	[2] = "icon_Disenchant.png",
 	[3] = "Icon_Enchant.png",
