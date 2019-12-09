@@ -22,7 +22,7 @@ function Unit:onCreate(objType)
 	Object.onCreate(self, objType)
 	self.m_ActivatedSpells = {} --Activated Spells 当身上有相同法术存留的时候只覆盖
 	self.m_ControlByPlayer = false
-	self.m_Alive = true
+	self.m_Alive = false
 	self.m_Pawn = Pawn:create():addTo(self)
 	self.m_BaseAttrs = {
 		maxHealth 				= 100,
@@ -169,13 +169,21 @@ function Unit:modifyHealth(value)
 	self:setAttr("health", final)
 end
 
+function Unit:getDeathTime()
+	return self.m_DeathTime
+end
+
+function Unit:setDeathTime(time)
+	self.m_DeathTime = time
+end
+
 function Unit:justDie()
 	self:setAlive(false)
 	-- TODO
 	-- CleanUp All Areas
 	-- Play Animation
 	-- CleanUp All Threats And Targets
-
+	self:setDeathTime(os.time())
 	if self:getAI() then self:getAI():onDead() end
 end
 			-----------------------

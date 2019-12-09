@@ -87,12 +87,24 @@ function Creature:fetchQuest()
 	end
 end
 
+function Creature:justDie()
+	Unit.justDie(self)
+	self:saveToDB()
+end
+
+function Creature:saveToDB()
+	local sql = string.format("UPDATE creature_instance SET alive = '%d', dead_time = '%d' WHERE guid = '%d'", 
+								self:isAlive() and 1 or 0, self:getDeathTime(), self:getGuid())
+	DataBase:query(sql)
+end
+
 function Creature:onUpdate(diff)
 	Unit.onUpdate(self, diff)
 end
 
 function Creature:cleanUpBeforeDelete()
 	release_print("Creature : cleanUpBeforeDelete()")
+	self:saveToDB()
 	Unit.cleanUpBeforeDelete(self)
 end
 

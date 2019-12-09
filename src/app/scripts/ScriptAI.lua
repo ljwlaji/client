@@ -66,6 +66,7 @@ function ScriptAI:tryGenrateNextMovePos()
 end
 
 function ScriptAI:onAIMove(diff)
+	do return end
 	if self.m_TargetMoementPos then
 		local dis = self:getOwner():getPositionX() - self.m_TargetMoementPos
 		if math.abs(dis) < 5 then
