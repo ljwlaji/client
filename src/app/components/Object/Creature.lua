@@ -12,6 +12,7 @@ function Creature:onCreate()
 	self:setGuid(self.context.guid)
 	self:setFaction(self.context.faction)
 	self:setAlive(self.context.alive)
+	self:setDeathTime(self.context.dead_time)
 	self:fetchQuest()
 
 	if self.context.script_name and self.context.script_name ~= "" then

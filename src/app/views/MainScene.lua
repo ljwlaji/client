@@ -31,7 +31,7 @@ end
 
 function MainScene:onNativeUpdate()
     local diff = self.Timmer:getMSDiff()
-    if diff >= 5 then
+    if diff >= 15 then
         self.Timmer:reset()
         -- Update All Sync Views
         for k, v in pairs(self.sycnUpdateList) do v(diff) end
