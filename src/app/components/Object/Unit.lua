@@ -1,6 +1,5 @@
 local DataBase 			= import("app.components.DataBase")
 local Object 			= import("app.components.Object.Object")
-local Pawn 				= import("app.views.node.vNodePawn")
 local MovementMonitor 	= import("app.components.Object.UnitMovementMonitor")
 local Unit 				= class("Unit", Object)
 
@@ -23,7 +22,6 @@ function Unit:onCreate(objType)
 	self.m_ActivatedSpells = {} --Activated Spells 当身上有相同法术存留的时候只覆盖
 	self.m_ControlByPlayer = false
 	self.m_Alive = false
-	self.m_Pawn = Pawn:create():addTo(self)
 	self.m_BaseAttrs = {
 		maxHealth 				= 100,
 		maxMana 				= 100,
@@ -208,6 +206,11 @@ end
 			--------------------
 function Unit:getPawn()
 	return self.m_Pawn
+end
+
+function Unit:setPawn(pawn)
+	assert(not self.m_Pawn)
+	self.m_Pawn = pawn
 end
 			-----------------------
 			-- End Of Pawn Issus --

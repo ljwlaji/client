@@ -205,6 +205,7 @@ end
 
 function Map:tryFixPosition(unit, offset)
 	local hitGround = false
+	local hitGObject = false
 	local nowPosX, nowPosY = unit:getPosition()
 	local nextPos = {
 		x = nowPosX + offset.x,
@@ -218,6 +219,7 @@ function Map:tryFixPosition(unit, offset)
 				elseif offset.x < 0 then
 					nextPos.x = v:getPositionX() + v:getContentSize().width + 1
 				end
+				hitGObject = true
 				break
 			end
 		end
@@ -236,7 +238,7 @@ function Map:tryFixPosition(unit, offset)
 
 	-- Out Of Left Edge
 	if nextPos.x < 10 then nextPos.x = 10 end
-	return nextPos, hitGround
+	return nextPos, hitGround, hitGObject
 end
 
 function Map:getStandingObject(nextPos)

@@ -91,9 +91,9 @@ function Object:getModelDataByModelID(model_id)
 	return currModelData
 end
 
-function Object:createModelByID(model_id)
+function Object:createModelByID()
 	local model = nil
-	local currModelData = self:getModelDataByModelID(model_id)
+	local currModelData = self:getModelDataByModelID(self.context.model_id)
 	if currModelData.model_type == "image" then
 		model = cc.Sprite:create(string.format("res/model/image/%s", currModelData.file_path))
 	elseif currModelData.model_type == "spine" then

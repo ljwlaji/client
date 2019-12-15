@@ -2,6 +2,7 @@ local Unit 				= import("app.components.Object.Unit")
 local DataBase 			= import("app.components.DataBase")
 local ShareDefine 		= import("app.ShareDefine")
 local WindowMgr			= import("app.components.WindowMgr")
+local Pawn 				= import("app.views.node.vNodePawn")
 local Player 			= class("Player", Unit)
 
 Player.instance = nil
@@ -19,12 +20,13 @@ function Player:onCreate()
 	self.m_QuestDatas = {}
 	self:setAlive(true)
 	self:loadFromDB()
-	self:initAvatar()
 	self:setControlByPlayer(true)
 	self:resetGossipList()
 	self:updateAttrs()
 	Player.instance = self
-
+    self:move(self.context.pos_x, self.context.pos_y)
+    	:setLocalZOrder(1)
+    	-- :setContentSize(sp:getContentSize())
 	-- self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", function() end)
 
 end
@@ -36,11 +38,12 @@ function Player:loadFromDB()
 	local queryResult = nil
 	local sql = "SELECT * FROM character_instance AS I JOIN character_template AS T ON I.class = T.class AND I.gender = T.gender WHERE I.guid = %d"
 	queryResult = DataBase:query(string.format(sql, self.context))[1]
+	self.context = queryResult
+	self:setPawn(Pawn:create():addTo(self):init(self))
 	self:setClass(queryResult.class)
 	self:setLevel(queryResult.level)
 	self:setName(queryResult.name)
 	self:setGuid(queryResult.guid)
-	self.context = queryResult
 	self:loadInventoryFromDB()
 	self:loadAllLearnedSpellsFromDB()
 	self:loadActivatedSpellFromDB()
@@ -265,13 +268,6 @@ end
 
 function Player:getInventoryData()
 	return self.m_InventoryData
-end
-
-function Player:initAvatar()
-	local sp = cc.Sprite:create("res/player.png"):addTo(self:getPawn().m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
-    self:move(self.context.pos_x, self.context.pos_y)
-    	:setLocalZOrder(1)
-    	:setContentSize(sp:getContentSize())
 end
 
 function Player:canEquip(itemData)
