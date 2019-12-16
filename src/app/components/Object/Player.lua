@@ -18,6 +18,7 @@ function Player:onCreate()
 	self.m_InventoryData = {}
 	self.m_LearnedSpells = {}
 	self.m_QuestDatas = {}
+	self.m_SpellSlots = {}
 	self:setAlive(true)
 	self:loadFromDB()
 	self:setControlByPlayer(true)
@@ -26,6 +27,7 @@ function Player:onCreate()
 	Player.instance = self
     self:move(self.context.pos_x, self.context.pos_y)
     	:setLocalZOrder(1)
+
     	-- :setContentSize(sp:getContentSize())
 	-- self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", function() end)
 
@@ -49,10 +51,11 @@ function Player:loadFromDB()
 	self:loadActivatedSpellFromDB()
 
 	self:loadQuestFromDB()
+
+	self:loadSpellSlotFromDB()
 end
 
 --[[ For Quest Issus ]]
-
 function Player:loadQuestFromDB()
 	local sql = "SELECT * FROM character_quest WHERE character_guid = '%d'"
 	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
@@ -104,6 +107,38 @@ function Player:canAcceptQuest(questTemplate)
 end
 
 --[[ End Quest Issus ]]
+function Player:changeSlotSpell(pSlotID, pSpellID)
+	if self.m_SpellSlots[pSlotID] == pSpellID then return end
+
+	for slotID, SpellID in pairs(self.m_SpellSlots) do
+		if pSpellID == SpellID then self.m_SpellSlots[slotID] = nil break end -- 移除旧的Slot信息
+	end
+	self.m_SpellSlots[pSlotID] = pSpellID
+	self:saveSpellSlotToDB()
+	self:sendAppMsg("MSG_ON_SPELL_SLOT_CHANGED")
+end
+
+function Player:getSpellSlotInfo()
+	return self.m_SpellSlots
+end
+
+function Player:loadSpellSlotFromDB()
+	-- local changed = false
+	local sql = "SELECT * FROM spell_slot_instance WHERE character_guid = '%d'"
+	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
+	for k, v in pairs(queryResult) do
+		self.m_SpellSlots[v.slot_index] = v.spell_id
+	end
+end
+
+function Player:saveSpellSlotToDB()
+	local sql = "DELETE FROM spell_slot_instance WHERE character_guid = '%d'"
+	DataBase:query(string.format(sql, self:getGuid()))
+	sql = "INSERT INTO spell_slot_instance(character_guid, slot_index, spell_id) VALUES('%d', '%d', '%d')"
+	for slot_index, spell_id in pairs(self.m_SpellSlots) do
+		DataBase:query(string.format(sql, self:getGuid(), slot_index, spell_id))
+	end
+end
 
 function Player:getLearnedSpells()
 	return self.m_LearnedSpells
@@ -196,8 +231,9 @@ function Player:updateEquipmentAttrs()
 		local equipment = self.m_InventoryData[i]
 		if equipment then
 			-- 计算基础的属性增幅
-			for attrName, value in pairs(equipment.template.attrs) do
-				extraValues[attrName] = extraValues[attrName] + value
+			for attrIndex, value in pairs(equipment.template.attrs) do
+				local indexStr = ShareDefine.stateIndexToString(attrIndex)
+				extraValues[indexStr] = extraValues[indexStr] + value
 			end
 		end
 	end
@@ -253,6 +289,7 @@ function Player:saveToDB()
 	self:saveActivatedSpellFromDB()
 	self:saveAllLearnedSpellToDB()
 	self:saveQuestToDB()
+	self:saveSpellSlotToDB()
 end
 
 function Player:saveInventoryToDB()

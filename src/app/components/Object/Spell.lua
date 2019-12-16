@@ -1,5 +1,7 @@
-local StateMachine = import("app.components.StateMachine")
-local Spell = class("Spell", cc.Node)
+local StateMachine 		= import("app.components.StateMachine")
+local ShareDefine       = import("app.ShareDefine")
+local WindowMgr			= import("app.components.WindowMgr")
+local Spell 			= class("Spell", cc.Node)
 
 
 --[[
@@ -17,14 +19,11 @@ Spell.CastResult = {
 	CAST_ERROR_COOL_DOWN 			= 2,
 	CAST_ERROR_WRONG_TARGET 		= 3,
 
-	CAST_ERROR_NOT_ENOUGH_BEGIN		= 3,
-	CAST_ERROR_NOT_ENOUGH_MANA 		= 4, --魔法
-	CAST_ERROR_NOT_ENOUGH_RAGE 		= 5, --怒气
-	CAST_ERROR_NOT_ENOUGH_ENERGY 	= 6, --能量
-	CAST_ERROR_NOT_ENOUGH_HEALTH 	= 7, --体力
-
-	CAST_ERROR_NOT_ENOUGH_RANGE		= 8,
-
+	CAST_ERROR_NOT_ENOUGH_BEGIN		= 400,
+	CAST_ERROR_NOT_ENOUGH_MANA 		= 417, --魔法
+	CAST_ERROR_NOT_ENOUGH_RAGE 		= 418, --怒气
+	CAST_ERROR_NOT_ENOUGH_ENERGY 	= 419, --能量
+	CAST_ERROR_NOT_ENOUGH_HEALTH 	= 420, --体力
 	CAST_PREPARE 					= 100,
 }
 local CastResult = Spell.CastResult
@@ -39,20 +38,24 @@ Spell.SpellTargetType = {
 }
 local SpellTargetType = Spell.SpellTargetType
 
-Spell.SpellRequirementType = {
-	[1] = "mana",
-	[2] = "rage",
-	[3] = "enegry",
-	[4] = "health"
+local SPELL_CAST_STATES = {
+	STATE_CASTTING 		= 1,
+	-- STATE_LAUNCHING 	= 2,
 }
-local SpellRequirementType = Spell.SpellRequirementType
 
-function Spell:ctor(caster, target, spellInfo)
+function Spell:ctor(caster, spellInfo)
 	self.m_Caster = caster
-	self.m_Target = target
+	self.m_Targets = {}
+	self.m_CastTimer = 0
 	self.m_SpellInfo = spellInfo
 	self.m_CastResult = CastResult.CAST_PREPARE
 	self:onNodeEvent("cleanup", handler(self, self.cleanUpBeforeDelete))
+
+	self.m_StateMachine = StateMachine:create()
+									  :addState(SPELL_CAST_STATES.STATE_CASTTING, 	handler(self, self.onEnterCastting), handler(self, self.onExecuteCastting), nil, nil)
+									  -- :addState(SPELL_CAST_STATES.STATE_LAUNCHING, handler(self, self.onEnterLaunch), handler(self, self.onExecuteLaunch), handler(self, self.onExitLaunch), nil)
+
+	self:tryCast()
 end
 
 function Spell:getCaster()
@@ -60,60 +63,86 @@ function Spell:getCaster()
 end
 
 function Spell:getTarget()
-	return self.m_Target
+	return self.m_Targets
 end
 
 function Spell:getSpellInfo()
 	return self.m_SpellInfo
 end
 
-function Spell:prepare()
-	if CastResult.CAST_OK ~= self:checkCast() then self:cancel() end
-	--Init CastTime
-end
-
 function Spell:cancel()
+	self.m_StateMachine:stop()
+	self.m_StateMachine = nil
 	self:getCaster():onSpellCancel()
 	self:removeFromParent()
 end
 
 function Spell:checkCast()
 	local spellInfo = self:getSpellInfo()
-	--Check Requirements
-	for requireType, requireValue in pairs(spellInfo.requirements) do
-		if self:getCaster():getAttr(SpellRequirementType[requireType]) < requireValue then
-			return CastResult.CAST_ERROR_NOT_ENOUGH_BEGIN + requireType
-		end
-	end
-	--Check ColdDown
-
-
-	--Check Target
-	if 	(spellInfo.SpellTargetType == SpellTargetType.TARGET_ENEMY 					and not FactionMgr:isHostile(self:getCaster(), self:getTarget())) or
-		(spellInfo.SpellTargetType == SpellTargetType.TARGET_NOT_ENEMY 				and FactionMgr:isHostile(self:getCaster(), self:getTarget())) or
-		(spellInfo.SpellTargetType == SpellTargetType.TARGET_SELF 					and self:getCaster() ~= self:getTarget()) or
-		(spellInfo.SpellTargetType == SpellTargetType.TARGET_SPECIFIC_GAMEOBJECT 	and (not self:getTarget():isGameObject() 	or self:getTarget():getEntry() ~= spellInfo.SpellTargetValue)) or
-		(spellInfo.SpellTargetType == SpellTargetType.TARGET_SPECIFIC_CREATURE 		and (not self:getTarget():isCreature() 		or self:getTarget():getEntry() ~= spellInfo.SpellTargetValue)) then
-		return CastResult.CAST_ERROR_WRONG_TARGET
-	end
-
-
-	--Check Range
-	if cc.pGetDistance(cc.p(self:getCaster():getPosition()), self:getTarget()) then
-		return CastResult.CAST_ERROR_NOT_ENOUGH_RANGE
+	if spellInfo.cost_type > 0 and spellInfo.cost_amount > 0 and self:getCaster():getAttr(ShareDefine.stateIndexToString(spellInfo.cost_type)) < spellInfo.cost_amount then
+		return CastResult.CAST_ERROR_NOT_ENOUGH_BEGIN + spellInfo.cost_type
 	end
 	return CastResult.CAST_OK
 end
 
-function Spell:fetchTargets()
+function Spell:tryCast()
+	self.m_StateMachine:setState(SPELL_CAST_STATES.STATE_CASTTING)
+				   	   :run()
+	self:onExecuteCastting(0) --先检查一次
+end
 
+function Spell:onEnterCastting()
+	-- 通知WindowMgr呼出倒计时栏
+	WindowMgr:createWindow("app.views.layer.vLayerCasttingBar", self.m_SpellInfo, 0)
+	-- play Cast Effect
+end
+
+function Spell:onExecuteCastting(diff)
+	if CastResult.CAST_OK ~= self:checkCast() then self:cancel() end
+
+	if self.m_CastTimer >= self.m_SpellInfo.cast_time then
+		self.m_StateMachine:stop()
+		self:launchSpell()
+		return
+	end
+	self.m_CastTimer = self.m_CastTimer + diff
+	WindowMgr:createWindow("app.views.layer.vLayerCasttingBar", self.m_SpellInfo, self.m_CastTimer / self.m_SpellInfo.cast_time * 100)
+end
+
+-- function Spell:onEnterLaunch()
+
+-- end
+
+-- function Spell:onExecuteLaunch(diff)
+
+-- end
+
+-- function Spell:onExitLaunch()
+
+-- end
+
+function Spell:launchSpell()
+	-- TODO
+	-- modify spell cast_cost
+
+	-- fetch targets
+	self:fetchTargets()
+	-- just launch
+
+
+	self:getCaster():onSpellLaunched()
+
+	-- launch spell effect
+end
+
+function Spell:fetchTargets()
+	-- fetch vailed targets in range
+	
+	-- fetch damage
 end
 
 function Spell:onUpdate(diff)
-	if self.m_CastResult == CastResult.CAST_PREPARE or self.m_CastResult == CastResult.CAST_CANCELED then 
-		return 
-	end
-
+	self.m_StateMachine:executeStateProgress(diff)
 end
 
 function Spell:cleanUpBeforeDelete()

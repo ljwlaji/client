@@ -36,14 +36,14 @@
                 <EndColor A="255" R="255" G="255" B="255" />
                 <ColorVector ScaleY="1.0000" />
               </AbstractNodeData>
-              <AbstractNodeData Name="Text_SpellName" ActionTag="321216717" Tag="42" IconVisible="False" PositionPercentYEnabled="True" LeftMargin="90.0000" RightMargin="248.0000" TopMargin="28.5000" BottomMargin="28.5000" FontSize="20" LabelText="Text Label" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
-                <Size X="92.0000" Y="23.0000" />
+              <AbstractNodeData Name="Text_SpellName" ActionTag="321216717" Tag="42" IconVisible="False" PositionPercentYEnabled="True" LeftMargin="90.0000" RightMargin="240.0000" TopMargin="30.0000" BottomMargin="30.0000" FontSize="20" LabelText="Text Label" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="100.0000" Y="20.0000" />
                 <AnchorPoint ScaleY="0.5000" />
                 <Position X="90.0000" Y="40.0000" />
                 <Scale ScaleX="1.0000" ScaleY="1.0000" />
                 <CColor A="255" R="255" G="255" B="255" />
                 <PrePosition X="0.2093" Y="0.5000" />
-                <PreSize X="0.2140" Y="0.2875" />
+                <PreSize X="0.2326" Y="0.2500" />
                 <OutlineColor A="255" R="255" G="0" B="0" />
                 <ShadowColor A="255" R="110" G="110" B="110" />
               </AbstractNodeData>

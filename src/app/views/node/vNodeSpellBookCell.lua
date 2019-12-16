@@ -1,6 +1,7 @@
-local ViewBaseEx 		= import("app.views.ViewBaseEx")
-local DataBase 			= import("app.components.DataBase")
-local vNodeSpellBookCell = class("vNodeSpellBookCell", ViewBaseEx)
+local ViewBaseEx 			= import("app.views.ViewBaseEx")
+local DataBase 				= import("app.components.DataBase")
+local WindowMgr				= import("app.components.WindowMgr")
+local vNodeSpellBookCell 	= class("vNodeSpellBookCell", ViewBaseEx)
 
 vNodeSpellBookCell.RESOURCE_FILENAME = "res/csb/node/CSB_Node_SpellBookCell.csb"
 vNodeSpellBookCell.RESOURCE_BINDING = {
@@ -24,7 +25,7 @@ end
 function vNodeSpellBookCell:onTouchCell(e)
 	if e.name ~= "ended" then return end
 	if cc.pGetDistance(e.target:getTouchBeganPosition(), e.target:getTouchEndPosition()) > 20 then return end
-	release_print("onTouchSpellBookCell")
+	WindowMgr:createWindow("app.views.layer.vLayerSpellInfo", self.context)
 end
 
 

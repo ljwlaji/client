@@ -1,6 +1,8 @@
 local DataBase 			= import("app.components.DataBase")
 local Object 			= import("app.components.Object.Object")
 local MovementMonitor 	= import("app.components.Object.UnitMovementMonitor")
+local SpellMgr 			= import("app.components.SpellMgr")
+local Spell 			= import("app.components.Object.Spell")
 local Unit 				= class("Unit", Object)
 
 --[[
@@ -27,6 +29,11 @@ function Unit:onCreate(objType)
 		maxMana 				= 100,
 		maxRage					= 100,
 		maxEnergy				= 100,
+
+		rage 					= 100,
+		health 					= 100,
+		energy 					= 100,
+		mana 					= 100,
 
 		attackPower 			= 1,
 		magicAttackPower 		= 1,
@@ -57,6 +64,7 @@ function Unit:onUpdate(diff)
 	-- end of testting --
 	Object.onUpdate(self, diff)
 	self.m_MovementMonitor:update(diff)
+	if self.m_CasttingSpell then self.m_CasttingSpell:onUpdate(diff) end
 end
 
 function Unit:setFaction(faction)
@@ -188,18 +196,37 @@ end
 			-- End Of Attr Issus --
 			-----------------------
 
-function Unit:castSpell(target, spellID)
+--[[ For Combat Issus ]]
+function Unit:attack(victim)
+	local damage = self:getAttr("attackPower")
+	self:dealDamage(damage, victim, ShareDefine.meleeDamage())
+end
+
+function Unit:dealDamage(damage, victim, damageType)
+	if damageType == ShareDefine.meleeDamage() then
+		damage = damage - victim:getAttr("defence")
+	end
+	victim:modifyHealth(damage)
+end
+
+function Unit:castSpell(spellID)
 	if self.m_CasttingSpell then release_print("Already Castting a Spell !") return end
 	local spellTemplate = SpellMgr:getSpellTemplate(spellID)
 	if not spellTemplate then release_print("Cannot Find SpellTemplate By SpellID : "..spellID) return end
 
-	self.m_CasttingSpell = Spell:create(self, target, spellTemplate)
-	self.m_CasttingSpell:prepare()
+	self.m_CasttingSpell = Spell:create(self, spellTemplate):addTo(self:getMap())
 end
 
 function Unit:onSpellCancel()
+	self.m_CasttingSpell = nil
 	release_print("onSpellCancel")
 end
+
+function Unit:onSpellLaunched()
+	self.m_CasttingSpell = nil
+	release_print("onSpellLaunched")
+end
+--[[ End Combat Issus ]]
 
 			--------------------
 			-- For Pawn Issus --

@@ -9,16 +9,17 @@ local ShareDefine   = import("app.ShareDefine")
 local updateCount = 0
 local totalMS = 0
 
-
 function MainScene:onCreate()
     self.sycnUpdateList = {}
 end
 
 function MainScene:onEnterTransitionFinish()
+    local chosedCharacterID = 1
     self:run()
     self:createView("layer.LayerEntrance", function()
         self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
-        self:startGame(1)
+        self:startGame(chosedCharacterID)
+        self.m_HUDLayer:onReset()
     end):addTo(self)
 end
 

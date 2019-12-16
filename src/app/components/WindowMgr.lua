@@ -14,6 +14,10 @@ function WindowMgr:getInstance()
 	return WindowMgr.instance
 end
 
+function WindowMgr:popCheckWindow(...)
+	self:createWindow("app.views.layer.vLayerCheckWindow", ...)
+end
+
 function WindowMgr:findWindowIndexByClassName(className)
 	local ret = nil
 	local index = nil
@@ -46,7 +50,7 @@ end
 function WindowMgr:createWindow(path, ...)
 	local template = import(path)
 	if rawget(template, "DisableDuplicateCreation") == true and rawget(template, "inDisplay") then 
-        print("\nModule <"..template.__cname.."> Was Disabled For Duplicate Creation, Call onReset Instead.")
+        -- print("\nModule <"..template.__cname.."> Was Disabled For Duplicate Creation, Call onReset Instead.")
         local currentWindow, index = self:findWindowIndexByClassName(template.__cname)
         if currentWindow and currentWindow.onReset then currentWindow:onReset(...) end
         table.insert(self.m_Windows, table.remove(self.m_Windows, index))

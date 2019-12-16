@@ -22,7 +22,6 @@ function DataBase:fetchItemTemplate()
         v.spells = loadstring("return "..v.spells)()
         itemTmeplate[v.entry] = v
     end
-
     return itemTmeplate
 end
 

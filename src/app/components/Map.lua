@@ -37,6 +37,7 @@ function Map:ctor(Entry, chosedCharacterID)
 	self.m_GroundDatas 		= {}
 	self.m_CreatureDatas 	= {}
 	self.m_ObjectList 		= {}
+	self.m_SpellObjects		= {}
 	self.m_HotloadTimer 	= 0
 	self:onCreate(chosedCharacterID)
 

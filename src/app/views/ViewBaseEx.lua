@@ -2,6 +2,7 @@ local ViewBaseEx = class("ViewBaseEx", cc.load("mvc").ViewBase)
 
 function ViewBaseEx:autoAlgin()
 	self:setContentSize(display.width, display.height)
+	self:getResourceNode():setContentSize(display.width, display.height)
 
 	if self.m_Children["node_Left_Up"] 			then self.m_Children["node_Left_Up"]:move(0, display.height):setAnchorPoint(0, 1) 	end
 	if self.m_Children["node_Left"] 			then self.m_Children["node_Left"]:move(0, display.cy):setAnchorPoint(0, 0.5) 		end
