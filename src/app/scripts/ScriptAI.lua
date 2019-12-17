@@ -11,6 +11,8 @@ local GOSSIP_SENDER_TYPES = ShareDefine.gossipSenderTypes()
 
 local SIGHT_RANGE = ShareDefine.sightRange()
 
+local MOVE_IN_LINE_OF_SIGHT_TIMER = 1000
+
 function ScriptAI:ctor(me)
 	self.getOwner = function() return me end
 	self:onReset()
@@ -44,7 +46,7 @@ end
 function ScriptAI:onReset()
 	self.m_Victim = nil
 	self.m_ThreadList = {}
-	self.m_MoveInLineOfSightTimer = 1000
+	self.m_MoveInLineOfSightTimer = 0
 end
 
 function ScriptAI:onTranceMove(victim)
@@ -124,14 +126,14 @@ end
 --[[ End Combat Issus]]
 
 function ScriptAI:onUpdate(diff)
-	if self.m_MoveInLineOfSightTimer <= diff then
+	if self.m_MoveInLineOfSightTimer >= MOVE_IN_LINE_OF_SIGHT_TIMER then
 		local units = self:getOwner():getMap():fetchUnitInRange(self:getOwner(), SIGHT_RANGE, true, true, true)
 		for k, v in pairs(units) do
 			self:moveInLineOfSight(v.obj)
 		end
-		self.m_MoveInLineOfSightTimer = 1000
+		self.m_MoveInLineOfSightTimer = 0
 	else
-		self.m_MoveInLineOfSightTimer = self.m_MoveInLineOfSightTimer - diff
+		self.m_MoveInLineOfSightTimer = self.m_MoveInLineOfSightTimer + diff
 	end
 end
 
