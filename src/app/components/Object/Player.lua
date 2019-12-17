@@ -278,12 +278,12 @@ function Player:onInventoryDataChanged()
 end
 
 function Player:saveToDB()
-	-- Save Instance Stuff						  0		1		2		3	   4	5	  6		7	   8
-	local sql = [[REPLACE INTO character_instance(guid, class, gender, level, race, name, map, pos_x, pos_y) 
+	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9
+	local sql = [[REPLACE INTO character_instance(guid, class, gender, faction, level, race, name, map, pos_x, pos_y) 
 										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%s', '%d','%d',  '%d') ]]
-	--										0				1				2					3				4
-	DataBase:query(string.format(sql, self:getGuid(), self:getClass(), self:getGender(), self:getLevel(), self:getRace(), 
-	--										5					6						7					8
+	--										0				1				2					3				4					5
+	DataBase:query(string.format(sql, self:getGuid(), self:getClass(), self:getGender(), self:getFaction(), self:getLevel(), self:getRace(), 
+	--										6					7						8					9
 									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY()))
 
 	self:saveInventoryToDB()
