@@ -128,6 +128,12 @@ local DAMAGE_TYPES = {
 	MAGIC_DAMAGE = 2
 }
 
+local SIGHT_RANGE = 200
+
+function ShareDefine.sightRange()
+	return SIGHT_RANGE
+end
+
 function ShareDefine.meleeDamage()
 	return DAMAGE_TYPES.MELEE_DAMAGE
 end

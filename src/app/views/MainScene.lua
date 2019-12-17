@@ -158,6 +158,7 @@ end
 
 function MainScene:startGame(chosedCharacterID)
     import("app.components.SpellMgr"):loadFromDB()
+    import("app.components.FactionMgr"):loadFromDB()
     local MapEntry = import("app.components.DataBase"):query(string.format("SELECT * FROM character_instance WHERE guid = %d", chosedCharacterID))[1]["map"]
     self:tryEnterMap(MapEntry, chosedCharacterID)
 end

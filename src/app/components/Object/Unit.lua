@@ -197,6 +197,18 @@ end
 			-----------------------
 
 --[[ For Combat Issus ]]
+function Unit:onCombatStart()
+
+end
+
+function Unit:onCombatEnded()
+	-- return to home pos
+end
+
+function Unit:getDistance(otherUnit)
+	return cc.pGetDistance(cc.p(self:getPosition()), cc.p(otherUnit:getPosition()))
+end
+
 function Unit:attack(victim)
 	local damage = self:getAttr("attackPower")
 	self:dealDamage(damage, victim, ShareDefine.meleeDamage())

@@ -5,6 +5,7 @@ local Player        = import("app.components.Object.Player")
 local GameObject    = import("app.components.Object.GameObject")
 local Ground    	= import("app.components.Object.Ground")
 local Creature    	= import("app.components.Object.Creature")
+local FactionMgr	= import("app.components.FactionMgr")
 
 -- 需要实现的功能
 -- 无缝地图
@@ -168,6 +169,23 @@ function Map:tryRemoveObjects()
 			v.instance = nil
 		end
 	end 
+end
+
+function Map:fetchUnitInRange(who, range, ingnoreSelf, aliveOnly, hostileOnly)
+	local ret = {}
+	for k, v in pairs(self.m_ObjectList) do
+		local distance = who:getDistance(v)
+		if v:isUnit() and distance <= range 
+					  and (ingnoreSelf and who ~= v) 
+					  and (aliveOnly and v:isAlive()) 
+					  and (hostileOnly and FactionMgr:isHostile(who:getFaction(), v:getFaction()))
+			then
+			table.insert(ret, {obj = v, dist = distance})
+		end
+	end
+
+	table.sort(ret, function(a, b) return a.dist < b.dist end)
+	return ret
 end
 
 function Map:addObject(object)

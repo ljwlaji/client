@@ -9,6 +9,8 @@ local GOSSIP_SENDER_TYPES = ShareDefine.gossipSenderTypes()
 	TYPE_VENDOR 	= -3,
 ]]
 
+local SIGHT_RANGE = ShareDefine.sightRange()
+
 function ScriptAI:ctor(me)
 	self.getOwner = function() return me end
 	self:onReset()
@@ -39,20 +41,53 @@ function ScriptAI:onGossipSelect(pPlayer, pObject, pSender, pIndex)
 	end
 end
 
-function ScriptAI:moveInLineOfSight(who)
-	
-end
-
 function ScriptAI:onReset()
 	self.m_Victim = nil
 	self.m_ThreadList = {}
+	self.m_MoveInLineOfSightTimer = 1000
+end
+
+function ScriptAI:onTranceMove(victim)
+	local offsetX = victim:getPositionX() > self:getOwner():getPositionX() and 1 or -1
+	local distance = self:getOwner():getDistance(victim)
+	if distance < 100 then offsetX = 0 end
+	return offsetX
 end
 
 function ScriptAI:onAIMove(diff)
-
+	local offsetX = 0
+	local TracedUnit = self:isInCombat() and self:getVictim() or self:getTracedUnit()
+	if TracedUnit then 
+		offsetX = self:onTranceMove(TracedUnit) 
+	end
+	return offsetX
 end
 
 --[[ For Combat Issus]]
+
+function ScriptAI:moveInLineOfSight(who)
+	if not self:isInCombat() then self:startCombat(who) end
+end
+
+function ScriptAI:startCombat(victim)
+	self:setVictim(victim)
+	self:setInCombat(true)
+end
+
+function ScriptAI:setInCombat(enabled)
+	if self.m_Combat == enabled then return end
+	self.m_Combat = enabled
+	if self.m_Combat == true then
+		self:getOwner():onCombatStart()
+	else
+		self:getOwner():onCombatEnded()
+	end
+end
+
+function ScriptAI:isInCombat()
+	return self.m_Combat
+end
+
 function ScriptAI:setVictim(victim)
 	self.m_Victim = victim
 end
@@ -66,7 +101,7 @@ function ScriptAI:getThreadList()
 end
 
 function ScriptAI:onDead()
-
+	self:setInCombat(false)
 end
 
 function ScriptAI:doMeleeAttack()
@@ -75,29 +110,29 @@ function ScriptAI:doMeleeAttack()
 	end
 end
 
-function ScriptAI:isInAttackRange(who)
-
+function ScriptAI:getTracedUnit()
+	return self.m_TracedUnit
 end
 
-function ScriptAI:tryTraceVictim()
-
+function ScriptAI:setTraceOn(unit)
+	self.m_TracedUnit = unit
 end
 
 function ScriptAI:onExecuteCombat(diff)
 	if not self:getVictim() and self:getVictim():isAlive() then return end
 end
-
-function ScriptAI:onEnterCombat(victim)
-	self:setVictim(victim)
-end
-
-function ScriptAI:onExitCombat()
-
-end
 --[[ End Combat Issus]]
 
 function ScriptAI:onUpdate(diff)
-
+	if self.m_MoveInLineOfSightTimer <= diff then
+		local units = self:getOwner():getMap():fetchUnitInRange(self:getOwner(), SIGHT_RANGE, true, true, true)
+		for k, v in pairs(units) do
+			self:moveInLineOfSight(v.obj)
+		end
+		self.m_MoveInLineOfSightTimer = 1000
+	else
+		self.m_MoveInLineOfSightTimer = self.m_MoveInLineOfSightTimer - diff
+	end
 end
 
 return ScriptAI

@@ -86,7 +86,6 @@ function UnitMovementMonitor:getNextPathPos()
 end
 
 --[[ End Path Movement Issus ]]
-
 function UnitMovementMonitor:jump()
 	local currentState = self.m_StateMachine:getCurrentState()
 	if currentState == MovementStates.STATE_JUMP_HIGH or currentState == MovementStates.STATE_JUMP_FALL then return end
@@ -147,10 +146,8 @@ function UnitMovementMonitor:onHorizonMove(diff, isJumpping)
             -- path moving....
             -- step 1:
             -- get next move position
-            if self:canDoPathMove() then 
+            if self:canDoPathMove() and not mover:getAI():isInCombat() then 
             	self:doPathMove(mover, diff)
-            -- elseif self:getVictim() then --合并到onAIMove内
-            -- 	self:onCombatMove()
             else
                 self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION + (mover:getAI() and mover:getAI():onAIMove(diff) or 0)
             end
@@ -165,7 +162,6 @@ end
 --	 State Machine Functions   --
 ---------------------------------
 function UnitMovementMonitor:onEnterIdle()
-	release_print("onEnterIdle")
 end
 
 function UnitMovementMonitor:onExecuteIdle(diff)
@@ -177,7 +173,6 @@ function UnitMovementMonitor:onExitIdle()
 end
 
 function UnitMovementMonitor:onEnterIdleRun()
-	release_print("onEnterIdleRun")
 
 end
 
@@ -190,7 +185,6 @@ function UnitMovementMonitor:onExitIdleRun()
 end
 
 function UnitMovementMonitor:onEnterRun()
-	release_print("onEnterRun")
 end
 
 function UnitMovementMonitor:onExecuteRun(diff)
@@ -202,7 +196,6 @@ function UnitMovementMonitor:onExitRun()
 end
 
 function UnitMovementMonitor:onEnterJumpHigh()
-	release_print("onEnterJumpHigh")
     AudioMgr:playEffect("Jump.mp3", false)
 	self.m_FallSpeed = self:getOwner():getAttr("jumpForce")
 	self.m_JumpDirection = self.m_Direction
@@ -216,7 +209,6 @@ function UnitMovementMonitor:onExitJumpHigh()
 end
 
 function UnitMovementMonitor:onEnterJumpFall()
-	release_print("onEnterJumpFall")
 	self.m_FallSpeed = -1
 end
 
