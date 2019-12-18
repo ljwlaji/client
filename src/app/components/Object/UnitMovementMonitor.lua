@@ -85,6 +85,16 @@ function UnitMovementMonitor:getNextPathPos()
     return pos
 end
 
+function UnitMovementMonitor:setDriection(direction)
+	if self.m_Direction == direction then return end
+	self.m_Direction = direction
+	self:getOwner():getPawn():setFlippedX(self.m_Direction == "left" and true or false)
+end
+
+function UnitMovementMonitor:getDirection()
+	return self.m_Direction
+end
+
 --[[ End Path Movement Issus ]]
 function UnitMovementMonitor:jump()
 	local currentState = self.m_StateMachine:getCurrentState()
@@ -95,8 +105,7 @@ end
 function UnitMovementMonitor:updateDirection()
 	local offset = self:getOwner():isControlByPlayer() and Controller:getInstance():getHorizonOffset() or self.m_MoveSpeed
 	if offset == 0 then return end
-	self.m_Direction = offset > 0 and "right" or "left"
-	self:getOwner():getPawn():setFlippedX(self.m_Direction == "left" and true or false)
+	self:setDriection(offset > 0 and "right" or "left")
 end
 
 function UnitMovementMonitor:updateMovement(diff, isJumpping)

@@ -127,7 +127,7 @@ end
 
 function ScriptAI:onUpdate(diff)
 	if self.m_MoveInLineOfSightTimer >= MOVE_IN_LINE_OF_SIGHT_TIMER then
-		local units = self:getOwner():getMap():fetchUnitInRange(self:getOwner(), SIGHT_RANGE, true, true, true)
+		local units = self:getOwner():getMap():fetchUnitInRange(self:getOwner(), SIGHT_RANGE, true, true, true, 999, true)
 		for k, v in pairs(units) do
 			self:moveInLineOfSight(v.obj)
 		end

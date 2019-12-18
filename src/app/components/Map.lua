@@ -171,17 +171,20 @@ function Map:tryRemoveObjects()
 	end 
 end
 
-function Map:fetchUnitInRange(who, range, ingnoreSelf, aliveOnly, hostileOnly)
+function Map:fetchUnitInRange(who, range, ingnoreSelf, aliveOnly, hostileOnly, maxNumber, checkFacing)
 	local ret = {}
+	maxNumber = maxNumber or 999
 	for k, v in pairs(self.m_ObjectList) do
 		local distance = who:getDistance(v)
 		if v:isUnit() and distance <= range 
-					  and (ingnoreSelf and who ~= v) 
-					  and (aliveOnly and v:isAlive()) 
-					  and (hostileOnly and FactionMgr:isHostile(who:getFaction(), v:getFaction()))
+					  and (not ingnoreSelf or who ~= v) 
+					  and (not aliveOnly or v:isAlive()) 
+					  and (not hostileOnly or FactionMgr:isHostile(who:getFaction(), v:getFaction()))
+					  and (not checkFacing or who:isFacingTo(v))
 			then
 			table.insert(ret, {obj = v, dist = distance})
 		end
+		if #ret >= maxNumber then break end
 	end
 
 	table.sort(ret, function(a, b) return a.dist < b.dist end)

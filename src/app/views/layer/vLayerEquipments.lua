@@ -45,7 +45,7 @@ function vLayerEquipments:onReset()
 	
 	for index, attrStr in pairs(BaseAttrs) do
 		local child = self.m_Children[string.format("Text_%s", attrStr)]
-		if child then child:setString(string.format("%s : %s", ShareDefine.getStateStringByStateIndex(index), currPlr:getBaseAttr(attrStr))) end
+		if child then child:setString(string.format("%s : %s", ShareDefine.getStateStringByStateIndex(index), currPlr:getAttr(attrStr))) end
 	end
 	self:refreshAllSlots()
 	self:refreshStrings()

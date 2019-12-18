@@ -3,12 +3,13 @@ local Object 			= import("app.components.Object.Object")
 local MovementMonitor 	= import("app.components.Object.UnitMovementMonitor")
 local SpellMgr 			= import("app.components.SpellMgr")
 local Spell 			= import("app.components.Object.Spell")
+local ShareDefine 		= import("app.ShareDefine")
 local Unit 				= class("Unit", Object)
 
 --[[
 	Unit Base Attrs
 
-	1. maxHeath
+	1. maxHealth
 	2. maxMana
 	3. baseAttack
 	4. baseMagicAttack
@@ -35,10 +36,10 @@ function Unit:onCreate(objType)
 		energy 					= 100,
 		mana 					= 100,
 
-		attackPower 			= 1,
-		magicAttackPower 		= 1,
-		defence 				= 1,
-		magicDefence 			= 1,
+		attackPower 			= 0,
+		magicAttackPower 		= 0,
+		defence 				= 0,
+		magicDefence 			= 0,
 
 		moveSpeed				= 7.0,
 		jumpForce				= 8,
@@ -50,6 +51,12 @@ function Unit:onCreate(objType)
 		intelligence 			= 0,
 		spirit 					= 0,
 		stamina					= 0,
+
+		blockChance 			= 0,
+		dodgeChance				= 0,
+		missChance				= 0,
+		meleeCritChance			= 0,
+		magicCritChance 		= 0,
 	}
 	self.m_Attrs = {}
 	self.m_MovementMonitor = MovementMonitor:create(self)
@@ -103,20 +110,6 @@ end
 			--------------------
 			-- For Attr Issus --
 			--------------------
-
-function Unit:setAttrToBase()
-	for k, v in pairs(self.m_BaseAttrs) do
-		self.m_Attrs[k] = v
-	end
-	if self:isPlayer() then
-		self.m_Attrs["health"]	= self.context.current_health
-		self.m_Attrs["mana"]	= self.context.current_mana
-	else
-		self.m_Attrs["health"] 	= self.m_BaseAttrs["maxHealth"]
-		self.m_Attrs["mana"] 	= self.m_BaseAttrs["maxMana"]
-	end
-end
-
 function Unit:setAlive(alive)
 	if alive == self.m_Alive then return end
 	self.m_Alive = alive
@@ -126,22 +119,131 @@ function Unit:isAlive()
 	return self.m_Alive
 end
 
-function Unit:updateAttrs()
+function Unit:updateBaseAttrs(init)
+	-- calc base Attrs 
+	-- include base attrs, level granted, equipment attrs
+	-- base attrs will change while equipment changed, level changed
+	-- base attrs include helth, maxHealth, mana, maxMana, rage, maxRage, energy, maxEnegry, strengh, agility, intelliange, sprirt, stamina 
+	-- for Creature Issus we just create constant value for it
 	for k, v in pairs(self.m_BaseAttrs) do
 		if self.context[k] then
 			self:setBaseAttr(k, self.context[k])
 		end
 	end
+	-- for Player Issus we need calc level-based values and equipment granted values
 	if self:isPlayer() then
+		-- level-based values
 		local lvl = self.context.level - 1
 		for _, attrName in pairs({"maxHealth", "maxMana", "strength", "intelligence", "agility", "spirit", "stamina"}) do
 			local extraValue = self.context[string.format("%s_per_lvl", attrName)] * lvl
 			self:setBaseAttr(attrName, self:getBaseAttr(attrName) + extraValue)
 		end
+		-- equipment values
 		self:updateEquipmentAttrs()
 	end
-	self:setAttrToBase()
-	self:getPawn():modifyHealth(self:getAttr("health"), self:getAttr("maxHealth"))
+
+	self:updateAttrs()
+
+	local recalc = {
+		["health"] 	= "maxHealth",
+		["mana"] 	= "maxMana",
+		["rage"] 	= "maxRage",
+		["energy"] 	= "maxEnergy",
+	}
+	if self:isPlayer() and init then
+		self:setAttr("health", self.context.current_health)
+		self:setAttr("mana", self.context.current_mana)
+	end
+	for k, v in pairs(recalc) do
+		local now = self:getAttr(k)
+		local max = self:getAttr(v)
+		if now > max then self:setAttr(k, max) end
+	end
+end
+
+
+function Unit:updateAttrs()
+	-- sync base attrs to modifible attrs
+	for valueName, value in pairs(self.m_BaseAttrs) do
+		self:setAttr(valueName, value)
+	end
+
+
+	-- for dynaic Attrs, there has more value to calc
+	-- include max Attack, min Attack, magic Attack, block Chance, dodge Chance, miss Chance
+	-- their are depends on Activated spells
+
+	-- to calc changed by Activated spells
+	-- need to fill
+
+	local extraValue = {
+			maxHealth 				= 0,
+			maxMana 				= 0,
+			maxRage					= 0,
+			maxEnergy				= 0,
+			attackPower 			= 0,
+			magicAttackPower 		= 0,
+			defence 				= 0,
+			magicDefence 			= 0,
+			attackSpeed 			= 0,
+
+			strength				= 0,
+			agility					= 0,
+			intelligence 			= 0,
+			spirit 					= 0,
+			stamina					= 0,
+
+			maxMeleeDamage 			= 0,
+			minMelleDamage 			= 0,
+
+			blockChance 			= 0,
+			dodgeChance				= 0,
+			missChance				= 0,
+			meleeCritChance			= 0,
+			magicCritChance 		= 0,
+
+			plus = function(this, k, v)
+				this[k] = this[k] + v
+			end
+	}
+	-- for player Multiply
+	if self:isPlayer() then
+		
+		extraValue:plus("maxHealth", 		self:getAttr("stamina") 		* 10)
+		extraValue:plus("maxMana", 			self:getAttr("intelligence") 	* 10)
+		extraValue:plus("missChance", 		self:getAttr("agility") 		* 0.05)
+		extraValue:plus("meleeCritChance", 	self:getAttr("agility") 		* 0.05)
+		extraValue:plus("magicCritChance", 	self:getAttr("intelligence")	* 0.05)
+		-- extraValue:plus("maxMeleeDamage", )
+		-- For Class Issus
+		local class = self:getClass()
+		if class == ShareDefine.classWarrior() 		then
+			extraValue:plus("attackPower", self:getAttr("strength") * 2)
+		elseif class == ShareDefine.classMage() 		then
+		elseif class == ShareDefine.classPriest() 	then
+		elseif class == ShareDefine.classKnight() 	then
+			extraValue:plus("attackPower", self:getAttr("strength") * 2)
+		elseif class == ShareDefine.classHunter() 	then
+			extraValue:plus("attackPower", self:getAttr("agility") * 2)
+		elseif class == ShareDefine.classWarlock() 	then
+ 		elseif class == ShareDefine.classThief() 	then
+			extraValue:plus("attackPower", self:getAttr("agility") 	* 2)
+			extraValue:plus("attackPower", self:getAttr("strength") * 1)
+ 		elseif class == ShareDefine.classDruid() 	then
+			extraValue:plus("attackPower", self:getAttr("strength") * 1)
+			extraValue:plus("attackPower", self:getAttr("agility") 	* 1)
+		elseif class == ShareDefine.classShaman() 	then
+			extraValue:plus("attackPower", self:getAttr("strength") * 1)
+			extraValue:plus("attackPower", self:getAttr("agility") 	* 1)
+		end
+	end
+	-- finally we calc and applied all attrs, 
+	-- then we need to send a notify to some window whitch has oppenned to change displaying values
+	extraValue.plus = nil
+	for k, v in pairs(extraValue) do
+		self:setAttr(k, self:getAttr(k) + v)
+	end
+	self:sendAppMsg("MSG_ON_ATTR_CHANGED")
 end
 
 function Unit:setBaseAttr(attrName, value)
@@ -205,6 +307,12 @@ function Unit:onCombatEnded()
 	-- return to home pos
 end
 
+function Unit:isFacingTo(otherUnit)
+	local offset = self:getPositionX() - otherUnit:getPositionX()
+	local direction = self:getMovementMonitor():getDirection()
+	return (offset >= 0 and direction == "left") or (offset < 0 and direction == "right")
+end
+
 function Unit:getDistance(otherUnit)
 	return cc.pGetDistance(cc.p(self:getPosition()), cc.p(otherUnit:getPosition()))
 end
@@ -259,7 +367,7 @@ function Unit:getMovementMonitor()
 	return self.m_MovementMonitor
 end
 function Unit:getMaxMoveSpeed()
-	return self:getBaseAttr("moveSpeed")
+	return self:getAttr("moveSpeed")
 end
 
 function Unit:setControlByPlayer(enabled)

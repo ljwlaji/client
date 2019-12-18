@@ -23,7 +23,7 @@ function Player:onCreate()
 	self:loadFromDB()
 	self:setControlByPlayer(true)
 	self:resetGossipList()
-	self:updateAttrs()
+	self:updateBaseAttrs()
 	Player.instance = self
     self:move(self.context.pos_x, self.context.pos_y)
     	:setLocalZOrder(1)
@@ -272,7 +272,7 @@ end
 
 function Player:onInventoryDataChanged()
 	self:saveInventoryToDB()
-	self:updateAttrs()
+	self:updateBaseAttrs()
 	self:sendAppMsg("MSG_INVENTORY_DATA_CHANGED")
 	-- if self:getAI() then self:getAI():onInventoryDataChanged() end
 end

@@ -24,12 +24,7 @@ function script_test:onGossipSelect(pPlayer, pObject, pSender, pIndex)
 end
 
 function script_test:onUpdate(diff)
-	-- if self.m_JumpTimer <= diff then
-	-- 	self:getOwner():getMovementMonitor():jump()
-	-- 	self.m_JumpTimer = math.random(1500, 2000)
-	-- else
-	-- 	self.m_JumpTimer = self.m_JumpTimer - diff
-	-- end
+	ScriptAI.onUpdate(self, diff)
 end
 
 return script_test

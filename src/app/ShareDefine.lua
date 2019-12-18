@@ -52,6 +52,18 @@ local ITEM_TYPES = {
 	-- HALBERD
 }
 
+local CLASS_TYPES = {
+	CLASS_WARRIOR 	= 1,
+	CLASS_MAGE 		= 2,
+	CLASS_PRIEST 	= 3,
+	CLASS_KNIGHT 	= 4,
+	CLASS_HUNTER 	= 5,
+	CLASS_WARLOCK 	= 6,
+	CLASS_THIEF 	= 7,
+	CLASS_DRUID 	= 8,
+	CLASS_SHAMAN 	= 9,
+}
+
 local INVENTORY_BASE_SLOT_COUNT = 16
 
 local INVENTORY_SLOTS = {
@@ -130,6 +142,16 @@ local DAMAGE_TYPES = {
 
 local SIGHT_RANGE = 200
 
+function ShareDefine.classWarrior() return CLASS_TYPES.CLASS_WARRIOR 	end
+function ShareDefine.classMage() 	return CLASS_TYPES.CLASS_MAGE 		end
+function ShareDefine.classPriest() 	return CLASS_TYPES.CLASS_PRIEST 	end
+function ShareDefine.classKnight() 	return CLASS_TYPES.CLASS_KNIGHT 	end
+function ShareDefine.classHunter() 	return CLASS_TYPES.CLASS_HUNTER 	end
+function ShareDefine.classWarlock() return CLASS_TYPES.CLASS_WARLOCK 	end
+function ShareDefine.classThief() 	return CLASS_TYPES.CLASS_THIEF 		end
+function ShareDefine.classDruid() 	return CLASS_TYPES.CLASS_DRUID 		end
+function ShareDefine.classShaman() 	return CLASS_TYPES.CLASS_SHAMAN 	end
+
 function ShareDefine.sightRange()
 	return SIGHT_RANGE
 end
@@ -206,6 +228,10 @@ end
 
 function ShareDefine.containerSlotEnd()
 	return INVENTORY_SLOTS.SLOT_CONTAINER_END
+end
+
+function ShareDefine.inventoryMainHandSlot()
+	return INVENTORY_SLOTS.SLOT_MAIN_HAND
 end
 
 function ShareDefine.inventoryBaseSlotCount()

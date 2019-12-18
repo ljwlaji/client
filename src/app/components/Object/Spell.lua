@@ -35,12 +35,19 @@ Spell.SpellTargetType = {
 	TARGET_SELF 				= 3,
 	TARGET_SPECIFIC_CREATURE	= 4,
 	TARGET_SPECIFIC_GAMEOBJECT	= 5,
+	TARGET_BODY					= 6,
 }
+
 local SpellTargetType = Spell.SpellTargetType
 
 local SPELL_CAST_STATES = {
 	STATE_CASTTING 		= 1,
 	-- STATE_LAUNCHING 	= 2,
+}
+
+local SPELL_DAMAGE_TYPES = {
+	MELEE_DAMAGE = 1,
+	MAGIC_DAMAGE = 2,
 }
 
 function Spell:ctor(caster, spellInfo)
@@ -109,18 +116,6 @@ function Spell:onExecuteCastting(diff)
 	WindowMgr:createWindow("app.views.layer.vLayerCasttingBar", self.m_SpellInfo, self.m_CastTimer / self.m_SpellInfo.cast_time * 100)
 end
 
--- function Spell:onEnterLaunch()
-
--- end
-
--- function Spell:onExecuteLaunch(diff)
-
--- end
-
--- function Spell:onExitLaunch()
-
--- end
-
 function Spell:launchSpell()
 	-- TODO
 	-- modify spell cast_cost
@@ -135,10 +130,55 @@ function Spell:launchSpell()
 	-- launch spell effect
 end
 
+--[[
+Spell.SpellTargetType = {
+	TARGET_ALL 					= 0,
+	TARGET_ENEMY 				= 1,
+	TARGET_NOT_ENEMY 			= 2,
+	TARGET_SELF 				= 3,
+	TARGET_SPECIFIC_CREATURE	= 4,
+	TARGET_SPECIFIC_GAMEOBJECT	= 5,
+	TARGET_BODY					= 6,
+}
+
+local SpellTargetType = Spell.SpellTargetType
+]]
+
 function Spell:fetchTargets()
 	-- fetch vailed targets in range
-	
+	local spellInfo = self:getSpellInfo()
+	local range = spellInfo.cast_range
+	local spellTarget = spellInfo.target_type
+	local ingnoreSelf = spellTarget == SpellTargetType.TARGET_ENEMY or 
+						spellTarget == SpellTargetType.TARGET_SPECIFIC_CREATURE or 
+						spellTarget == SpellTargetType.TARGET_SPECIFIC_GAMEOBJECT
+
+	local aliveOnly 	= spellTarget ~= SpellTargetType.TARGET_BODY
+	local hostileOnly 	= spellTarget == SpellTargetType.TARGET_ENEMY
+	local maxNumber 	= spellInfo.max_target_count
+	local checkFacingTo = spellInfo.check_facing_to == 1
+
+	local fetchResult 	= self:getCaster():getMap():fetchUnitInRange(self:getCaster(), range, ingnoreSelf, aliveOnly, hostileOnly, maxNumber, checkFacingTo)
+
 	-- fetch damage
+
+end
+
+function Spell:calcDamage()
+	local minDamage = 0
+	local maxDamage = 0
+	local spellInfo = self:getSpellInfo()
+	local caster = self:getCaster()
+	if caster:isPlayer() then
+		if spellInfo.damage_type == SPELL_DAMAGE_TYPES.MELEE_DAMAGE then
+			local weapon = caster:getInventoryData()[ShareDefine.inventoryMainHandSlot()]
+			
+		else
+
+		end
+	else
+
+	end
 end
 
 function Spell:onUpdate(diff)

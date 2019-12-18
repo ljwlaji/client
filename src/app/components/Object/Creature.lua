@@ -28,7 +28,7 @@ function Creature:onCreate()
 
 	self:setName(DataBase:getStringByID(self.context.name_id))
 
-	self:updateAttrs()
+	self:updateBaseAttrs()
 	-- For Testting
 	-- local anims = {
 	-- 	"attack",

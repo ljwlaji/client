@@ -24,16 +24,10 @@ function vNodeInventorySlot:onReset(context, forPreview)
 end
 
 function vNodeInventorySlot:onTouchSlot(e)
+	-- if self.__onTouchHold then return end
+	-- if e.name == "began" then self:runSequence( cc.DelayTime:create(1), cc.CallFunc:create( handler(self, self.onTouchHoldCallback) ) ) return end
 	if e.name ~= "ended" or self.context == "null" then return end
 	WindowMgr:createWindow("app.views.layer.vLayerItemDetail", self.context, self.forPreview and 0 or 2)
-	do return end
-	local window = WindowMgr:findWindowIndexByClassName("vLayerItemDetail")
-	if e.name == "ended" or e.name == "cancelled" then
-		if window then window:removeFromParent() end
-		return 
-	end
-	if window then return end
-	WindowMgr:createWindow("app.views.layer.vLayerItemDetail"):onReset(self.context, 2)
 end
 
 return vNodeInventorySlot
