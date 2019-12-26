@@ -57,6 +57,9 @@ function Unit:onCreate(objType)
 		missChance				= 0,
 		meleeCritChance			= 0,
 		magicCritChance 		= 0,
+
+		minMeleeDamage			= 0,
+		maxMeleeDamage			= 0,
 	}
 	self.m_Attrs = {}
 	self.m_MovementMonitor = MovementMonitor:create(self)
@@ -194,7 +197,7 @@ function Unit:updateAttrs()
 			stamina					= 0,
 
 			maxMeleeDamage 			= 0,
-			minMelleDamage 			= 0,
+			minMeleeDamage 			= 0,
 
 			blockChance 			= 0,
 			dodgeChance				= 0,
@@ -259,7 +262,9 @@ function Unit:setAttr(attrName, value)
 end
 
 function Unit:getAttr(attrName)
-	return self.m_Attrs[attrName]
+	local ret = self.m_Attrs[attrName]
+	assert(ret)
+	return ret
 end
 
 function Unit:modifyHealth(value)
