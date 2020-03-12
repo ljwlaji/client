@@ -69,7 +69,7 @@ function Spell:getCaster()
 	return self.m_Caster
 end
 
-function Spell:getTarget()
+function Spell:getTargets()
 	return self.m_Targets
 end
 
@@ -100,7 +100,9 @@ end
 
 function Spell:onEnterCastting()
 	-- 通知WindowMgr呼出倒计时栏
-	WindowMgr:createWindow("app.views.layer.vLayerCasttingBar", self.m_SpellInfo, 0)
+	if self.m_SpellInfo.cast_time > 0 then
+		WindowMgr:createWindow("app.views.layer.vLayerCasttingBar", self.m_SpellInfo, 0)
+	end
 	-- play Cast Effect
 end
 
@@ -125,9 +127,14 @@ function Spell:launchSpell()
 	-- just launch
 
 
-	self:getCaster():onSpellLaunched()
-
 	-- launch spell effect
+
+
+	self.m_StateMachine:stop()
+	self.m_StateMachine = nil
+	self:getCaster():onSpellLaunched()
+	self:removeFromParent()
+
 end
 
 --[[
@@ -159,9 +166,10 @@ function Spell:fetchTargets()
 	local checkFacingTo = spellInfo.check_facing_to == 1
 
 	local fetchResult 	= self:getCaster():getMap():fetchUnitInRange(self:getCaster(), range, ingnoreSelf, aliveOnly, hostileOnly, maxNumber, checkFacingTo)
-
-	-- fetch damage
-
+	local results = {}
+	for k, v in pairs(fetchResult) do table.insert(results, v.obj) end
+	
+	self.m_Targets = results
 end
 
 function Spell:calcDamage()
@@ -186,7 +194,9 @@ function Spell:onUpdate(diff)
 end
 
 function Spell:cleanUpBeforeDelete()
-
+	release_print("Spell:cleanUpBeforeDelete()")
+	local window = WindowMgr:findWindowIndexByClassName("vLayerCasttingBar")
+	if window then window:hide() end
 end
 
 return Spell

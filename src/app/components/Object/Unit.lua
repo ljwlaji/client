@@ -348,6 +348,7 @@ function Unit:onSpellCancel()
 end
 
 function Unit:onSpellLaunched()
+	-- 减去相关技能消耗所需
 	self.m_CasttingSpell = nil
 	release_print("onSpellLaunched")
 end

@@ -14,6 +14,7 @@ end
 
 function vLayerCasttingBar:onReset(spellInfo, progress)
 	self.m_Children["Timer"]:setPercent(progress)
+	self:show()
 end
 
 return vLayerCasttingBar
