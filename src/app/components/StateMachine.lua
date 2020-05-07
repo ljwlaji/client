@@ -89,6 +89,7 @@ function StateMachine:executeStateProgress(diff)
 		self._running = false
 		error("State Mechine Running With An Invaild Index : "..self.currStateIndex.." !  Auto Terminated !")
 	end
+	return self
 end
 
 --[[

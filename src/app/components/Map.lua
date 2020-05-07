@@ -5,6 +5,7 @@ local Player        = import("app.components.Object.Player")
 local GameObject    = import("app.components.Object.GameObject")
 local Ground    	= import("app.components.Object.Ground")
 local Creature    	= import("app.components.Object.Creature")
+local FactionMgr	= import("app.components.FactionMgr")
 
 -- 需要实现的功能
 -- 无缝地图
@@ -37,6 +38,7 @@ function Map:ctor(Entry, chosedCharacterID)
 	self.m_GroundDatas 		= {}
 	self.m_CreatureDatas 	= {}
 	self.m_ObjectList 		= {}
+	self.m_SpellObjects		= {}
 	self.m_HotloadTimer 	= 0
 	self:onCreate(chosedCharacterID)
 
@@ -169,6 +171,26 @@ function Map:tryRemoveObjects()
 	end 
 end
 
+function Map:fetchUnitInRange(who, range, ingnoreSelf, aliveOnly, hostileOnly, maxNumber, checkFacing)
+	local ret = {}
+	maxNumber = maxNumber or 999
+	for k, v in pairs(self.m_ObjectList) do
+		local distance = who:getDistance(v)
+		if v:isUnit() and distance <= range 
+					  and (not ingnoreSelf or who ~= v) 
+					  and (not aliveOnly or v:isAlive()) 
+					  and (not hostileOnly or FactionMgr:isHostile(who:getFaction(), v:getFaction()))
+					  and (not checkFacing or who:isFacingTo(v))
+			then
+			table.insert(ret, {obj = v, dist = distance})
+		end
+		if #ret >= maxNumber then break end
+	end
+
+	table.sort(ret, function(a, b) return a.dist < b.dist end)
+	return ret
+end
+
 function Map:addObject(object)
 	table.insert(self.m_ObjectList, object)
 	object:addTo(self)
@@ -205,6 +227,7 @@ end
 
 function Map:tryFixPosition(unit, offset)
 	local hitGround = false
+	local hitGObject = false
 	local nowPosX, nowPosY = unit:getPosition()
 	local nextPos = {
 		x = nowPosX + offset.x,
@@ -218,6 +241,7 @@ function Map:tryFixPosition(unit, offset)
 				elseif offset.x < 0 then
 					nextPos.x = v:getPositionX() + v:getContentSize().width + 1
 				end
+				hitGObject = true
 				break
 			end
 		end
@@ -236,7 +260,7 @@ function Map:tryFixPosition(unit, offset)
 
 	-- Out Of Left Edge
 	if nextPos.x < 10 then nextPos.x = 10 end
-	return nextPos, hitGround
+	return nextPos, hitGround, hitGObject
 end
 
 function Map:getStandingObject(nextPos)

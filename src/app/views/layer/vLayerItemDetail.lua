@@ -45,7 +45,7 @@ function vLayerItemDetail:onReset(itemData, slotType)
 
 	-- 基础属性
 	for attrName, attrValue in pairs(itemTemplate.attrs) do
-		self:newLine(string.format("+%d %s", attrValue, ShareDefine.getStateStringByStateName(attrName)))
+		self:newLine(string.format("+%d %s", attrValue, ShareDefine.getStateStringByStateIndex(attrName)))
 	end
 
 	-- 耐久度

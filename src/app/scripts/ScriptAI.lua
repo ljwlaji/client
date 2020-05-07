@@ -9,6 +9,10 @@ local GOSSIP_SENDER_TYPES = ShareDefine.gossipSenderTypes()
 	TYPE_VENDOR 	= -3,
 ]]
 
+local SIGHT_RANGE = ShareDefine.sightRange()
+
+local MOVE_IN_LINE_OF_SIGHT_TIMER = 1000
+
 function ScriptAI:ctor(me)
 	self.getOwner = function() return me end
 	self:onReset()
@@ -39,56 +43,98 @@ function ScriptAI:onGossipSelect(pPlayer, pObject, pSender, pIndex)
 	end
 end
 
-function ScriptAI:moveInLineOfSight(who)
-	
-end
-
 function ScriptAI:onReset()
-	self.m_PathGenerateTimer = 2000
-	self.m_TargetMoementPos = nil
+	self.m_Victim = nil
+	self.m_ThreadList = {}
+	self.m_MoveInLineOfSightTimer = 0
 end
 
-function ScriptAI:onDead()
-
-end
-
-function ScriptAI:tryGenrateNextMovePos()
-	local nextPos = 0
-	local owner = self:getOwner()
-	if owner:isCreature() then
-		if false then
-		-- if owner:getVictim() then
-		else
-			nextPos = owner.context.x + math.random(-200, 200)
-		end
-	end
-	return nextPos
+function ScriptAI:onTranceMove(victim)
+	local offsetX = victim:getPositionX() > self:getOwner():getPositionX() and 1 or -1
+	local distance = self:getOwner():getDistance(victim)
+	if distance < 100 then offsetX = 0 end
+	return offsetX
 end
 
 function ScriptAI:onAIMove(diff)
-	do return end
-	if self.m_TargetMoementPos then
-		local dis = self:getOwner():getPositionX() - self.m_TargetMoementPos
-		if math.abs(dis) < 5 then
-			self.m_TargetMoementPos = nil
-			return 0
-		else
-			return self:getOwner():getPositionX() > self.m_TargetMoementPos and -1 or 1
-		end
+	local offsetX = 0
+	local TracedUnit = self:isInCombat() and self:getVictim() or self:getTracedUnit()
+	if TracedUnit then 
+		offsetX = self:onTranceMove(TracedUnit) 
 	end
-
-	if self.m_PathGenerateTimer <= diff then
-		self.m_TargetMoementPos = self:tryGenrateNextMovePos()
-		self.m_PathGenerateTimer = 2000
-	else
-		self.m_PathGenerateTimer = self.m_PathGenerateTimer - diff
-	end
-
-	return 0
+	return offsetX
 end
 
-function ScriptAI:onUpdate(diff)
+--[[ For Combat Issus]]
 
+function ScriptAI:moveInLineOfSight(who)
+	if not self:isInCombat() then self:startCombat(who) end
+end
+
+function ScriptAI:startCombat(victim)
+	self:setVictim(victim)
+	self:setInCombat(true)
+end
+
+function ScriptAI:setInCombat(enabled)
+	if self.m_Combat == enabled then return end
+	self.m_Combat = enabled
+	if self.m_Combat == true then
+		self:getOwner():onCombatStart()
+	else
+		self:getOwner():onCombatEnded()
+	end
+end
+
+function ScriptAI:isInCombat()
+	return self.m_Combat
+end
+
+function ScriptAI:setVictim(victim)
+	self.m_Victim = victim
+end
+
+function ScriptAI:getVictim()
+	return self.m_Victim
+end
+
+function ScriptAI:getThreadList()
+	return self.m_ThreadList
+end
+
+function ScriptAI:onDead()
+	self:setInCombat(false)
+end
+
+function ScriptAI:doMeleeAttack()
+	if cc.pGetDistance(self:getOwner(), self:getVictim()) <= 50 then
+		self:getOwner():attack(self:getVictim())
+	end
+end
+
+function ScriptAI:getTracedUnit()
+	return self.m_TracedUnit
+end
+
+function ScriptAI:setTraceOn(unit)
+	self.m_TracedUnit = unit
+end
+
+function ScriptAI:onExecuteCombat(diff)
+	if not self:getVictim() and self:getVictim():isAlive() then return end
+end
+--[[ End Combat Issus]]
+
+function ScriptAI:onUpdate(diff)
+	if self.m_MoveInLineOfSightTimer >= MOVE_IN_LINE_OF_SIGHT_TIMER then
+		local units = self:getOwner():getMap():fetchUnitInRange(self:getOwner(), SIGHT_RANGE, true, true, true, 999, true)
+		for k, v in pairs(units) do
+			self:moveInLineOfSight(v.obj)
+		end
+		self.m_MoveInLineOfSightTimer = 0
+	else
+		self.m_MoveInLineOfSightTimer = self.m_MoveInLineOfSightTimer + diff
+	end
 end
 
 return ScriptAI

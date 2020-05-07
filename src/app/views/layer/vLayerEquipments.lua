@@ -13,13 +13,13 @@ vLayerEquipments.RESOURCE_BINDING = {
 }
 
 local BaseAttrs = {
-	"maxHealth",
-	"maxMana",
-	"strength",
-	"agility",
-	"intelligence",
-	"spirit",
-	"stamina",
+	[1] = "maxHealth",
+	[2] = "maxMana",
+	[12] = "strength",
+	[13] = "agility",
+	[14] = "intelligence",
+	[15] = "spirit",
+	[16] = "stamina",
 }
 
 function vLayerEquipments:onCreate()
@@ -43,9 +43,9 @@ function vLayerEquipments:onReset()
 		self.m_Children["Slot_"..slotID]:removeAllChildren()
 	end
 	
-	for k, v in pairs(BaseAttrs) do
-		local child = self.m_Children[string.format("Text_%s", v)]
-		if child then child:setString(string.format("%s : %s", ShareDefine.getStateStringByStateName(v), currPlr:getBaseAttr(v))) end
+	for index, attrStr in pairs(BaseAttrs) do
+		local child = self.m_Children[string.format("Text_%s", attrStr)]
+		if child then child:setString(string.format("%s : %s", ShareDefine.getStateStringByStateIndex(index), currPlr:getAttr(attrStr))) end
 	end
 	self:refreshAllSlots()
 	self:refreshStrings()

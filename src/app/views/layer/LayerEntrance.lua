@@ -54,7 +54,7 @@ function LayerEntrance:onExecuteCheckVersion()
 		return 
 	end
 	-- in DevMode we skip the version update progress
-	if DevMode == true then self:enterGame() end
+	if DevMode == true then release_print("开发模式 跳过更新直接进入游戏") self:enterGame() return end
 	self:setState(STATE_REQUEST_NEW_VERSION)
 end
 

@@ -2,17 +2,21 @@ local Unit 			= import("app.components.Object.Unit")
 local Player        = import("app.components.Object.Player")
 local ShareDefine 	= import("app.ShareDefine")
 local DataBase 		= import("app.components.DataBase")
+local Pawn 			= import("app.views.node.vNodePawn")
 local Creature 		= class("Creature", Unit)
 
 function Creature:onCreate()
 	Unit.onCreate(self, ShareDefine:creatureType())
+	self:setPawn(Pawn:create():addTo(self):init(self))
 
 	self.m_QuestList = {}
 
 	self:setGuid(self.context.guid)
 	self:setFaction(self.context.faction)
 	self:setAlive(self.context.alive)
+	self:setDeathTime(self.context.dead_time)
 	self:fetchQuest()
+	self:fetchMovePaths()
 
 	if self.context.script_name and self.context.script_name ~= "" then
 		self:initAI(self.context.script_name)
@@ -22,30 +26,28 @@ function Creature:onCreate()
 
 	self:move(self.context.x, self.context.y)
 
-	self.m_Model = self:createModelByID(self.context.model_id)
-	self.m_Model:addTo(self):setAnchorPoint(0.5, 0)
 	self:setName(DataBase:getStringByID(self.context.name_id))
 
-	self:updateAttrs()
+	self:updateBaseAttrs()
 	-- For Testting
-	local anims = {
-		"attack",
-		"celebrate",
-		"combskill",
-		"death",
-		"dizzy",
-		"dodge",
-		"injured",
-		"skill",
-		"stand",
-	}
-	xpcall(function() 
-		self.m_Model:setAnimation(0, "attack", false)
-		self.m_Model:registerSpineEventHandler(function(event) 
-			local index = math.random(1, #anims)
-			self.m_Model:setAnimation(0, anims[index], false)
-		end, sp.EventType.ANIMATION_COMPLETE)  
-	end, function(...) dump({...}) end)
+	-- local anims = {
+	-- 	"attack",
+	-- 	"celebrate",
+	-- 	"combskill",
+	-- 	"death",
+	-- 	"dizzy",
+	-- 	"dodge",
+	-- 	"injured",
+	-- 	"skill",
+	-- 	"stand",
+	-- }
+	-- xpcall(function() 
+	-- 	self.m_Model:setAnimation(0, "attack", false)
+	-- 	self.m_Model:registerSpineEventHandler(function(event) 
+	-- 		local index = math.random(1, #anims)
+	-- 		self.m_Model:setAnimation(0, anims[index], false)
+	-- 	end, sp.EventType.ANIMATION_COMPLETE)  
+	-- end, function(...) dump({...}) end)
 	-- End of testting
 	
     self:setContentSize(50, 90)
@@ -77,6 +79,13 @@ function Creature:onTouched(pPlayer)
 	-- 判断声望
 	-- 判断生死情况
 	return self:getAI():onGossipHello(pPlayer, self)
+end
+
+function Creature:fetchMovePaths()
+    local sql = string.format("SELECT * FROM path_movement_template WHERE path_id = '%d'", self.context.path_id)
+    local queryResult = DataBase:query(sql)[1]
+    queryResult = queryResult and loadstring(string.format("return %s" ,queryResult["path_info"]))() or {}
+    self:getMovementMonitor():setMovementPath(queryResult)
 end
 
 function Creature:fetchQuest()

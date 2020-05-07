@@ -52,6 +52,17 @@ local ITEM_TYPES = {
 	-- HALBERD
 }
 
+local CLASS_TYPES = {
+	CLASS_WARRIOR 	= 1,
+	CLASS_MAGE 		= 2,
+	CLASS_PRIEST 	= 3,
+	CLASS_KNIGHT 	= 4,
+	CLASS_HUNTER 	= 5,
+	CLASS_WARLOCK 	= 6,
+	CLASS_THIEF 	= 7,
+	CLASS_DRUID 	= 8,
+	CLASS_SHAMAN 	= 9,
+}
 
 local INVENTORY_BASE_SLOT_COUNT = 16
 
@@ -83,22 +94,28 @@ local INVENTORY_SLOTS = {
 }
 
 local STATE_INDEXES = {
-	maxHealth 				= 1,
-	maxMana 				= 2,
-	maxRage					= 3,
-	maxEnergy				= 4,
-	attackPower 			= 5,
-	magicAttackPower 		= 6,
-	defence 				= 7,
-	magicDefence 			= 8,
-	moveSpeed				= 9,
-	jumpForce				= 10,
-	attackSpeed 			= 11,
-	strength				= 12,
-	agility					= 13,
-	intelligence 			= 14,
-	spirit 					= 15,
-	stamina					= 16,
+	[1] 	= "maxHealth",
+	[2] 	= "maxMana",
+	[3] 	= "maxRage",
+	[4] 	= "maxEnergy",
+	[5] 	= "attackPower",
+	[6] 	= "magicAttackPower",
+	[7] 	= "defence",
+	[8] 	= "magicDefence",
+	[9] 	= "moveSpeed",
+	[10] 	= "jumpForce",
+	[11] 	= "attackSpeed",
+
+	[12] 	= "strength",
+	[13] 	= "agility",
+	[14] 	= "intelligence",
+	[15] 	= "spirit",
+	[16] 	= "stamina",
+
+	[17] 	= "mana",
+	[18] 	= "rage",
+	[19] 	= "enegry",
+	[20] 	= "health",
 }
 
 local CHANGE_STATES = {
@@ -117,6 +134,35 @@ local GOSSIP_SENDER_TYPES = {
 	TYPE_TRAINER 	= -2,
 	TYPE_VENDOR 	= -3,
 }
+
+local DAMAGE_TYPES = {
+	MELEE_DAMAGE = 1,
+	MAGIC_DAMAGE = 2
+}
+
+local SIGHT_RANGE = 200
+
+function ShareDefine.classWarrior() return CLASS_TYPES.CLASS_WARRIOR 	end
+function ShareDefine.classMage() 	return CLASS_TYPES.CLASS_MAGE 		end
+function ShareDefine.classPriest() 	return CLASS_TYPES.CLASS_PRIEST 	end
+function ShareDefine.classKnight() 	return CLASS_TYPES.CLASS_KNIGHT 	end
+function ShareDefine.classHunter() 	return CLASS_TYPES.CLASS_HUNTER 	end
+function ShareDefine.classWarlock() return CLASS_TYPES.CLASS_WARLOCK 	end
+function ShareDefine.classThief() 	return CLASS_TYPES.CLASS_THIEF 		end
+function ShareDefine.classDruid() 	return CLASS_TYPES.CLASS_DRUID 		end
+function ShareDefine.classShaman() 	return CLASS_TYPES.CLASS_SHAMAN 	end
+
+function ShareDefine.sightRange()
+	return SIGHT_RANGE
+end
+
+function ShareDefine.meleeDamage()
+	return DAMAGE_TYPES.MELEE_DAMAGE
+end
+
+function ShareDefine.magicDamage()
+	return DAMAGE_TYPES.MAGIC_DAMAGE
+end
 
 function ShareDefine.gossipSenderTypes()
 	return GOSSIP_SENDER_TYPES
@@ -154,12 +200,14 @@ function ShareDefine.getQualityColor(quality)
 	return ret
 end
 
-function ShareDefine.getStateIndexByStateName(stateName)
-	return STATE_INDEXES[stateName] + 400
+function ShareDefine.stateIndexToString(index)
+	local ret = STATE_INDEXES[index]
+	assert(ret, "Cannot Find State String By Fetching Index : "..tostring(index))
+	return ret
 end
 
-function ShareDefine.getStateStringByStateName(stateName)
-	return import("app.components.DataBase"):getStringByID(ShareDefine.getStateIndexByStateName(stateName))
+function ShareDefine.getStateStringByStateIndex(stateIndex)
+	return import("app.components.DataBase"):getStringByID(stateIndex + 400)
 end
 
 function ShareDefine.isAmmorType(itemType)
@@ -180,6 +228,10 @@ end
 
 function ShareDefine.containerSlotEnd()
 	return INVENTORY_SLOTS.SLOT_CONTAINER_END
+end
+
+function ShareDefine.inventoryMainHandSlot()
+	return INVENTORY_SLOTS.SLOT_MAIN_HAND
 end
 
 function ShareDefine.inventoryBaseSlotCount()

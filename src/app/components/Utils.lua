@@ -147,5 +147,76 @@ function Utils.createScrollableLayouter(baseNode, onNotEnoughWidth)
     end
 end
 
+function Utils.splitStrToTable(input, maxLetterPreLine)
+    local ret = {}
+    while Utils.subStringGetTotalIndex(input) > maxLetterPreLine do
+        table.insert(ret, Utils.subStringUTF8(input, 1, maxLetterPreLine))
+        input = Utils.subStringUTF8(input, maxLetterPreLine + 1)
+    end
+    if string.len(input) > 0 then
+        table.insert(ret, input)
+    end
+    return ret
+end
+
+function Utils.subStringUTF8(str, startIndex, endIndex)
+    if startIndex < 0 then
+        startIndex = Utils.subStringGetTotalIndex(str) + startIndex + 1
+    end
+
+    if endIndex ~= nil and endIndex < 0 then
+        endIndex = Utils.subStringGetTotalIndex(str) + endIndex + 1
+    end
+
+    if endIndex == nil then 
+        return string.sub(str, Utils.subStringGetTrueIndex(str, startIndex))
+    else
+        return string.sub(str, Utils.subStringGetTrueIndex(str, startIndex), Utils.subStringGetTrueIndex(str, endIndex + 1) - 1)
+    end
+end
+
+function Utils.subStringGetTotalIndex(str)
+    local curIndex = 0;
+    local i = 1;
+    local lastCount = 1;
+    repeat 
+        lastCount = Utils.subStringGetByteCount(str, i)
+        i = i + lastCount;
+        curIndex = curIndex + 1;
+    until(lastCount == 0);
+    return curIndex - 1;
+end
+
+function Utils.subStringGetTrueIndex(str, index)
+    local curIndex = 0;
+    local i = 1;
+    local lastCount = 1;
+    repeat 
+        lastCount = Utils.subStringGetByteCount(str, i)
+        i = i + lastCount;
+        curIndex = curIndex + 1;
+    until(curIndex >= index);
+    return i - lastCount;
+end
+
+function Utils.subStringGetByteCount(str, index)
+    local curByte = string.byte(str, index)
+    local byteCount = 1;
+    if curByte == nil then
+        byteCount = 0
+    elseif curByte == 9 then --For '\t' Issus
+        byteCount = 4
+    elseif curByte > 0 and curByte <= 127 then
+        byteCount = 1
+    elseif curByte>=192 and curByte<=223 then
+        byteCount = 2
+    elseif curByte>=224 and curByte<=239 then
+        byteCount = 3
+    elseif curByte>=240 and curByte<=247 then
+        byteCount = 4
+    end
+    return byteCount;
+end
+
 
 return Utils

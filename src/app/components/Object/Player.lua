@@ -2,6 +2,7 @@ local Unit 				= import("app.components.Object.Unit")
 local DataBase 			= import("app.components.DataBase")
 local ShareDefine 		= import("app.ShareDefine")
 local WindowMgr			= import("app.components.WindowMgr")
+local Pawn 				= import("app.views.node.vNodePawn")
 local Player 			= class("Player", Unit)
 
 Player.instance = nil
@@ -17,14 +18,17 @@ function Player:onCreate()
 	self.m_InventoryData = {}
 	self.m_LearnedSpells = {}
 	self.m_QuestDatas = {}
+	self.m_SpellSlots = {}
 	self:setAlive(true)
 	self:loadFromDB()
-	self:initAvatar()
 	self:setControlByPlayer(true)
 	self:resetGossipList()
-	self:updateAttrs()
+	self:updateBaseAttrs()
 	Player.instance = self
+    self:move(self.context.pos_x, self.context.pos_y)
+    	:setLocalZOrder(1)
 
+    	-- :setContentSize(sp:getContentSize())
 	-- self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", function() end)
 
 end
@@ -36,20 +40,23 @@ function Player:loadFromDB()
 	local queryResult = nil
 	local sql = "SELECT * FROM character_instance AS I JOIN character_template AS T ON I.class = T.class AND I.gender = T.gender WHERE I.guid = %d"
 	queryResult = DataBase:query(string.format(sql, self.context))[1]
+	self.context = queryResult
+	self:setPawn(Pawn:create():addTo(self):init(self))
 	self:setClass(queryResult.class)
 	self:setLevel(queryResult.level)
 	self:setName(queryResult.name)
 	self:setGuid(queryResult.guid)
-	self.context = queryResult
+	self:setFaction(queryResult.faction)
 	self:loadInventoryFromDB()
 	self:loadAllLearnedSpellsFromDB()
 	self:loadActivatedSpellFromDB()
 
 	self:loadQuestFromDB()
+
+	self:loadSpellSlotFromDB()
 end
 
 --[[ For Quest Issus ]]
-
 function Player:loadQuestFromDB()
 	local sql = "SELECT * FROM character_quest WHERE character_guid = '%d'"
 	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
@@ -101,6 +108,38 @@ function Player:canAcceptQuest(questTemplate)
 end
 
 --[[ End Quest Issus ]]
+function Player:changeSlotSpell(pSlotID, pSpellID)
+	if self.m_SpellSlots[pSlotID] == pSpellID then return end
+
+	for slotID, SpellID in pairs(self.m_SpellSlots) do
+		if pSpellID == SpellID then self.m_SpellSlots[slotID] = nil break end -- 移除旧的Slot信息
+	end
+	self.m_SpellSlots[pSlotID] = pSpellID
+	self:saveSpellSlotToDB()
+	self:sendAppMsg("MSG_ON_SPELL_SLOT_CHANGED")
+end
+
+function Player:getSpellSlotInfo()
+	return self.m_SpellSlots
+end
+
+function Player:loadSpellSlotFromDB()
+	-- local changed = false
+	local sql = "SELECT * FROM spell_slot_instance WHERE character_guid = '%d'"
+	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
+	for k, v in pairs(queryResult) do
+		self.m_SpellSlots[v.slot_index] = v.spell_id
+	end
+end
+
+function Player:saveSpellSlotToDB()
+	local sql = "DELETE FROM spell_slot_instance WHERE character_guid = '%d'"
+	DataBase:query(string.format(sql, self:getGuid()))
+	sql = "INSERT INTO spell_slot_instance(character_guid, slot_index, spell_id) VALUES('%d', '%d', '%d')"
+	for slot_index, spell_id in pairs(self.m_SpellSlots) do
+		DataBase:query(string.format(sql, self:getGuid(), slot_index, spell_id))
+	end
+end
 
 function Player:getLearnedSpells()
 	return self.m_LearnedSpells
@@ -193,8 +232,9 @@ function Player:updateEquipmentAttrs()
 		local equipment = self.m_InventoryData[i]
 		if equipment then
 			-- 计算基础的属性增幅
-			for attrName, value in pairs(equipment.template.attrs) do
-				extraValues[attrName] = extraValues[attrName] + value
+			for attrIndex, value in pairs(equipment.template.attrs) do
+				local indexStr = ShareDefine.stateIndexToString(attrIndex)
+				extraValues[indexStr] = extraValues[indexStr] + value
 			end
 		end
 	end
@@ -232,24 +272,25 @@ end
 
 function Player:onInventoryDataChanged()
 	self:saveInventoryToDB()
-	self:updateAttrs()
+	self:updateBaseAttrs()
 	self:sendAppMsg("MSG_INVENTORY_DATA_CHANGED")
 	-- if self:getAI() then self:getAI():onInventoryDataChanged() end
 end
 
 function Player:saveToDB()
-	-- Save Instance Stuff						  0		1		2		3	   4	5	  6		7	   8
-	local sql = [[REPLACE INTO character_instance(guid, class, gender, level, race, name, map, pos_x, pos_y) 
+	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9
+	local sql = [[REPLACE INTO character_instance(guid, class, gender, faction, level, race, name, map, pos_x, pos_y) 
 										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%s', '%d','%d',  '%d') ]]
-	--										0				1				2					3				4
-	DataBase:query(string.format(sql, self:getGuid(), self:getClass(), self:getGender(), self:getLevel(), self:getRace(), 
-	--										5					6						7					8
+	--										0				1				2					3				4					5
+	DataBase:query(string.format(sql, self:getGuid(), self:getClass(), self:getGender(), self:getFaction(), self:getLevel(), self:getRace(), 
+	--										6					7						8					9
 									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY()))
 
 	self:saveInventoryToDB()
 	self:saveActivatedSpellFromDB()
 	self:saveAllLearnedSpellToDB()
 	self:saveQuestToDB()
+	self:saveSpellSlotToDB()
 end
 
 function Player:saveInventoryToDB()
@@ -265,13 +306,6 @@ end
 
 function Player:getInventoryData()
 	return self.m_InventoryData
-end
-
-function Player:initAvatar()
-	local sp = cc.Sprite:create("res/player.png"):addTo(self:getPawn().m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
-    self:move(self.context.pos_x, self.context.pos_y)
-    	:setLocalZOrder(1)
-    	:setContentSize(sp:getContentSize())
 end
 
 function Player:canEquip(itemData)

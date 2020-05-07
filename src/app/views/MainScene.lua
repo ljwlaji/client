@@ -9,16 +9,17 @@ local ShareDefine   = import("app.ShareDefine")
 local updateCount = 0
 local totalMS = 0
 
-
 function MainScene:onCreate()
     self.sycnUpdateList = {}
 end
 
 function MainScene:onEnterTransitionFinish()
+    local chosedCharacterID = 1
     self:run()
     self:createView("layer.LayerEntrance", function()
         self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
-        self:startGame(1)
+        self:startGame(chosedCharacterID)
+        self.m_HUDLayer:onReset()
     end):addTo(self)
 end
 
@@ -31,7 +32,7 @@ end
 
 function MainScene:onNativeUpdate()
     local diff = self.Timmer:getMSDiff()
-    if diff >= 5 then
+    if diff >= 15 then
         self.Timmer:reset()
         -- Update All Sync Views
         for k, v in pairs(self.sycnUpdateList) do v(diff) end
@@ -157,6 +158,7 @@ end
 
 function MainScene:startGame(chosedCharacterID)
     import("app.components.SpellMgr"):loadFromDB()
+    import("app.components.FactionMgr"):loadFromDB()
     local MapEntry = import("app.components.DataBase"):query(string.format("SELECT * FROM character_instance WHERE guid = %d", chosedCharacterID))[1]["map"]
     self:tryEnterMap(MapEntry, chosedCharacterID)
 end
