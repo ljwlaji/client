@@ -163,7 +163,7 @@ def compileLua(srcDir, dstDir, doCompile, is64bit, doEncrypt) {
 // 编译debug      ./gradlew assembledebug
 // 编译release    ./gradlew assemblerelease
 android.applicationVariants.all { variant ->
-    def project_root_folder = "/Users/ljw/WorkSpace/client"
+    def project_root_folder = "${buildDir}/../../../../../"
 
     def dest_assets_folder = "${buildDir}/intermediates/merged_assets/${variant.dirName}/out"
     if (variant.name.compareTo('release') == 0)
@@ -171,8 +171,9 @@ android.applicationVariants.all { variant ->
     else
         dest_assets_folder = "${buildDir}/intermediates/merged_assets/${variant.dirName}/mergeDebugAssets/out"
 
-    println(variant.name)
-    println("Folder : " + dest_assets_folder);
+    println(variant.name);
+    println("Root_Folder : " + project_root_folder);
+    println("Dest_Folder : " + dest_assets_folder);
     // ${buildDir}/intermediates/assets/${variant.dirName}/
 
     // delete previous files first
