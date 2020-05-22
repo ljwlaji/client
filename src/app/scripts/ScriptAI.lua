@@ -1,5 +1,6 @@
 local ShareDefine 	= import("app.ShareDefine")
 local WindowMgr		= import("app.components.WindowMgr")
+local FactionMgr	= import("app.components.FactionMgr")
 local ScriptAI 		= class("ScriptAI")
 
 local GOSSIP_SENDER_TYPES = ShareDefine.gossipSenderTypes()
@@ -71,8 +72,8 @@ end
 --[[ For Combat Issus]]
 
 function ScriptAI:moveInLineOfSight(who)
-	if not self:isInCombat() then 
-		self:setVictim(victim)
+	if not self:isInCombat() and FactionMgr:isHostile(self:getOwner():getFaction(), who:getFaction()) then
+		self:setVictim(who)
 		self:setInCombat(true)
 	end
 end

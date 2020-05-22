@@ -26,11 +26,20 @@ function vLayerEquipments:onCreate()
 	for slotID = ShareDefine.equipSlotBegin(), ShareDefine.equipSlotEnd() do
 		self.m_Children["Slot_"..slotID]:onTouch(handler(self, self.onTouchEquiptmentSlot))
 	end
-	self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", handler(self, self.onReset))
+	self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", 	function() self:setDataDirty(true) end )
+	self:regiestCustomEventListenter("MSG_ON_ATTR_CHANGED", 		function() self:setDataDirty(true) end )
 	self:onReset()
+	self:onUpdate(function()
+		if self.m_DataDirty then self:onReset() end
+	end)
+end
+
+function vLayerEquipments:setDataDirty(dirty)
+	self.m_DataDirty = dirty
 end
 
 function vLayerEquipments:onReset()
+	release_print("vLayerEquipments : onReset()")
 	self.datas = {}
 	local currPlr = Player:getInstance()
 	local playerData = currPlr and currPlr:getInventoryData() or {}
@@ -49,6 +58,7 @@ function vLayerEquipments:onReset()
 	end
 	self:refreshAllSlots()
 	self:refreshStrings()
+	self:setDataDirty(false)
 end
 
 function vLayerEquipments:refreshAllSlots()
@@ -71,15 +81,6 @@ function vLayerEquipments:onTouchEquiptmentSlot(e)
 	local slotData = self.datas[e.target:getTag()]
 	if not slotData then return end
 	WindowMgr:createWindow("app.views.layer.vLayerItemDetail", slotData, 1)
-	
-	do return end
-	local window = WindowMgr:findWindowIndexByClassName("vLayerItemDetail")
-	if e.name == "ended" or e.name == "cancelled" then
-		if window then window:removeFromParent() end
-		return 
-	end
-	if window then return end
-	WindowMgr:createWindow("app.views.layer.vLayerItemDetail"):onReset(slotData, 1)
 end
 
 function vLayerEquipments:Exit()

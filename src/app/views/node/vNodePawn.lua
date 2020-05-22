@@ -7,18 +7,34 @@ vNodePawn.RESOURCE_FILENAME = "res/csb/node/CSB_Node_Pawn.csb"
 vNodePawn.RESOURCE_BINDING = {}
 
 function vNodePawn:onCreate()
-	self.m_Children["LiveBar"]:setPercent(10)
-	self.m_Children["ManaBar"]:setPercent(20)
+	self:regiestCustomEventListenter("MSG_ON_ATTR_CHANGED", function() self:setDataDirty(true) end)
+	self:onUpdate(function() 
+		if self:isDataDirty() then
+			self:onReset()
+			self:setDataDirty(false)
+		end
+	end)
+	self:setDataDirty(true)
 end
 
 function vNodePawn:init(owner)
-	self.m_Model = owner:createModelByID():addTo(self.m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
+	self.getOwner = function() return owner end
+	self.m_Model = self:getOwner():createModelByID():addTo(self.m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
 	return self
 end
 
-function vNodePawn:modifyHealth(curr, max)
-	self.m_Children["LiveBar"]:setPercent(curr / max * 100)
-	return self
+function vNodePawn:onReset()
+	local owner = self:getOwner()
+	self.m_Children["HealthBar"]:setPercent(owner:getAttr("health") / owner:getAttr("maxHealth") * 100)
+	self.m_Children["ManaBar"]:setPercent(owner:getAttr("mana") / owner:getAttr("maxMana") * 100)
+end
+
+function vNodePawn:isDataDirty()
+	return self.m_DataDirty
+end
+
+function vNodePawn:setDataDirty(dirty)
+	self.m_DataDirty = dirty
 end
 
 function vNodePawn:setFlippedX(value)

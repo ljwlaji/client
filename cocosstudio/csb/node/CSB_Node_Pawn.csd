@@ -6,7 +6,7 @@
       <ObjectData Name="Node" Tag="15" ctype="GameNodeObjectData">
         <Size X="0.0000" Y="0.0000" />
         <Children>
-          <AbstractNodeData Name="LiveBar" ActionTag="-312410216" Tag="16" IconVisible="False" LeftMargin="-49.4878" RightMargin="-50.5122" TopMargin="-199.1814" BottomMargin="192.1814" ProgressInfo="59" ctype="LoadingBarObjectData">
+          <AbstractNodeData Name="HealthBar" ActionTag="-312410216" Tag="16" IconVisible="False" LeftMargin="-49.4878" RightMargin="-50.5122" TopMargin="-199.1814" BottomMargin="192.1814" ProgressInfo="59" ctype="LoadingBarObjectData">
             <Size X="100.0000" Y="7.0000" />
             <AnchorPoint ScaleX="0.4794" ScaleY="0.8628" />
             <Position X="-1.5478" Y="198.2210" />

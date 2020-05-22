@@ -69,6 +69,7 @@ function Unit:onCreate(objType)
 	self:regiestCustomEventListenter("onTouchButtonY", function() end)
 	self:regiestCustomEventListenter("onTouchButtonA", function() end)
 	self:regiestCustomEventListenter("onControllerJump", function() if self:isControlByPlayer() then self.m_MovementMonitor:jump() end end)
+	self:setAttrDataDirty(true)
 end
 
 function Unit:onUpdate(diff)
@@ -78,6 +79,10 @@ function Unit:onUpdate(diff)
 	self.m_MovementMonitor:update(diff)
 	if self.m_CasttingSpell then self.m_CasttingSpell:onUpdate(diff) end
 	self:updateSpellCoolDown(diff)
+	if self:isAttrDataDirty() then 
+		self:sendAppMsg("MSG_ON_ATTR_CHANGED")
+		self:setAttrDataDirty(false)
+	end
 end
 
 function Unit:updateSpellCoolDown(diff)
@@ -254,11 +259,11 @@ function Unit:updateAttrs()
 	end
 	-- finally we calc and applied all attrs, 
 	-- then we need to send a notify to some window whitch has oppenned to change displaying values
+	-- attr update msg will automatic send when update func notice the attr data was dirty Unit:isAttrDataDirty()
 	extraValue.plus = nil
 	for k, v in pairs(extraValue) do
 		self:setAttr(k, self:getAttr(k) + v)
 	end
-	self:sendAppMsg("MSG_ON_ATTR_CHANGED")
 end
 
 function Unit:setBaseAttr(attrName, value)
@@ -271,12 +276,21 @@ end
 
 function Unit:setAttr(attrName, value)
 	self.m_Attrs[attrName] = value
+	self:setAttrDataDirty(true)
 end
 
 function Unit:getAttr(attrName)
 	local ret = self.m_Attrs[attrName]
 	assert(ret)
 	return ret
+end
+
+function Unit:setAttrDataDirty(ditry)
+	self.m_IsAttrDataDirty = ditry
+end
+
+function Unit:isAttrDataDirty()
+	return self.m_IsAttrDataDirty
 end
 
 function Unit:modifyHealth(value)
@@ -290,7 +304,6 @@ function Unit:modifyHealth(value)
 	end
 	local final = currHealth + value
 	if final == 0 then self:justDie() end
-	self:getPawn():modifyHealth(final, self:getAttr("maxHealth"))
 	self:setAttr("health", final)
 end
 
@@ -334,11 +347,6 @@ function Unit:getDistance(otherUnit)
 	return cc.pGetDistance(cc.p(self:getPosition()), cc.p(otherUnit:getPosition()))
 end
 
-function Unit:attack(victim)
-	local damage = self:getAttr("attackPower")
-	self:dealDamage(damage, victim, ShareDefine.meleeDamage())
-end
-
 function Unit:dealDamage(damage, victim, damageType)
 	if damageType == ShareDefine.meleeDamage() then
 		damage = damage - victim:getAttr("defence")
@@ -351,7 +359,6 @@ function Unit:castSpell(spellID)
 	if self:isInSpellCoolDown(spellID) then release_print("This Spell Is In CoolDown!") return end
 	local spellTemplate = SpellMgr:getSpellTemplate(spellID)
 	if not spellTemplate then release_print("Cannot Find SpellTemplate By SpellID : "..spellID) return end
-
 	self.m_CasttingSpell = Spell:create(self, spellTemplate):addTo(self:getMap())
 end
 

@@ -42,7 +42,7 @@ function Player:loadFromDB()
 	local sql = "SELECT * FROM character_instance AS I JOIN character_template AS T ON I.class = T.class AND I.gender = T.gender WHERE I.guid = %d"
 	queryResult = DataBase:query(string.format(sql, self.context))[1]
 	self.context = queryResult
-	self:setPawn(Pawn:create():addTo(self):init(self))
+	self:setPawn(Pawn:create(self):addTo(self):init(self))
 	self:setClass(queryResult.class)
 	self:setLevel(queryResult.level)
 	self:setName(queryResult.name)
