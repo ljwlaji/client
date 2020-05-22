@@ -37,7 +37,7 @@ end
 
 function SpellMgr:getSpellDescString(spellInfo)
 	local str = DataBase:getStringByID(spellInfo.description_string)
-	str = string.gsub(str, "{cast_range}", 				spellInfo.cast_range)
+	str = string.gsub(str, "{target_range}", 			spellInfo.target_range)
 	str = string.gsub(str, "{max_target_count}", 		spellInfo.max_target_count)
 	str = string.gsub(str, "{damage_multiply_base}", 	(spellInfo.damage_multiply_base * 100) .. "%")
 	

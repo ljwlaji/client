@@ -6,7 +6,7 @@
       <ObjectData Name="Node" Tag="129" ctype="GameNodeObjectData">
         <Size X="0.0000" Y="0.0000" />
         <Children>
-          <AbstractNodeData Name="ButtonExit" ActionTag="1397995460" Tag="999" IconVisible="False" LeftMargin="-1000.0000" RightMargin="-1000.0000" TopMargin="-1000.0000" BottomMargin="-1000.0000" TouchEnable="True" FontSize="14" Scale9Enable="True" LeftEage="15" RightEage="15" TopEage="4" BottomEage="4" Scale9OriginX="15" Scale9OriginY="4" Scale9Width="12" Scale9Height="6" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="ButtonObjectData">
+          <AbstractNodeData Name="ButtonExit" ActionTag="1397995460" Tag="999" IconVisible="False" LeftMargin="-1000.0000" RightMargin="-1000.0000" TopMargin="-1000.0000" BottomMargin="-1000.0000" TouchEnable="True" FontSize="14" Scale9Enable="True" LeftEage="15" RightEage="15" TopEage="4" BottomEage="4" Scale9OriginX="-15" Scale9OriginY="-4" Scale9Width="30" Scale9Height="8" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="ButtonObjectData">
             <Size X="2000.0000" Y="2000.0000" />
             <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <Position />
@@ -21,58 +21,58 @@
           <AbstractNodeData Name="Panel_7" ActionTag="740639434" Tag="139" IconVisible="False" LeftMargin="-375.0000" RightMargin="-375.0000" TopMargin="-200.0000" BottomMargin="-200.0000" TouchEnable="True" ClipAble="False" BackColorAlpha="102" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
             <Size X="750.0000" Y="400.0000" />
             <Children>
-              <AbstractNodeData Name="Text_SpellName" ActionTag="2099472529" Tag="140" IconVisible="False" LeftMargin="26.9295" RightMargin="623.0705" TopMargin="24.8691" BottomMargin="355.1309" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
-                <Size X="100.0000" Y="20.0000" />
+              <AbstractNodeData Name="Text_SpellName" ActionTag="2099472529" Tag="140" IconVisible="False" LeftMargin="27.0000" RightMargin="631.0000" TopMargin="23.3691" BottomMargin="353.6309" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
                 <AnchorPoint ScaleY="0.5000" />
-                <Position X="26.9295" Y="365.1309" />
+                <Position X="27.0000" Y="365.1309" />
                 <Scale ScaleX="1.0000" ScaleY="1.0000" />
                 <CColor A="255" R="255" G="255" B="255" />
-                <PrePosition X="0.0359" Y="0.9128" />
-                <PreSize X="0.1333" Y="0.0500" />
+                <PrePosition X="0.0360" Y="0.9128" />
+                <PreSize X="0.1227" Y="0.0575" />
                 <OutlineColor A="255" R="255" G="0" B="0" />
                 <ShadowColor A="255" R="110" G="110" B="110" />
               </AbstractNodeData>
-              <AbstractNodeData Name="Text_SpellCost" ActionTag="370280808" Tag="141" IconVisible="False" LeftMargin="27.1795" RightMargin="622.8205" TopMargin="51.1208" BottomMargin="328.8792" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
-                <Size X="100.0000" Y="20.0000" />
+              <AbstractNodeData Name="Text_SpellCost" ActionTag="370280808" Tag="141" IconVisible="False" LeftMargin="27.0000" RightMargin="631.0000" TopMargin="49.6208" BottomMargin="327.3792" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
                 <AnchorPoint ScaleY="0.5000" />
-                <Position X="27.1795" Y="338.8792" />
+                <Position X="27.0000" Y="338.8792" />
                 <Scale ScaleX="1.0000" ScaleY="1.0000" />
                 <CColor A="255" R="255" G="255" B="255" />
-                <PrePosition X="0.0362" Y="0.8472" />
-                <PreSize X="0.1333" Y="0.0500" />
+                <PrePosition X="0.0360" Y="0.8472" />
+                <PreSize X="0.1227" Y="0.0575" />
                 <OutlineColor A="255" R="255" G="0" B="0" />
                 <ShadowColor A="255" R="110" G="110" B="110" />
               </AbstractNodeData>
-              <AbstractNodeData Name="Text_SpellRange" ActionTag="-2009615369" Tag="142" IconVisible="False" LeftMargin="246.9152" RightMargin="403.0848" TopMargin="50.2857" BottomMargin="329.7143" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
-                <Size X="100.0000" Y="20.0000" />
+              <AbstractNodeData Name="Text_SpellRange" ActionTag="-2009615369" Tag="142" IconVisible="False" LeftMargin="246.9152" RightMargin="411.0848" TopMargin="48.7857" BottomMargin="328.2143" FontSize="20" LabelText="Text Label" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
                 <AnchorPoint ScaleY="0.5000" />
                 <Position X="246.9152" Y="339.7143" />
                 <Scale ScaleX="1.0000" ScaleY="1.0000" />
                 <CColor A="255" R="255" G="255" B="255" />
                 <PrePosition X="0.3292" Y="0.8493" />
-                <PreSize X="0.1333" Y="0.0500" />
+                <PreSize X="0.1227" Y="0.0575" />
                 <OutlineColor A="255" R="255" G="0" B="0" />
                 <ShadowColor A="255" R="110" G="110" B="110" />
               </AbstractNodeData>
-              <AbstractNodeData Name="Text_SpellSlotTitle" ActionTag="1728444222" Tag="42" IconVisible="False" LeftMargin="513.6068" RightMargin="136.3932" TopMargin="22.4572" BottomMargin="357.5428" FontSize="20" LabelText="Text Label" HorizontalAlignmentType="HT_Center" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
-                <Size X="100.0000" Y="20.0000" />
+              <AbstractNodeData Name="Text_SpellSlotTitle" ActionTag="1728444222" Tag="42" IconVisible="False" LeftMargin="517.6068" RightMargin="140.3932" TopMargin="20.9572" BottomMargin="356.0428" FontSize="20" LabelText="Text Label" HorizontalAlignmentType="HT_Center" VerticalAlignmentType="VT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="92.0000" Y="23.0000" />
                 <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
                 <Position X="563.6068" Y="367.5428" />
                 <Scale ScaleX="1.0000" ScaleY="1.0000" />
                 <CColor A="255" R="255" G="255" B="255" />
                 <PrePosition X="0.7515" Y="0.9189" />
-                <PreSize X="0.1333" Y="0.0500" />
+                <PreSize X="0.1227" Y="0.0575" />
                 <OutlineColor A="255" R="255" G="0" B="0" />
                 <ShadowColor A="255" R="110" G="110" B="110" />
               </AbstractNodeData>
-              <AbstractNodeData Name="Text_SpellDesc" ActionTag="-1243788513" Tag="48" IconVisible="False" LeftMargin="62.8863" RightMargin="467.1137" TopMargin="88.4361" BottomMargin="31.5639" FontSize="20" LabelText="这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述&#xA;这是一段不知所云的描述" HorizontalAlignmentType="HT_Center" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
-                <Size X="220.0000" Y="280.0000" />
-                <AnchorPoint ScaleX="0.5000" ScaleY="1.0000" />
-                <Position X="172.8863" Y="311.5639" />
+              <AbstractNodeData Name="Text_SpellDesc" ActionTag="-1243788513" Tag="48" IconVisible="False" LeftMargin="30.0000" RightMargin="410.0000" TopMargin="88.4361" BottomMargin="288.5639" FontSize="20" LabelText="11111111111111111111111111111111" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+                <Size X="310.0000" Y="23.0000" />
+                <AnchorPoint ScaleY="1.0000" />
+                <Position X="30.0000" Y="311.5639" />
                 <Scale ScaleX="1.0000" ScaleY="1.0000" />
                 <CColor A="255" R="255" G="255" B="255" />
-                <PrePosition X="0.2305" Y="0.7789" />
-                <PreSize X="0.2933" Y="0.7000" />
+                <PrePosition X="0.0400" Y="0.7789" />
+                <PreSize X="0.4133" Y="0.0575" />
                 <OutlineColor A="255" R="255" G="0" B="0" />
                 <ShadowColor A="255" R="110" G="110" B="110" />
               </AbstractNodeData>

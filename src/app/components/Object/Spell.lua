@@ -145,7 +145,7 @@ local SpellTargetType = Spell.SpellTargetType
 function Spell:fetchTargets()
 	-- fetch vailed targets in range
 	local spellInfo = self:getSpellInfo()
-	local range = spellInfo.cast_range
+	local range = spellInfo.target_range
 	local spellTarget = spellInfo.target_type
 	local ingnoreSelf = spellTarget == SpellTargetType.TARGET_ENEMY or 
 						spellTarget == SpellTargetType.TARGET_SPECIFIC_CREATURE or 

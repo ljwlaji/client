@@ -47,7 +47,7 @@ end
 function vLayerSpellInfo:onReset()
 	self:resetSpellButtons()
 	local desc = SpellMgr:getSpellDescString(self.context)
-	desc = table.concat(Utils.splitStrToTable(desc, 28), "\n")
+	desc = table.concat(Utils.splitStrByLetterCount(desc, 30), "\n")
 	self.m_Children["Text_SpellDesc"]:setString(desc)
 	self.m_Children["Text_SpellName"]:setString(DataBase:getStringByID(self.context.name_string))
 	local hideCost = self.context.cost_amount == 0 or self.context.cost_type == 0
@@ -55,7 +55,7 @@ function vLayerSpellInfo:onReset()
 	if not hideCost then
 		self.m_Children["Text_SpellCost"]:setString(string.format("%d %s", self.context.cost_amount, ShareDefine.getStateStringByStateIndex(self.context.cost_type)))
 	end
-	self.m_Children["Text_SpellRange"]:setString(string.format(DataBase:getStringByID(10022), self.context.cast_range))
+	self.m_Children["Text_SpellRange"]:setString(string.format(DataBase:getStringByID(10022), self.context.target_range))
 end
 
 function vLayerSpellInfo:onTouchSpellSlot(e)
