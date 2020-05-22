@@ -52,6 +52,7 @@
 	NSTextStorage *storage = [textView textStorage];
 	[storage beginEditing];
 	[storage appendAttributedString:string];
+    [storage setForegroundColor:[NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:1]];
 
     if ([linesCount count] >= MAX_LINES_COUNT)
     {
