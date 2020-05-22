@@ -266,7 +266,7 @@ function Utils.splitStrByLetterCount(str, maxLetterCount)
         end
         index = index + byteCount
     end
-
+    table.insert(ret, strr)
     return ret
 end
 
