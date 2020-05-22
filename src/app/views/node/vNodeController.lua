@@ -65,6 +65,7 @@ function Controller:registTouchEvents()
 end
 
 function Controller:onKeyPressed(keyID, event)
+	release_print(keyID)
 	if keyID == 146 then --Up
 		Pressed_Up = true
 	elseif keyID == 127 then

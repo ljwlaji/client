@@ -12,6 +12,20 @@ end
 
 function SpellMgr:ctor()
 	self.m_SpellTemplates = {}
+	self:resetDescFitter()
+end
+
+function SpellMgr:resetDescFitter()
+	self.m_DamageFitter = {
+		[1] = DataBase:getStringByID(300000),
+		[2] = DataBase:getStringByID(300001)
+	}
+	self.m_CheckFacingToFitter = {
+		[1] = DataBase:getStringByID(300002),
+		[0] = DataBase:getStringByID(300003)
+	}
+
+	self.m_ExtraDamageFitter = DataBase:getStringByID(300004)
 end
 
 function SpellMgr:loadFromDB()
@@ -19,6 +33,24 @@ function SpellMgr:loadFromDB()
 	for k, v in pairs(queryResult) do
 		self.m_SpellTemplates[v.entry] = v
 	end
+end
+
+function SpellMgr:getSpellDescString(spellInfo)
+	local str = DataBase:getStringByID(spellInfo.description_string)
+	str = string.gsub(str, "{cast_range}", 				spellInfo.cast_range)
+	str = string.gsub(str, "{max_target_count}", 		spellInfo.max_target_count)
+	str = string.gsub(str, "{damage_multiply_base}", 	(spellInfo.damage_multiply_base * 100) .. "%")
+	
+	dump(str)
+	if spellInfo.extra_damage_seed == 1 then
+		release_print("extra_damage_seed == 1")
+		str = string.gsub(str, "{extra_damage}", 		spellInfo.extra_damage)
+	else
+		str = string.gsub(str, "{extra_damage}", 		string.format(self.m_ExtraDamageFitter, spellInfo.extra_damage, spellInfo.extra_damage * spellInfo.extra_damage_seed))
+	end
+	str = string.gsub(str, "{damage_type}", self.m_DamageFitter[spellInfo.damage_type])
+	str = string.gsub(str, "{check_facing_to}", self.m_CheckFacingToFitter[spellInfo.check_facing_to])
+	return str
 end
 
 function SpellMgr:getSpellTemplate(spellID)

@@ -46,7 +46,7 @@ end
 
 function vLayerSpellInfo:onReset()
 	self:resetSpellButtons()
-	local desc = "1231231236516dsafdsafkjhqweoirhuqwouiefhnuilsadhfiulewhrhbnflsadkajhfeiworyqioqwer51ds9af84w9e7rsadf21w6er74we798rqwe"
+	local desc = SpellMgr:getSpellDescString(self.context)
 	desc = table.concat(Utils.splitStrToTable(desc, 28), "\n")
 	self.m_Children["Text_SpellDesc"]:setString(desc)
 	self.m_Children["Text_SpellName"]:setString(DataBase:getStringByID(self.context.name_string))

@@ -1,5 +1,6 @@
 local ViewBaseEx 	= import("app.views.ViewBaseEx")
 local DataBase 		= import("app.components.DataBase")
+local ShareDefine 	= import("app.ShareDefine")
 local vNodePawn 	= class("vNodePawn", ViewBaseEx)
 
 
@@ -26,7 +27,19 @@ end
 function vNodePawn:onReset()
 	local owner = self:getOwner()
 	self.m_Children["HealthBar"]:setPercent(owner:getAttr("health") / owner:getAttr("maxHealth") * 100)
-	self.m_Children["ManaBar"]:setPercent(owner:getAttr("mana") / owner:getAttr("maxMana") * 100)
+
+	local class = owner:getClass()
+	local displayManaName = "mana"
+	local displayManaMaxName = "maxMana"
+	if class == ShareDefine.classWarrior() then
+		displayManaName = "rage"
+		displayManaMaxName = "maxRage"
+ 	elseif class == ShareDefine.classThief() then
+		displayManaName = "enegry"
+		displayManaMaxName = "maxEnegry"
+	end
+
+	self.m_Children["ManaBar"]:setPercent(owner:getAttr(displayManaName) / owner:getAttr(displayManaMaxName) * 100)
 end
 
 function vNodePawn:isDataDirty()

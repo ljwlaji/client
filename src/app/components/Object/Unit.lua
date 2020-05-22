@@ -274,6 +274,11 @@ function Unit:getBaseAttr(attrName, value)
 	return self.m_BaseAttrs[attrName]
 end
 
+function Unit:modifyAttr(attrName, value)
+	assert(self.m_Attrs[attrName], "Cannot Find Attr Named : "..attrName)
+	self:setAttr(attrName, self:getAttr(attrName) + value)
+end
+
 function Unit:setAttr(attrName, value)
 	self.m_Attrs[attrName] = value
 	self:setAttrDataDirty(true)
@@ -281,7 +286,7 @@ end
 
 function Unit:getAttr(attrName)
 	local ret = self.m_Attrs[attrName]
-	assert(ret)
+	assert(ret, "No Such Attr : "..attrName)
 	return ret
 end
 
@@ -359,7 +364,8 @@ function Unit:castSpell(spellID)
 	if self:isInSpellCoolDown(spellID) then release_print("This Spell Is In CoolDown!") return end
 	local spellTemplate = SpellMgr:getSpellTemplate(spellID)
 	if not spellTemplate then release_print("Cannot Find SpellTemplate By SpellID : "..spellID) return end
-	self.m_CasttingSpell = Spell:create(self, spellTemplate):addTo(self:getMap())
+	local casttingSpell = Spell:create(self, spellTemplate):addTo(self:getMap())
+	if casttingSpell:checkCast() == Spell.CastResult.CAST_OK then self.m_CasttingSpell = casttingSpell end
 end
 
 function Unit:isInSpellCoolDown(spellID)
@@ -368,16 +374,17 @@ end
 
 function Unit:onSpellCancel()
 	self.m_CasttingSpell = nil
-	release_print("onSpellCancel")
 end
 
 function Unit:onSpellLaunched(spellInfo)
 	-- 减去相关技能消耗所需
-
+	if spellInfo.cost_type ~= 0 then
+		local costType = ShareDefine.stateIndexToString(spellInfo.cost_type)
+		self:modifyAttr(costType, -spellInfo.cost_amount)
+	end
 	-- 增加spellCoolDown
 	self:insertSpellCoolDown(spellInfo.entry, spellInfo.cool_down)
 	self.m_CasttingSpell = nil
-	release_print("onSpellLaunched")
 end
 
 function Unit:insertSpellCoolDown(spellID, timeleft)

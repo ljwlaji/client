@@ -60,9 +60,9 @@ function Spell:ctor(caster, spellInfo)
 
 	self.m_StateMachine = StateMachine:create()
 									  :addState(SPELL_CAST_STATES.STATE_CASTTING, 	handler(self, self.onEnterCastting), handler(self, self.onExecuteCastting), nil, nil)
-									  -- :addState(SPELL_CAST_STATES.STATE_LAUNCHING, handler(self, self.onEnterLaunch), handler(self, self.onExecuteLaunch), handler(self, self.onExitLaunch), nil)
+									  :setState(SPELL_CAST_STATES.STATE_CASTTING)
+				   	   				  :run()
 
-	self:tryCast()
 end
 
 function Spell:getCaster()
@@ -82,20 +82,17 @@ function Spell:cancel()
 	self.m_StateMachine = nil
 	self:getCaster():onSpellCancel()
 	self:removeFromParent()
+	release_print("Spell Cancelled!!")
 end
 
 function Spell:checkCast()
 	local spellInfo = self:getSpellInfo()
 	if spellInfo.cost_type > 0 and spellInfo.cost_amount > 0 and self:getCaster():getAttr(ShareDefine.stateIndexToString(spellInfo.cost_type)) < spellInfo.cost_amount then
+		release_print("Spell:checkCast() Failed With Code : "..result)
+		-- SendNotify
 		return CastResult.CAST_ERROR_NOT_ENOUGH_BEGIN + spellInfo.cost_type
 	end
 	return CastResult.CAST_OK
-end
-
-function Spell:tryCast()
-	self.m_StateMachine:setState(SPELL_CAST_STATES.STATE_CASTTING)
-				   	   :run()
-	self:onExecuteCastting(0) --先检查一次
 end
 
 function Spell:onEnterCastting()
@@ -107,7 +104,7 @@ function Spell:onEnterCastting()
 end
 
 function Spell:onExecuteCastting(diff)
-	if CastResult.CAST_OK ~= self:checkCast() then self:cancel() end
+	if CastResult.CAST_OK ~= self:checkCast() then self:cancel() return end
 
 	if self.m_CastTimer >= self.m_SpellInfo.cast_time then
 		self.m_StateMachine:stop()
@@ -116,25 +113,19 @@ function Spell:onExecuteCastting(diff)
 	end
 	self.m_CastTimer = self.m_CastTimer + diff
 	WindowMgr:createWindow("app.views.layer.vLayerCasttingBar", self.m_SpellInfo, self.m_CastTimer / self.m_SpellInfo.cast_time * 100)
+	return result
 end
 
 function Spell:launchSpell()
 	-- TODO
-	-- modify spell cast_cost
-
 	-- fetch targets
 	self:fetchTargets()
 	-- just launch
-
-
 	-- launch spell effect
-
-
 	self.m_StateMachine:stop()
 	self.m_StateMachine = nil
 	self:getCaster():onSpellLaunched(self.m_SpellInfo)
 	self:removeFromParent()
-
 end
 
 --[[
@@ -172,11 +163,14 @@ function Spell:fetchTargets()
 	self.m_Targets = results
 end
 
-function Spell:calcDamage()
+function Spell:calcSpellDamage()
 	local minDamage = 0
 	local maxDamage = 0
 	local spellInfo = self:getSpellInfo()
 	local caster = self:getCaster()
+
+	local cleanDamage = 0
+	
 	if caster:isPlayer() then
 		if spellInfo.damage_type == SPELL_DAMAGE_TYPES.MELEE_DAMAGE then
 			local weapon = caster:getInventoryData()[ShareDefine.inventoryMainHandSlot()]
@@ -194,7 +188,6 @@ function Spell:onUpdate(diff)
 end
 
 function Spell:cleanUpBeforeDelete()
-	release_print("Spell:cleanUpBeforeDelete()")
 	local window = WindowMgr:findWindowIndexByClassName("vLayerCasttingBar")
 	if window then window:hide() end
 end

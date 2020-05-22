@@ -30,6 +30,39 @@ function vNodeControllerNew:onCreate(context)
 	self.m_Children["Button_Right"].onTouchInto = handler(self, self.onTouchButtonRight)
 	self.m_Children["Button_Up"].onTouchInto = handler(self, self.onTouchButtonUp)
 
+
+    if device.platform == "mac" or device.platform == "windows" then
+		local keyListener = cc.EventListenerKeyboard:create()
+	    keyListener:registerScriptHandler(handler(self, self.onKeyPressed), 	cc.Handler.EVENT_KEYBOARD_PRESSED)
+	    keyListener:registerScriptHandler(handler(self, self.onKeyReleased), 	cc.Handler.EVENT_KEYBOARD_RELEASED)
+    	eventDispatcher:addEventListenerWithSceneGraphPriority(keyListener, self)
+    end
+end
+
+function vNodeControllerNew:onKeyPressed(keyID, event)
+	if keyID == 146 then --Up
+		self:sendAppMsg("onControllerJump")
+	elseif keyID == 127 then
+		Pressed_Right = true
+	elseif keyID == 142 then
+		Pressed_Down = true
+	elseif keyID == 124 then
+		Pressed_Left = true
+	end
+	self:updateMovement()
+end
+
+function vNodeControllerNew:onKeyReleased(keyID, event)
+	if keyID == 146 then --Up
+		Pressed_Up = false
+	elseif keyID == 127 then
+		Pressed_Right = false
+	elseif keyID == 142 then
+		Pressed_Down = false
+	elseif keyID == 124 then
+		Pressed_Left = false
+	end
+	self:updateMovement()
 end
 
 function vNodeControllerNew:getInstance()
