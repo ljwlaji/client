@@ -39,7 +39,7 @@ function vLayerItemDetail:onReset(itemData, slotType)
 
 	-- 攻击速度
 	if not ShareDefine.isAmmorType(itemData.template.type) then
-		local dps = (itemTemplate.min_attack_power + itemTemplate.max_attack_power) * 0.5 / itemTemplate.attack_speed * 0.01
+		local dps = (itemTemplate.min_attack + itemTemplate.max_attack) * 0.5 / itemTemplate.attack_speed * 0.01
 		self:newLine(string.format(DataBase:getStringByID(296), dps)) 
 	end
 

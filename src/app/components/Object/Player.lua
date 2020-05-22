@@ -29,6 +29,8 @@ function Player:onCreate()
     self:move(self.context.pos_x, self.context.pos_y)
     	:setLocalZOrder(1)
 
+
+    self:setInventoryDataDirty(false)
     	-- :setContentSize(sp:getContentSize())
 	-- self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", function() end)
 
@@ -238,6 +240,9 @@ function Player:updateEquipmentAttrs()
 		["agility"] 		= 0,
 		["spirit"] 			= 0,
 		["stamina"] 		= 0,
+		["ammor"]			= 0,
+		["max_attack"]		= 0,
+		["min_attack"]		= 0,
 	}
 	for i = ShareDefine.equipSlotBegin(), ShareDefine.equipSlotEnd() do
 		local equipment = self.m_InventoryData[i]
@@ -247,8 +252,12 @@ function Player:updateEquipmentAttrs()
 				local indexStr = ShareDefine.stateIndexToString(attrIndex)
 				extraValues[indexStr] = extraValues[indexStr] + value
 			end
+			for _, v in pairs({ "ammor", "max_attack", "min_attack" }) do
+				extraValues[v] = extraValues[v] + equipment.template[v]
+			end
 		end
 	end
+
 	for attrName, value in pairs(extraValues) do
 		self:setBaseAttr(attrName, self:getBaseAttr(attrName) + value)
 	end
@@ -260,8 +269,9 @@ function Player:tryUnEquipItem(itemSlot)
 	local itemData = self.m_InventoryData[itemSlot]
 	assert(itemData, "Cannot Find Current ItemData In Slot : "..itemSlot.."!")
 	itemData.slot_id = emptySlotIndex
-	self.m_InventoryData[emptySlotIndex] = table.remove(self.m_InventoryData, itemSlot)
-	self:onInventoryDataChanged()
+	self.m_InventoryData[itemSlot] = nil
+	self.m_InventoryData[emptySlotIndex] = itemData
+	self:setInventoryDataDirty(true)
 end
 
 function Player:tryEquipItem(itemSlot)
@@ -278,13 +288,22 @@ function Player:tryEquipItem(itemSlot)
 	temp = self.m_InventoryData[itemSlot]
 	self.m_InventoryData[itemSlot] = oldEquiupData
 	self.m_InventoryData[equipmentSlot] = temp
-	self:onInventoryDataChanged()
+	self:setInventoryDataDirty(true)
+end
+
+function Player:setInventoryDataDirty(dirty)
+	self.m_InventoryDataDirty = dirty
+end
+
+function Player:isInventoryDataDirty()
+	return self.m_InventoryDataDirty
 end
 
 function Player:onInventoryDataChanged()
 	self:saveInventoryToDB()
 	self:updateBaseAttrs()
 	self:sendAppMsg("MSG_INVENTORY_DATA_CHANGED")
+	self:setInventoryDataDirty(false)
 	-- if self:getAI() then self:getAI():onInventoryDataChanged() end
 end
 
@@ -342,6 +361,7 @@ end
 
 function Player:onUpdate(diff)
 	Unit.onUpdate(self, diff)
+	if self:isInventoryDataDirty() then self:onInventoryDataChanged() end
 end
 
 function Player:resetGossipList()

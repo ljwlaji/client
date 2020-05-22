@@ -100,7 +100,7 @@ local STATE_INDEXES = {
 	[4] 	= "maxEnergy",
 	[5] 	= "attackPower",
 	[6] 	= "magicAttackPower",
-	[7] 	= "defence",
+	[7] 	= "ammor",
 	[8] 	= "magicDefence",
 	[9] 	= "moveSpeed",
 	[10] 	= "jumpForce",
@@ -232,6 +232,10 @@ end
 
 function ShareDefine.inventoryMainHandSlot()
 	return INVENTORY_SLOTS.SLOT_MAIN_HAND
+end
+
+function ShareDefine.inventoryOffHandSlot()
+	return INVENTORY_SLOTS.SLOT_OFF_HAND
 end
 
 function ShareDefine.inventoryBaseSlotCount()

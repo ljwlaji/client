@@ -39,7 +39,7 @@ function Unit:onCreate(objType)
 
 		attackPower 			= 0,
 		magicAttackPower 		= 0,
-		defence 				= 0,
+		ammor 					= 0,
 		magicDefence 			= 0,
 
 		moveSpeed				= 7.0,
@@ -59,8 +59,8 @@ function Unit:onCreate(objType)
 		meleeCritChance			= 0,
 		magicCritChance 		= 0,
 
-		minMeleeDamage			= 0,
-		maxMeleeDamage			= 0,
+		min_attack				= 0,
+		max_attack				= 0,
 
 	}
 	self.m_Attrs = {}
@@ -150,6 +150,7 @@ function Unit:updateBaseAttrs(init)
 			self:setBaseAttr(k, self.context[k])
 		end
 	end
+
 	-- for Player Issus we need calc level-based values and equipment granted values
 	if self:isPlayer() then
 		-- level-based values
@@ -162,6 +163,7 @@ function Unit:updateBaseAttrs(init)
 		self:updateEquipmentAttrs()
 	end
 
+	-- 计算高级属性加成
 	self:updateAttrs()
 
 	local recalc = {
@@ -179,8 +181,14 @@ function Unit:updateBaseAttrs(init)
 		local max = self:getAttr(v)
 		if now > max then self:setAttr(k, max) end
 	end
+
 end
 
+function Unit:updateAttrsForActivedSpells()
+	for spell_id, spell_template in pairs(self.m_ActivatedSpells) do
+
+	end
+end
 
 function Unit:updateAttrs()
 	-- sync base attrs to modifible attrs
@@ -203,7 +211,7 @@ function Unit:updateAttrs()
 			maxEnergy				= 0,
 			attackPower 			= 0,
 			magicAttackPower 		= 0,
-			defence 				= 0,
+			ammor 					= 0,
 			magicDefence 			= 0,
 			attackSpeed 			= 0,
 
@@ -213,8 +221,8 @@ function Unit:updateAttrs()
 			spirit 					= 0,
 			stamina					= 0,
 
-			maxMeleeDamage 			= 0,
-			minMeleeDamage 			= 0,
+			min_attack 				= 0,
+			max_attack 				= 0,
 
 			blockChance 			= 0,
 			dodgeChance				= 0,
@@ -239,7 +247,7 @@ function Unit:updateAttrs()
 		local class = self:getClass()
 		if class == ShareDefine.classWarrior() 		then
 			extraValue:plus("attackPower", self:getAttr("strength") * 2)
-		elseif class == ShareDefine.classMage() 		then
+		elseif class == ShareDefine.classMage() 	then
 		elseif class == ShareDefine.classPriest() 	then
 		elseif class == ShareDefine.classKnight() 	then
 			extraValue:plus("attackPower", self:getAttr("strength") * 2)
@@ -353,10 +361,14 @@ function Unit:getDistance(otherUnit)
 end
 
 function Unit:dealDamage(damage, victim, damageType)
-	if damageType == ShareDefine.meleeDamage() then
-		damage = damage - victim:getAttr("defence")
-	end
-	victim:modifyHealth(damage)
+	-- if damageType == ShareDefine.meleeDamage() then
+	-- 	damage = damage - victim:getAttr("ammor")
+	-- end
+	-- victim:modifyHealth(damage)
+end
+
+function Unit:addActivedSpell(spell_id)
+	
 end
 
 function Unit:castSpell(spellID)

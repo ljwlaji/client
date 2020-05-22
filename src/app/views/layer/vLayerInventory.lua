@@ -56,7 +56,6 @@ function vLayerInventory:initViews()
 	    }):addTo(self.m_Children["Panel_Catagory"])
 	    self.catagoryView:onCellAtIndex(
 	        function(cell, data)
-	        	release_print("catagoryView:onCellAtIndex()")
 	        	cell.item = cell.item or import("app.views.node.vNodeInventoryCatagory"):create():addTo(cell)
 	        	cell.item:onReset(data)
 	            return cell

@@ -18,8 +18,8 @@ function DataBase:fetchItemTemplate()
     local queryResult = self:query("SELECT * FROM item_template")
     local itemTmeplate = {}
     for k, v in pairs(queryResult) do
-        v.attrs = loadstring("return "..v.attrs)()
-        v.spells = loadstring("return "..v.spells)()
+        v.attrs     = v.attrs   and loadstring("return "..v.attrs)()  or {}
+        v.spells    = v.spells  and loadstring("return "..v.spells)() or {}
         itemTmeplate[v.entry] = v
     end
     return itemTmeplate

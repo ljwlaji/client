@@ -39,7 +39,6 @@ function vLayerEquipments:setDataDirty(dirty)
 end
 
 function vLayerEquipments:onReset()
-	release_print("vLayerEquipments : onReset()")
 	self.datas = {}
 	local currPlr = Player:getInstance()
 	local playerData = currPlr and currPlr:getInventoryData() or {}
@@ -51,7 +50,6 @@ function vLayerEquipments:onReset()
 	for slotID = ShareDefine.equipSlotBegin(), ShareDefine.equipSlotEnd() do
 		self.m_Children["Slot_"..slotID]:removeAllChildren()
 	end
-	
 	for index, attrStr in pairs(BaseAttrs) do
 		local child = self.m_Children[string.format("Text_%s", attrStr)]
 		if child then child:setString(string.format("%s : %s", ShareDefine.getStateStringByStateIndex(index), currPlr:getAttr(attrStr))) end

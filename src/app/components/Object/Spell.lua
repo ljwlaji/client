@@ -121,12 +121,23 @@ function Spell:launchSpell()
 	-- fetch targets
 	self:fetchTargets()
 	-- just launch
+	local cleanMinD, cleanMaxD = self:calcSpellDamage()
+
+	-- 这边分为即时伤害和子弹时间伤害
+
+	-- 如果是即时伤害则直接 owner:dealDamage(victim, damage, ...)
+
+	-- 如果是子弹时间伤害则让子弹实例携带damage数值 碰撞后 dealDamage
+
+	-- 思考 如果owner在碰撞时状态是死亡或者被移除了怎么办?
+
 	-- launch spell effect
 	self.m_StateMachine:stop()
 	self.m_StateMachine = nil
 	self:getCaster():onSpellLaunched(self.m_SpellInfo)
 	self:removeFromParent()
 end
+
 
 --[[
 Spell.SpellTargetType = {
@@ -164,23 +175,31 @@ function Spell:fetchTargets()
 end
 
 function Spell:calcSpellDamage()
+	--[[
+		damages = {
+			1 = {
+				type = meleeDamage,
+				min_damage = 10,
+				max_damage = 20
+			},
+			2 = {
+				type = natureDamage,
+				min_damage = 10,
+				max_damage = 20
+			}
+			...
+		}
+	]]
 	local minDamage = 0
 	local maxDamage = 0
 	local spellInfo = self:getSpellInfo()
 	local caster = self:getCaster()
-
-	local cleanDamage = 0
-	
-	if caster:isPlayer() then
-		if spellInfo.damage_type == SPELL_DAMAGE_TYPES.MELEE_DAMAGE then
-			local weapon = caster:getInventoryData()[ShareDefine.inventoryMainHandSlot()]
-			
-		else
-
-		end
+	if spellInfo.damage_type == ShareDefine.meleeDamage() then
+		caster:getMeleeDamage()
 	else
 
 	end
+	return minDamage, maxDamage
 end
 
 function Spell:onUpdate(diff)

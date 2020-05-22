@@ -42,7 +42,6 @@ function SpellMgr:getSpellDescString(spellInfo)
 	str = string.gsub(str, "{damage_multiply_base}", 	(spellInfo.damage_multiply_base * 100) .. "%")
 	
 	if spellInfo.extra_damage_seed == 1 then
-		release_print("extra_damage_seed == 1")
 		str = string.gsub(str, "{extra_damage}", 		spellInfo.extra_damage)
 	else
 		str = string.gsub(str, "{extra_damage}", 		string.format(self.m_ExtraDamageFitter, spellInfo.extra_damage, spellInfo.extra_damage * spellInfo.extra_damage_seed))
