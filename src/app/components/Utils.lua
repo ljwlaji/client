@@ -219,4 +219,56 @@ function Utils.subStringGetByteCount(str, index)
 end
 
 
+-- 数字英文标点符号占1 中文占2
+function Utils.splitStrByLetterCount(str, maxLetterCount)
+    local ret = {}
+    local function foo(str, index)
+        local curByte = string.byte(str, index)
+        local byteCount = 1
+        local length = 1
+        if curByte == nil then
+            byteCount = 0
+            length = 0
+        elseif curByte == 9 then --For '\t' Issus
+            byteCount = 1
+             length = 4
+        elseif curByte > 0 and curByte <= 127 then
+            byteCount = 1
+            length = 1
+        elseif curByte>=192 and curByte<=223 then
+            byteCount = 2
+            length = 2
+        elseif curByte>=224 and curByte<=239 then
+            byteCount = 3
+            length = 2
+        elseif curByte>=240 and curByte<=247 then
+            byteCount = 4
+            length = 2
+        end
+        return byteCount, length
+    end
+
+    local strr = ""
+    local currRowLength = 0
+    local maxLen = string.len(str)
+    local index = 1
+    while index < maxLen do
+        local byteCount, strLen = foo(str, index)
+        local currStr = string.sub(str, index, index + byteCount - 1)
+
+        if strLen + currRowLength >= maxLetterCount then
+            table.insert(ret, strr)
+            currRowLength = 0
+            strr = currStr
+        else
+            strr = strr..currStr
+            currRowLength = currRowLength + strLen
+        end
+        index = index + byteCount
+    end
+
+    return ret
+end
+
+
 return Utils
