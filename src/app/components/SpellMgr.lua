@@ -12,7 +12,6 @@ end
 
 function SpellMgr:ctor()
 	self.m_SpellTemplates = {}
-	self:resetDescFitter()
 end
 
 function SpellMgr:resetDescFitter()
@@ -33,6 +32,7 @@ function SpellMgr:loadFromDB()
 	for k, v in pairs(queryResult) do
 		self.m_SpellTemplates[v.entry] = v
 	end
+	self:resetDescFitter()
 end
 
 function SpellMgr:getSpellDescString(spellInfo)
@@ -41,7 +41,6 @@ function SpellMgr:getSpellDescString(spellInfo)
 	str = string.gsub(str, "{max_target_count}", 		spellInfo.max_target_count)
 	str = string.gsub(str, "{damage_multiply_base}", 	(spellInfo.damage_multiply_base * 100) .. "%")
 	
-	dump(str)
 	if spellInfo.extra_damage_seed == 1 then
 		release_print("extra_damage_seed == 1")
 		str = string.gsub(str, "{extra_damage}", 		spellInfo.extra_damage)

@@ -32,7 +32,6 @@ function AppBase:ctor(configs)
 end
 
 function AppBase:run(initSceneName)
-    release_print(initSceneName)
     initSceneName = initSceneName or self.configs_.defaultSceneName
     self:enterScene(initSceneName)
 end
