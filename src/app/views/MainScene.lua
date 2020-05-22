@@ -17,9 +17,9 @@ function MainScene:onEnterTransitionFinish()
     local chosedCharacterID = 1
     self:run()
     self:createView("layer.LayerEntrance", function()
-        self.m_HUDLayer = import("app.views.layer.HUDLayer"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
+        self.m_LayerHUD = import("app.views.layer.vLayerHUD"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
         self:startGame(chosedCharacterID)
-        self.m_HUDLayer:onReset()
+        self.m_LayerHUD:onReset()
     end):addTo(self)
 end
 

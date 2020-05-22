@@ -18,40 +18,16 @@ function Creature:onCreate()
 	self:fetchQuest()
 	self:fetchMovePaths()
 
-	if self.context.script_name and self.context.script_name ~= "" then
+	self:move(self.context.x, self.context.y)
+	self:setName(DataBase:getStringByID(self.context.name_id))
+	self:updateBaseAttrs()
+    self:setContentSize(50, 90)
+
+    if self.context.script_name and self.context.script_name ~= "" then
 		self:initAI(self.context.script_name)
 	else
 		self:initAI("ScriptAI")
 	end
-
-	self:move(self.context.x, self.context.y)
-
-	self:setName(DataBase:getStringByID(self.context.name_id))
-
-	self:updateBaseAttrs()
-	-- For Testting
-	-- local anims = {
-	-- 	"attack",
-	-- 	"celebrate",
-	-- 	"combskill",
-	-- 	"death",
-	-- 	"dizzy",
-	-- 	"dodge",
-	-- 	"injured",
-	-- 	"skill",
-	-- 	"stand",
-	-- }
-	-- xpcall(function() 
-	-- 	self.m_Model:setAnimation(0, "attack", false)
-	-- 	self.m_Model:registerSpineEventHandler(function(event) 
-	-- 		local index = math.random(1, #anims)
-	-- 		self.m_Model:setAnimation(0, anims[index], false)
-	-- 	end, sp.EventType.ANIMATION_COMPLETE)  
-	-- end, function(...) dump({...}) end)
-	-- End of testting
-	
-    self:setContentSize(50, 90)
-    self:debugDraw()
 end
 
 function Creature:getEntry()

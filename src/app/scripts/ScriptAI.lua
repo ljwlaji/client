@@ -13,8 +13,11 @@ local SIGHT_RANGE = ShareDefine.sightRange()
 
 local MOVE_IN_LINE_OF_SIGHT_TIMER = 1000
 
+local SPELL_ID_MELEE_ATTACK = 200000
+
 function ScriptAI:ctor(me)
 	self.getOwner = function() return me end
+	self.m_AttackTimer = 0
 	self:onReset()
 end
 
@@ -68,23 +71,27 @@ end
 --[[ For Combat Issus]]
 
 function ScriptAI:moveInLineOfSight(who)
-	if not self:isInCombat() then self:startCombat(who) end
-end
-
-function ScriptAI:startCombat(victim)
-	self:setVictim(victim)
-	self:setInCombat(true)
+	if not self:isInCombat() then 
+		self:setVictim(victim)
+		self:setInCombat(true)
+	end
 end
 
 function ScriptAI:setInCombat(enabled)
 	if self.m_Combat == enabled then return end
 	self.m_Combat = enabled
 	if self.m_Combat == true then
-		self:getOwner():onCombatStart()
+		self:getOwner():startCombat()
+		self:onStartCombat()
 	else
-		self:getOwner():onCombatEnded()
+		self:getOwner():leaveCombat()
+		self:onExitCombat()
 	end
 end
+
+function ScriptAI:onStartCombat() end --override
+
+function ScriptAI:onExitCombat() end --override
 
 function ScriptAI:isInCombat()
 	return self.m_Combat
@@ -106,10 +113,14 @@ function ScriptAI:onDead()
 	self:setInCombat(false)
 end
 
-function ScriptAI:doMeleeAttack()
-	if cc.pGetDistance(self:getOwner(), self:getVictim()) <= 50 then
-		self:getOwner():attack(self:getVictim())
-	end
+function ScriptAI:isInMeleeAttackRange(target)
+	return cc.pDistance(self:getOwner():getPosition(), target:getPosition()) < 50
+end
+
+function ScriptAI:doMeleeAttackIfReady()
+	local victim = self:getVictim()
+	if not self:isInMeleeAttackRange(victim) then return end
+	self:getOwner():castSpell(SPELL_ID_MELEE_ATTACK)
 end
 
 function ScriptAI:getTracedUnit()

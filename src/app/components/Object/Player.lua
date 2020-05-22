@@ -3,6 +3,7 @@ local DataBase 			= import("app.components.DataBase")
 local ShareDefine 		= import("app.ShareDefine")
 local WindowMgr			= import("app.components.WindowMgr")
 local Pawn 				= import("app.views.node.vNodePawn")
+local SpellMgr 			= import("app.components.SpellMgr")
 local Player 			= class("Player", Unit)
 
 Player.instance = nil
@@ -54,9 +55,19 @@ function Player:loadFromDB()
 	self:loadQuestFromDB()
 
 	self:loadSpellSlotFromDB()
+
+	self:loadSpellCoolDownFromDB()
 end
 
 --[[ For Quest Issus ]]
+function Player:loadSpellCoolDownFromDB()
+	local sql = "SELECT spell_id, cooldown_time_left FROM spell_cool_down WHERE character_guid = '%d'"
+	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
+	for k, v in pairs(queryResult) do
+		self:insertSpellCoolDown(v.spell_id, cooldown_time_left * 1000)
+	end
+end
+
 function Player:loadQuestFromDB()
 	local sql = "SELECT * FROM character_quest WHERE character_guid = '%d'"
 	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
@@ -291,6 +302,17 @@ function Player:saveToDB()
 	self:saveAllLearnedSpellToDB()
 	self:saveQuestToDB()
 	self:saveSpellSlotToDB()
+	self:saveSpellCoolDownToDB()
+end
+
+function Player:saveSpellCoolDownToDB()
+	local sql = "DELETE FROM spell_cool_down WHERE character_guid = '%d'"
+	DataBase:query(string.format(sql, self:getGuid()))
+
+	sql = "INSERT INTO spell_cool_down(character_guid, spell_id, cooldown_time_left) VALUES(%d, %d, %d)"
+	for spelid, timeleft in pairs(self:getSpellCoolDownList()) do
+		DataBase:query(string.format(sql, self:getGuid(), spellid, math.floor(timeleft * 0.001)))
+	end
 end
 
 function Player:saveInventoryToDB()

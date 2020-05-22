@@ -1,5 +1,5 @@
 <GameFile>
-  <PropertyGroup Name="CSB_HUD_Layer" Type="Layer" ID="8f242cb0-a95c-418d-99a7-5ddd7429a207" Version="3.10.0.0" />
+  <PropertyGroup Name="CSB_Layer_HUD" Type="Layer" ID="8f242cb0-a95c-418d-99a7-5ddd7429a207" Version="3.10.0.0" />
   <Content ctype="GameProjectContent">
     <Content>
       <Animation Duration="0" Speed="1.0000" />
@@ -40,6 +40,15 @@
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <CColor A="255" R="255" G="255" B="255" />
             <PrePosition X="-0.1442" Y="0.5982" />
+            <PreSize X="0.0000" Y="0.0000" />
+          </AbstractNodeData>
+          <AbstractNodeData Name="node_Right_Up" ActionTag="-1521327171" Tag="20" IconVisible="True" LeftMargin="-156.0000" RightMargin="1490.0000" TopMargin="567.0000" BottomMargin="183.0000" ctype="SingleNodeObjectData">
+            <Size X="0.0000" Y="0.0000" />
+            <AnchorPoint />
+            <Position X="-156.0000" Y="183.0000" />
+            <Scale ScaleX="1.0000" ScaleY="1.0000" />
+            <CColor A="255" R="255" G="255" B="255" />
+            <PrePosition X="-0.1169" Y="0.2440" />
             <PreSize X="0.0000" Y="0.0000" />
           </AbstractNodeData>
         </Children>

@@ -19,8 +19,6 @@ function SpellMgr:loadFromDB()
 	for k, v in pairs(queryResult) do
 		self.m_SpellTemplates[v.entry] = v
 	end
-
-	dump(self.m_SpellTemplates)
 end
 
 function SpellMgr:getSpellTemplate(spellID)

@@ -132,7 +132,7 @@ function Spell:launchSpell()
 
 	self.m_StateMachine:stop()
 	self.m_StateMachine = nil
-	self:getCaster():onSpellLaunched()
+	self:getCaster():onSpellLaunched(self.m_SpellInfo)
 	self:removeFromParent()
 
 end

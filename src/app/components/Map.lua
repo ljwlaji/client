@@ -67,25 +67,26 @@ function Map:setupEventListener()
     local listener = cc.EventListenerTouchOneByOne:create()
     listener:registerScriptHandler(handler(self, self.onTouchBegan), cc.Handler.EVENT_TOUCH_BEGAN)
     listener:registerScriptHandler(handler(self, self.onTouchEnded), cc.Handler.EVENT_TOUCH_ENDED)
-    listener:registerScriptHandler(handler(self, self.onTouchEnded), cc.Handler.EVENT_TOUCH_CANCELLED)
+    -- listener:registerScriptHandler(handler(self, self.onTouchEnded), cc.Handler.EVENT_TOUCH_CANCELLED)
     local eventDispatcher = self:getEventDispatcher()
     eventDispatcher:addEventListenerWithSceneGraphPriority(listener, self)
 end
 
 function Map:onTouchBegan(touch, event)
-	local canReciveTouch = false
-	local TouchPosition = self:getParent():convertToNodeSpace(touch:getLocation())
-	for k, object in pairs(self.m_ObjectList) do
-		if object:isCreature() and cc.rectContainsPoint(object:getBoundingBox(), self:convertToNodeSpace(touch:getLocation())) then
-			canReciveTouch = object:onTouched(self.mPlayer)
-			if canReciveTouch then break end
-		end
-	end
-	return canReciveTouch
+	return true
 end
 
 function Map:onTouchEnded(touch, event)
-	release_print("onTouchEnded")
+	local Delta = cc.pSub(touch:getStartLocation(), touch:getLocation())
+	if math.abs(Delta.x) >= 10 or math.abs(Delta.y) >= 10 then release_print("偏移量过大, 丢弃这个触摸!") return end
+	local TouchPosition = self:getParent():convertToNodeSpace(touch:getLocation())
+	for k, object in pairs(self.m_ObjectList) do
+		if 	object:isCreature() and 
+			cc.rectContainsPoint(object:getBoundingBox(), self:convertToNodeSpace(touch:getLocation())) and 
+			object:onTouched(self.mPlayer) then
+			break
+		end
+	end
 end
 
 function Map:loadFromDB()

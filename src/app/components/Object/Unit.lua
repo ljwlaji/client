@@ -23,6 +23,7 @@ local Unit 				= class("Unit", Object)
 function Unit:onCreate(objType)
 	Object.onCreate(self, objType)
 	self.m_ActivatedSpells = {} --Activated Spells 当身上有相同法术存留的时候只覆盖
+	self.m_SpellCoolDowns = {}
 	self.m_ControlByPlayer = false
 	self.m_Alive = false
 	self.m_BaseAttrs = {
@@ -60,6 +61,7 @@ function Unit:onCreate(objType)
 
 		minMeleeDamage			= 0,
 		maxMeleeDamage			= 0,
+
 	}
 	self.m_Attrs = {}
 	self.m_MovementMonitor = MovementMonitor:create(self)
@@ -75,6 +77,16 @@ function Unit:onUpdate(diff)
 	Object.onUpdate(self, diff)
 	self.m_MovementMonitor:update(diff)
 	if self.m_CasttingSpell then self.m_CasttingSpell:onUpdate(diff) end
+	self:updateSpellCoolDown(diff)
+end
+
+function Unit:updateSpellCoolDown(diff)
+	local new_t = {}
+	for k, v in pairs(self.m_SpellCoolDowns) do
+		v = v - diff
+		if v > 0 then new_t[k] = v end
+	end
+	self.m_SpellCoolDowns = new_t
 end
 
 function Unit:setFaction(faction)
@@ -304,11 +316,11 @@ end
 			-----------------------
 
 --[[ For Combat Issus ]]
-function Unit:onCombatStart()
-
+function Unit:startCombat()
+	
 end
 
-function Unit:onCombatEnded()
+function Unit:leaveCombat()
 	-- return to home pos
 end
 
@@ -336,10 +348,15 @@ end
 
 function Unit:castSpell(spellID)
 	if self.m_CasttingSpell then release_print("Already Castting a Spell !") return end
+	if self:isInSpellCoolDown(spellID) then release_print("This Spell Is In CoolDown!") return end
 	local spellTemplate = SpellMgr:getSpellTemplate(spellID)
 	if not spellTemplate then release_print("Cannot Find SpellTemplate By SpellID : "..spellID) return end
 
 	self.m_CasttingSpell = Spell:create(self, spellTemplate):addTo(self:getMap())
+end
+
+function Unit:isInSpellCoolDown(spellID)
+	return self.m_SpellCoolDowns[spellID] ~= nil
 end
 
 function Unit:onSpellCancel()
@@ -347,10 +364,23 @@ function Unit:onSpellCancel()
 	release_print("onSpellCancel")
 end
 
-function Unit:onSpellLaunched()
+function Unit:onSpellLaunched(spellInfo)
 	-- 减去相关技能消耗所需
+
+	-- 增加spellCoolDown
+	self:insertSpellCoolDown(spellInfo.entry, spellInfo.cool_down)
 	self.m_CasttingSpell = nil
 	release_print("onSpellLaunched")
+end
+
+function Unit:insertSpellCoolDown(spellID, timeleft)
+	if timeleft == 0 then return end
+	if self.m_SpellCoolDowns[spellID] and self.m_SpellCoolDowns[spellID] > timeleft then return end
+	self.m_SpellCoolDowns[spellID] = timeleft
+end
+
+function Unit:getSpellCoolDownList()
+	return self.m_SpellCoolDowns
 end
 --[[ End Combat Issus ]]
 
