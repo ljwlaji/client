@@ -19,7 +19,7 @@ function vNodeItemDetailUpper:onReset(context)
 	self.m_Children["Text_ItemLevel"]:setString(string.format(DataBase:getStringByID(297), context.item_level))
 	self.m_Children["Text_Slot"]:setString(DataBase:getStringByID(context.equip_slot + 300))
 	self.m_Children["Text_Type"]:setString(DataBase:getStringByID(context.type + 200))
-	self.m_Children["Text_AttackOrAmmor"]:setString(isWeapon and string.format(DataBase:getStringByID(299), context.min_attack, context.max_attack)
+	self.m_Children["Text_AttackOrAmmor"]:setString(isWeapon and string.format(DataBase:getStringByID(299), context.minAttack, context.maxAttack)
 															 or string.format(DataBase:getStringByID(298), context.ammor))
 end
 

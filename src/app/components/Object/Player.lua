@@ -154,6 +154,17 @@ function Player:saveSpellSlotToDB()
 	end
 end
 
+function Player:hasSpell(spellid)
+	local hasSpell = false
+	for i=1, #self.m_LearnedSpells do
+		if self.m_LearnedSpells[i] == spellid then
+			hasSpell = true
+			break
+		end
+	end
+	return hasSpell
+end
+
 function Player:getLearnedSpells()
 	return self.m_LearnedSpells
 end
@@ -241,8 +252,8 @@ function Player:updateEquipmentAttrs()
 		["spirit"] 			= 0,
 		["stamina"] 		= 0,
 		["ammor"]			= 0,
-		["max_attack"]		= 0,
-		["min_attack"]		= 0,
+		["maxAttack"]		= 0,
+		["minAttack"]		= 0,
 	}
 	for i = ShareDefine.equipSlotBegin(), ShareDefine.equipSlotEnd() do
 		local equipment = self.m_InventoryData[i]
@@ -252,11 +263,12 @@ function Player:updateEquipmentAttrs()
 				local indexStr = ShareDefine.stateIndexToString(attrIndex)
 				extraValues[indexStr] = extraValues[indexStr] + value
 			end
-			for _, v in pairs({ "ammor", "max_attack", "min_attack" }) do
+			for _, v in pairs({ "ammor", "maxAttack", "minAttack" }) do
 				extraValues[v] = extraValues[v] + equipment.template[v]
 			end
 		end
 	end
+
 
 	for attrName, value in pairs(extraValues) do
 		self:setBaseAttr(attrName, self:getBaseAttr(attrName) + value)
@@ -272,6 +284,7 @@ function Player:tryUnEquipItem(itemSlot)
 	self.m_InventoryData[itemSlot] = nil
 	self.m_InventoryData[emptySlotIndex] = itemData
 	self:setInventoryDataDirty(true)
+	return true
 end
 
 function Player:tryEquipItem(itemSlot)
@@ -289,6 +302,7 @@ function Player:tryEquipItem(itemSlot)
 	self.m_InventoryData[itemSlot] = oldEquiupData
 	self.m_InventoryData[equipmentSlot] = temp
 	self:setInventoryDataDirty(true)
+	return true
 end
 
 function Player:setInventoryDataDirty(dirty)
@@ -304,7 +318,6 @@ function Player:onInventoryDataChanged()
 	self:updateBaseAttrs()
 	self:sendAppMsg("MSG_INVENTORY_DATA_CHANGED")
 	self:setInventoryDataDirty(false)
-	-- if self:getAI() then self:getAI():onInventoryDataChanged() end
 end
 
 function Player:saveToDB()
@@ -350,12 +363,11 @@ function Player:getInventoryData()
 end
 
 function Player:canEquip(itemData)
-	-- local itemTemplate = itemData.template
-	-- 职业检查
-	-- if itemTemplate.require_class then return false end
-	-- 耐久检查
-
-
+	local itemTemplate = itemData.template
+	if itemTemplate.require_class ~= self:getClass() then return false end
+	if itemTemplate.require_level >  self:getLevel() then return false end
+	if itemTemplate.requie_spell and itemTemplate.requie_spell ~= 0 and not self:hasSpell(itemTemplate.requie_spell) then return false end
+	if itemData.durable == 0 then return false end
 	return true
 end
 

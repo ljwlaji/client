@@ -59,8 +59,10 @@ function Unit:onCreate(objType)
 		meleeCritChance			= 0,
 		magicCritChance 		= 0,
 
-		min_attack				= 0,
-		max_attack				= 0,
+		minAttack				= 0,
+		maxAttack				= 0,
+
+		critMutiply				= 1.5
 
 	}
 	self.m_Attrs = {}
@@ -221,8 +223,8 @@ function Unit:updateAttrs()
 			spirit 					= 0,
 			stamina					= 0,
 
-			min_attack 				= 0,
-			max_attack 				= 0,
+			minAttack 				= 0,
+			maxAttack 				= 0,
 
 			blockChance 			= 0,
 			dodgeChance				= 0,
@@ -276,6 +278,7 @@ end
 
 function Unit:setBaseAttr(attrName, value)
 	self.m_BaseAttrs[attrName] = value
+	self:setAttrDataDirty(true)
 end
 
 function Unit:getBaseAttr(attrName, value)
@@ -368,7 +371,7 @@ function Unit:dealDamage(damage, victim, damageType)
 end
 
 function Unit:addActivedSpell(spell_id)
-	
+
 end
 
 function Unit:castSpell(spellID)

@@ -39,7 +39,7 @@ function vLayerItemDetail:onReset(itemData, slotType)
 
 	-- 攻击速度
 	if not ShareDefine.isAmmorType(itemData.template.type) then
-		local dps = (itemTemplate.min_attack + itemTemplate.max_attack) * 0.5 / itemTemplate.attack_speed * 0.01
+		local dps = (itemTemplate.minAttack + itemTemplate.maxAttack) * 0.5 / itemTemplate.attack_speed * 0.01
 		self:newLine(string.format(DataBase:getStringByID(296), dps)) 
 	end
 
@@ -49,7 +49,7 @@ function vLayerItemDetail:onReset(itemData, slotType)
 	end
 
 	-- 耐久度
-	if itemTemplate.max_durable > 0 then
+	if itemData.durable > 0 then
 		self:newLine(string.format( DataBase:getStringByID(295), itemData.durable or itemTemplate.max_durable, itemTemplate.max_durable ))
 	end
 
