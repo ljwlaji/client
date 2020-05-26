@@ -121,7 +121,6 @@ function Spell:launchSpell()
 	self:fetchTargets()
 	-- just launch
 	local damages = self:calcSpellDamage()
-	dump(damages)
 	-- 这边分为即时伤害和子弹时间伤害
 
 	-- 如果是即时伤害则直接 owner:dealDamage(victim, damage, ...)
@@ -130,6 +129,10 @@ function Spell:launchSpell()
 
 	-- 思考 如果owner在碰撞时状态是死亡或者被移除了怎么办?
 
+	-- 直接造成伤害
+	for k, victim in pairs(self.m_Targets) do
+		self:getCaster():dealDamage(damages, victim)
+	end
 	-- launch spell effect
 	self.m_StateMachine:stop()
 	self.m_StateMachine = nil
