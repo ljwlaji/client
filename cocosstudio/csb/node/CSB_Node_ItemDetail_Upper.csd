@@ -6,7 +6,7 @@
       <ObjectData Name="Node" Tag="103" ctype="GameNodeObjectData">
         <Size X="0.0000" Y="0.0000" />
         <Children>
-          <AbstractNodeData Name="Panel_Detail" ActionTag="-703681821" Tag="104" IconVisible="False" RightMargin="-400.0000" TopMargin="-130.0000" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" ctype="PanelObjectData">
+          <AbstractNodeData Name="Panel_Detail" ActionTag="-703681821" Tag="104" IconVisible="False" RightMargin="-400.0000" TopMargin="-130.0000" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
             <Size X="400.0000" Y="130.0000" />
             <Children>
               <AbstractNodeData Name="Text_ItemName" ActionTag="37887749" Tag="105" IconVisible="False" PositionPercentXEnabled="True" LeftMargin="12.0000" RightMargin="296.0000" TopMargin="7.0000" BottomMargin="100.0000" FontSize="20" LabelText="Text Label" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
@@ -53,7 +53,7 @@
                 <OutlineColor A="255" R="255" G="0" B="0" />
                 <ShadowColor A="255" R="110" G="110" B="110" />
               </AbstractNodeData>
-              <AbstractNodeData Name="Text_AttackOrAmmor" ActionTag="1818126140" Tag="110" IconVisible="False" PositionPercentXEnabled="True" LeftMargin="12.0000" RightMargin="296.0000" TopMargin="97.0000" BottomMargin="10.0000" FontSize="20" LabelText="Text Label" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+              <AbstractNodeData Name="Text_AttackOrArmor" ActionTag="1818126140" Tag="110" IconVisible="False" PositionPercentXEnabled="True" LeftMargin="12.0000" RightMargin="296.0000" TopMargin="97.0000" BottomMargin="10.0000" FontSize="20" LabelText="Text Label" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
                 <Size X="92.0000" Y="23.0000" />
                 <AnchorPoint />
                 <Position X="12.0000" Y="10.0000" />
