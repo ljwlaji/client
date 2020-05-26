@@ -9,4 +9,17 @@
 
 	m_BaseAttrs在初始化完成之后 除非是升级/装备操作 其他动作一律不更新这边的属性
 
+2. 动态属性
+	
+	1. 初始化
+		直接填充BaseAttrs属性到m_Attrs
+
+	2. 更新动态属性
+   		计算由Buff/Debuff所带来的属性变更
+
+
+需要注意的点
+	1. 在外部获取Attr进行属性计算时 通常情况下直接获取m_Attrs的数值就可以
+	2. 关于变更传导确认
+		m_BaseAttrs -> m_Attrs -> ChangeAttrsDirty -> update() -> Notify 
 	

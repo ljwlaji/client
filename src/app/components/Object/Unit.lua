@@ -56,11 +56,14 @@ function Unit:onCreate(objType)
 		blockChance 			= 0,
 		dodgeChance				= 0,
 		missChance				= 0,
+		hitChance				= 0,
 		meleeCritChance			= 0,
 		magicCritChance 		= 0,
 
-		min_attack				= 0,
-		max_attack				= 0,
+		minAttack				= 0,
+		maxAttack				= 0,
+
+		critMutiply				= 1.5
 
 	}
 	self.m_Attrs = {}
@@ -221,8 +224,8 @@ function Unit:updateAttrs()
 			spirit 					= 0,
 			stamina					= 0,
 
-			min_attack 				= 0,
-			max_attack 				= 0,
+			minAttack 				= 0,
+			maxAttack 				= 0,
 
 			blockChance 			= 0,
 			dodgeChance				= 0,
@@ -276,6 +279,7 @@ end
 
 function Unit:setBaseAttr(attrName, value)
 	self.m_BaseAttrs[attrName] = value
+	self:setAttrDataDirty(true)
 end
 
 function Unit:getBaseAttr(attrName, value)
@@ -360,15 +364,20 @@ function Unit:getDistance(otherUnit)
 	return cc.pGetDistance(cc.p(self:getPosition()), cc.p(otherUnit:getPosition()))
 end
 
-function Unit:dealDamage(damage, victim, damageType)
-	-- if damageType == ShareDefine.meleeDamage() then
-	-- 	damage = damage - victim:getAttr("ammor")
-	-- end
-	-- victim:modifyHealth(damage)
+function Unit:dealDamage(damage, victim)
+	local lvl_diff = (self:getLevel() - victim:getLevel()) * 5
+	local missChance = ShareDefine.hitChance() - lvl_diff
+	if self:isPlayer() then missChance = missChance + self:getAttr("hitChance") end
+	for damageType, damageInfo in pairs(damage) do
+		--计算招架格
+		local cleanMinDamage = damageInfo.minDamage
+		local cleanMaxDamage = damageInfo.maxDamage
+
+	end when
 end
 
 function Unit:addActivedSpell(spell_id)
-	
+
 end
 
 function Unit:castSpell(spellID)

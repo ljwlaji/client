@@ -82,7 +82,6 @@ function Spell:cancel()
 	self.m_StateMachine = nil
 	self:getCaster():onSpellCancel()
 	self:removeFromParent()
-	release_print("Spell Cancelled!!")
 end
 
 function Spell:checkCast()
@@ -121,8 +120,7 @@ function Spell:launchSpell()
 	-- fetch targets
 	self:fetchTargets()
 	-- just launch
-	local cleanMinD, cleanMaxD = self:calcSpellDamage()
-
+	local damages = self:calcSpellDamage()
 	-- 这边分为即时伤害和子弹时间伤害
 
 	-- 如果是即时伤害则直接 owner:dealDamage(victim, damage, ...)
@@ -131,6 +129,10 @@ function Spell:launchSpell()
 
 	-- 思考 如果owner在碰撞时状态是死亡或者被移除了怎么办?
 
+	-- 直接造成伤害
+	for k, victim in pairs(self.m_Targets) do
+		self:getCaster():dealDamage(damages, victim)
+	end
 	-- launch spell effect
 	self.m_StateMachine:stop()
 	self.m_StateMachine = nil
@@ -175,31 +177,22 @@ function Spell:fetchTargets()
 end
 
 function Spell:calcSpellDamage()
-	--[[
-		damages = {
-			1 = {
-				type = meleeDamage,
-				min_damage = 10,
-				max_damage = 20
-			},
-			2 = {
-				type = natureDamage,
-				min_damage = 10,
-				max_damage = 20
-			}
-			...
-		}
-	]]
-	local minDamage = 0
-	local maxDamage = 0
+	local damages = {}
 	local spellInfo = self:getSpellInfo()
 	local caster = self:getCaster()
 	if spellInfo.damage_type == ShareDefine.meleeDamage() then
-		caster:getMeleeDamage()
+		local isCrit 	= math.random(1, 100) <= caster:getAttr("meleeCritChance")
+		local minDamage = spellInfo.damage_multiply_base * caster:getAttr("minAttack") + spellInfo.extra_damage
+		local maxDamage = spellInfo.damage_multiply_base * caster:getAttr("maxAttack") + spellInfo.extra_damage * spellInfo.extra_damage_seed
+		if isCrit then
+			minDamage = minDamage * caster:getAttr("critMutiply")
+			maxDamage = maxDamage * caster:getAttr("critMutiply")
+		end
+		damages[spellInfo.damage_type] = { minDamage = minDamage, maxDamage = maxDamage }
 	else
 
 	end
-	return minDamage, maxDamage
+	return damages
 end
 
 function Spell:onUpdate(diff)
