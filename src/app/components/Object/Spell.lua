@@ -87,7 +87,7 @@ end
 function Spell:checkCast()
 	local spellInfo = self:getSpellInfo()
 	if spellInfo.cost_type > 0 and spellInfo.cost_amount > 0 and self:getCaster():getAttr(ShareDefine.stateIndexToString(spellInfo.cost_type)) < spellInfo.cost_amount then
-		release_print("Spell:checkCast() Failed With Code : "..result)
+		release_print("Spell:checkCast() Failed With Code : "..CastResult.CAST_ERROR_NOT_ENOUGH_BEGIN + spellInfo.cost_type)
 		-- SendNotify
 		return CastResult.CAST_ERROR_NOT_ENOUGH_BEGIN + spellInfo.cost_type
 	end

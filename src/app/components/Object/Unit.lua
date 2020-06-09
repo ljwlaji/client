@@ -14,7 +14,6 @@ local Unit 				= class("Unit", Object)
 	3. baseAttack
 	4. baseMagicAttack
 	5. baseDefence
-	6. baseMagicDefence
 	7. baseMoveSpeed
 	8. baseJumpForce
 ]]
@@ -22,7 +21,7 @@ local Unit 				= class("Unit", Object)
 -- 关于攀爬 其实就是左右移动偏移值变成了上下移动偏移值
 function Unit:onCreate(objType)
 	Object.onCreate(self, objType)
-	self.m_ActivatedSpells = {} --Activated Spells 当身上有相同法术存留的时候只覆盖
+	self.m_Buffs = {} --Activated Spells 当身上有相同法术存留的时候只覆盖
 	self.m_SpellCoolDowns = {}
 	self.m_ControlByPlayer = false
 	self.m_Alive = false
@@ -39,8 +38,7 @@ function Unit:onCreate(objType)
 
 		attackPower 			= 0,
 		magicAttackPower 		= 0,
-		ammor 					= 0,
-		magicDefence 			= 0,
+		armor 					= 0,
 
 		moveSpeed				= 7.0,
 		jumpForce				= 8,
@@ -55,7 +53,6 @@ function Unit:onCreate(objType)
 
 		blockChance 			= 0,
 		dodgeChance				= 0,
-		missChance				= 0,
 		hitChance				= 0,
 		meleeCritChance			= 0,
 		magicCritChance 		= 0,
@@ -187,8 +184,8 @@ function Unit:updateBaseAttrs(init)
 
 end
 
-function Unit:updateAttrsForActivedSpells()
-	for spell_id, spell_template in pairs(self.m_ActivatedSpells) do
+function Unit:updateAttrsForBuffs()
+	for spell_id, spell_template in pairs(self.m_Buffs) do
 
 	end
 end
@@ -214,8 +211,7 @@ function Unit:updateAttrs()
 			maxEnergy				= 0,
 			attackPower 			= 0,
 			magicAttackPower 		= 0,
-			ammor 					= 0,
-			magicDefence 			= 0,
+			armor 					= 0,
 			attackSpeed 			= 0,
 
 			strength				= 0,
@@ -229,7 +225,6 @@ function Unit:updateAttrs()
 
 			blockChance 			= 0,
 			dodgeChance				= 0,
-			missChance				= 0,
 			meleeCritChance			= 0,
 			magicCritChance 		= 0,
 
@@ -242,7 +237,7 @@ function Unit:updateAttrs()
 		
 		extraValue:plus("maxHealth", 		self:getAttr("stamina") 		* 10)
 		extraValue:plus("maxMana", 			self:getAttr("intelligence") 	* 10)
-		extraValue:plus("missChance", 		self:getAttr("agility") 		* 0.05)
+		extraValue:plus("dodgeChance", 		self:getAttr("agility") 		* 0.05)
 		extraValue:plus("meleeCritChance", 	self:getAttr("agility") 		* 0.05)
 		extraValue:plus("magicCritChance", 	self:getAttr("intelligence")	* 0.05)
 		-- extraValue:plus("maxMeleeDamage", )
@@ -317,7 +312,7 @@ function Unit:modifyHealth(value)
 	if value > 0 then
 		value = currHealth + value > maxHealth and maxHealth - currHealth or value
 	else
-		value = currHealth - value < 0 and currHealth or value
+		value = currHealth + value <= 0 and -currHealth or value
 	end
 	local final = currHealth + value
 	if final == 0 then self:justDie() end
@@ -336,10 +331,14 @@ function Unit:justDie()
 	self:setAlive(false)
 	-- TODO
 	-- CleanUp All Areas
+	self.m_Buffs = {}
 	-- Play Animation
 	-- CleanUp All Threats And Targets
+	self:updateAttrs()
 	self:setDeathTime(os.time())
-	if self:getAI() then self:getAI():onDead() end
+	if self:getAI() then
+		self:getAI():onDead()
+	end
 end
 			-----------------------
 			-- End Of Attr Issus --
@@ -365,18 +364,34 @@ function Unit:getDistance(otherUnit)
 end
 
 function Unit:dealDamage(damage, victim)
+	local finalDamage = 0
+	-- 等级差
 	local lvl_diff = (self:getLevel() - victim:getLevel()) * 5
-	local missChance = ShareDefine.hitChance() - lvl_diff
-	if self:isPlayer() then missChance = missChance + self:getAttr("hitChance") end
+	-- 计算命中
+	local hitChance = ShareDefine.hitChance() + lvl_diff
+	if self:isPlayer() then hitChance = hitChance + self:getAttr("hitChance") end
+	if math.random(1, 100) > hitChance then return end
+
+	if math.random(1, 100) <= self:getAttr("dodgeChance") then return end
+
+	if math.random(1, 100) <= self:getAttr("blockChance") then return end
+
+
 	for damageType, damageInfo in pairs(damage) do
 		--计算招架格
 		local cleanMinDamage = damageInfo.minDamage
 		local cleanMaxDamage = damageInfo.maxDamage
 
-	end when
+		local cleanDamage = math.random(cleanMinDamage, cleanMaxDamage)
+		if damageType == ShareDefine.meleeDamage() then
+			finalDamage = cleanDamage - victim:getAttr("armor")
+		end
+	end 
+
+	victim:modifyHealth(-finalDamage)
 end
 
-function Unit:addActivedSpell(spell_id)
+function Unit:addBuff(spell_id)
 
 end
 

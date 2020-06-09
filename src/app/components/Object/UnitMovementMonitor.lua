@@ -152,9 +152,6 @@ function UnitMovementMonitor:onHorizonMove(diff, isJumpping)
 			local _c = Controller:getInstance()
 			self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION + (_c and _c:getHorizonOffset() or 0)
 		else
-            -- path moving....
-            -- step 1:
-            -- get next move position
             if self:canDoPathMove() and not mover:getAI():isInCombat() then 
             	self:doPathMove(mover, diff)
             else
@@ -162,7 +159,7 @@ function UnitMovementMonitor:onHorizonMove(diff, isJumpping)
             end
 		end
 	end
-	if math.abs(self.m_MoveSpeed) <= 0.1 then self.m_MoveSpeed = 0 end
+	if not mover:isAlive() or math.abs(self.m_MoveSpeed) <= 0.1 then self.m_MoveSpeed = 0 end
 	return cc.p(self.m_MoveSpeed, 0)
 end
 

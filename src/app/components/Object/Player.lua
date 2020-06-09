@@ -52,7 +52,7 @@ function Player:loadFromDB()
 	self:setFaction(queryResult.faction)
 	self:loadInventoryFromDB()
 	self:loadAllLearnedSpellsFromDB()
-	self:loadActivatedSpellFromDB()
+	self:loadBuffsFromDB()
 
 	self:loadQuestFromDB()
 
@@ -165,6 +165,15 @@ function Player:hasSpell(spellid)
 	return hasSpell
 end
 
+function Player:learnSpell(spellid)
+	local spellInfo = SpellMgr:getSpellTemplate(spellid)
+	if self:getClass() ~= spellInfo.require_class then return end
+	if self:getLevel() < spellInfo.require_level then return end
+	if self:getMoney() < spellInfo.learn_cost then return end
+	table.insert(self.m_LearnedSpells, spellid)
+	self:saveAllLearnedSpellToDB()
+end
+
 function Player:getLearnedSpells()
 	return self.m_LearnedSpells
 end
@@ -186,18 +195,18 @@ function Player:saveAllLearnedSpellToDB()
 	end
 end
 
-function Player:loadActivatedSpellFromDB()
-	local sql = "SELECT * FROM spell_activated WHERE character_guid = '%d'"
+function Player:loadBuffsFromDB()
+	local sql = "SELECT * FROM buff_instance WHERE character_guid = '%d'"
 	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
 	for k, v in pairs(queryResult) do
 		self.m_ActivatedSpells[v.spell_id] = v
 	end
 end
 
-function Player:saveActivatedSpellFromDB()
-	local sql = "DELETE FROM spell_activated WHERE character_guid = %d"
+function Player:saveBuffsFromDB()
+	local sql = "DELETE FROM buff_instance WHERE character_guid = %d"
 	DataBase:query(string.format(sql, self:getGuid()))
-	sql = "REPLACE INTO spell_activated(character_guid, spell_id, time_left) VALUES('%d', '%d', '%d')"
+	sql = "INSERT INTO buff_instance(character_guid, spell_id, time_left) VALUES('%d', '%d', '%d')"
 	for k, v in pairs(self.m_ActivatedSpells) do
 		DataBase:query(string.format(sql, self:getGuid(), v.spell_id, v.time_left))
 	end 
@@ -251,7 +260,7 @@ function Player:updateEquipmentAttrs()
 		["agility"] 		= 0,
 		["spirit"] 			= 0,
 		["stamina"] 		= 0,
-		["ammor"]			= 0,
+		["armor"]			= 0,
 		["maxAttack"]		= 0,
 		["minAttack"]		= 0,
 	}
@@ -263,7 +272,7 @@ function Player:updateEquipmentAttrs()
 				local indexStr = ShareDefine.stateIndexToString(attrIndex)
 				extraValues[indexStr] = extraValues[indexStr] + value
 			end
-			for _, v in pairs({ "ammor", "maxAttack", "minAttack" }) do
+			for _, v in pairs({ "armor", "maxAttack", "minAttack" }) do
 				extraValues[v] = extraValues[v] + equipment.template[v]
 			end
 		end
@@ -330,7 +339,7 @@ function Player:saveToDB()
 									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY()))
 
 	self:saveInventoryToDB()
-	self:saveActivatedSpellFromDB()
+	self:saveBuffsFromDB()
 	self:saveAllLearnedSpellToDB()
 	self:saveQuestToDB()
 	self:saveSpellSlotToDB()
@@ -364,9 +373,9 @@ end
 
 function Player:canEquip(itemData)
 	local itemTemplate = itemData.template
-	if itemTemplate.require_class ~= self:getClass() then return false end
-	if itemTemplate.require_level >  self:getLevel() then return false end
-	if itemTemplate.requie_spell and itemTemplate.requie_spell ~= 0 and not self:hasSpell(itemTemplate.requie_spell) then return false end
+	if itemTemplate.require_class ~= self:getClass() then release_print("can Equip : not equal class") return false end
+	if itemTemplate.require_level >  self:getLevel() then release_print("can Equip : not enough level") return false end
+	if itemTemplate.requie_spell and itemTemplate.requie_spell ~= 0 and not self:hasSpell(itemTemplate.requie_spell) then release_print("can Equip : require Spell : "..itemTemplate.requie_spell) return false end
 	if itemData.durable == 0 then return false end
 	return true
 end

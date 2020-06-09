@@ -33,7 +33,7 @@ end
 
 function ViewBase:fillAllChildren(rootNode)
     for k, v in pairs(rootNode:getChildren()) do
-        assert(not self.m_Children[v:getName()])
+        assert(not self.m_Children[v:getName()], "\n Trigger Assertion@ Cannot Find Child : ["..v:getName().."] In ViewClass : ["..self.__cname.."]")
         self.m_Children[v:getName()] = v
         self:fillAllChildren(v)
     end

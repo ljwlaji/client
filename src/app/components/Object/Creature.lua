@@ -10,11 +10,11 @@ function Creature:onCreate()
 	self:setPawn(Pawn:create():addTo(self):init(self))
 
 	self.m_QuestList = {}
-
 	self:setGuid(self.context.guid)
 	self:setFaction(self.context.faction)
 	self:setAlive(self.context.alive)
 	self:setDeathTime(self.context.dead_time)
+	self:setLevel(self.context.level)
 	self:fetchQuest()
 	self:fetchMovePaths()
 

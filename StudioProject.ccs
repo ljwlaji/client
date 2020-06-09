@@ -21,13 +21,11 @@
             <Project Name="CSB_Layer_SpellInfo.csd" Type="Node" />
             <Project Name="CSB_Layer_Talent.csd" Type="Node" />
             <Project Name="CSB_Layer_VendorMenu.csd" Type="Node" />
-            <Project Name="CSB_Layer_NotifyBar.csd" Type="Node" />
           </Folder>
           <Folder Name="maps">
             <Project Name="0.csd" Type="Layer" />
           </Folder>
           <Folder Name="node">
-            <Project Name="CSB_Node_ChatNode.csd" Type="Node" />
             <Project Name="CSB_Node_Controller.csd" Type="Layer" />
             <Project Name="CSB_Node_Controller_New.csd" Type="Layer" />
             <Project Name="CSB_Node_GossipItem.csd" Type="Node" />
@@ -37,12 +35,11 @@
             <Project Name="CSB_Node_ItemDetail_Upper.csd" Type="Node" />
             <Project Name="CSB_Node_ItemIcon.csd" Type="Node" />
             <Project Name="CSB_Node_MainMenuBar.csd" Type="Node" />
-            <Project Name="CSB_Node_NotifyBarCell.csd" Type="Layer" />
             <Project Name="CSB_Node_Pawn.csd" Type="Node" />
             <Project Name="CSB_Node_SkillButtons.csd" Type="Node" />
             <Project Name="CSB_Node_SpellBookCell.csd" Type="Node" />
-            <Project Name="CSB_Node_VendorMenuCell.csd" Type="Node" />
             <Project Name="CSB_Node_TalentIcon.csd" Type="Node" />
+            <Project Name="CSB_Node_VendorMenuCell.csd" Type="Node" />
           </Folder>
         </Folder>
         <Folder Name="ui">

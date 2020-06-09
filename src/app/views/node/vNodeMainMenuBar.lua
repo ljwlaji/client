@@ -51,6 +51,7 @@ end
 
 function vNodeMainMenuBar:onTouchButtonTalent(e)
 	if e.name ~= "ended" then return end
+	WindowMgr:createWindow("app.views.layer.vLayerTalent")
 end
 
 function vNodeMainMenuBar:onTouchButtonSettings(e)

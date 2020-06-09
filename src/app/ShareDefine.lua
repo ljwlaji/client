@@ -28,12 +28,12 @@ local MAP_Z_ORDERS = {
 
 local ITEM_TYPES = {
 	-- 布甲 锁甲 匕首 饰品 等
-	AMMOR_TYPE_BEGIN 	= 1,
+	ARMOR_TYPE_BEGIN 	= 1,
 	FABRIC 				= 1, 	--布甲
 	LEATHER 			= 2, 	--皮甲
 	MAIL				= 3, 	--锁甲
 	PLATE 				= 4,	--板甲
-	AMMOR_TYPE_END 		= 4,
+	ARMOR_TYPE_END 		= 4,
 
 	ONE_HAND_BEGIN 		= 5,
 	ONE_HAND_AXE 		= 5,	--单手斧
@@ -100,7 +100,7 @@ local STATE_INDEXES = {
 	[4] 	= "maxEnergy",
 	[5] 	= "attackPower",
 	[6] 	= "magicAttackPower",
-	[7] 	= "ammor",
+	[7] 	= "armor",
 	[8] 	= "magicDefence",
 	[9] 	= "moveSpeed",
 	[10] 	= "jumpForce",
@@ -216,8 +216,8 @@ function ShareDefine.getStateStringByStateIndex(stateIndex)
 	return import("app.components.DataBase"):getStringByID(stateIndex + 400)
 end
 
-function ShareDefine.isAmmorType(itemType)
-	return itemType >= ITEM_TYPES.AMMOR_TYPE_BEGIN and itemType <= ITEM_TYPES.AMMOR_TYPE_END
+function ShareDefine.isArmorType(itemType)
+	return itemType >= ITEM_TYPES.ARMOR_TYPE_BEGIN and itemType <= ITEM_TYPES.ARMOR_TYPE_END
 end
 
 function ShareDefine.getLanguageMode()
