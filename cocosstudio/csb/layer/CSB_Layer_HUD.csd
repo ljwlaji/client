@@ -26,6 +26,18 @@
           </AbstractNodeData>
           <AbstractNodeData Name="node_Center_Buttom" ActionTag="399600089" Tag="19" IconVisible="True" LeftMargin="-367.1675" RightMargin="1701.1675" TopMargin="223.2504" BottomMargin="526.7496" ctype="SingleNodeObjectData">
             <Size X="0.0000" Y="0.0000" />
+            <Children>
+              <AbstractNodeData Name="CSB_ExpBar" ActionTag="-1876031951" Tag="41" IconVisible="False" LeftMargin="-100.0000" RightMargin="-100.0000" TopMargin="-14.0000" ProgressInfo="0" ctype="LoadingBarObjectData">
+                <Size X="200.0000" Y="14.0000" />
+                <AnchorPoint ScaleX="0.5000" />
+                <Position />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <PrePosition />
+                <PreSize X="0.0000" Y="0.0000" />
+                <ImageFileData Type="Default" Path="Default/LoadingBarFile.png" Plist="" />
+              </AbstractNodeData>
+            </Children>
             <AnchorPoint />
             <Position X="-367.1675" Y="526.7496" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />

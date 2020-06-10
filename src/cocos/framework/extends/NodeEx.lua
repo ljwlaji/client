@@ -244,6 +244,6 @@ end
 
 function Node:sendAppMsg(msgID, ...)
     local pEvent = cc.EventCustom:new(msgID)
-    pEvent.parameters = {...}
+    pEvent.parameters = ...
     cc.Director:getInstance():getEventDispatcher():dispatchEvent(pEvent)
 end

@@ -51,15 +51,16 @@ function Player:loadFromDB()
 	self:setName(queryResult.name)
 	self:setGuid(queryResult.guid)
 	self:setFaction(queryResult.faction)
+	self:setGender(queryResult.gender)
+	self:setRace(queryResult.race)
 	self:loadInventoryFromDB()
 	self:loadAllLearnedSpellsFromDB()
 	self:loadBuffsFromDB()
-
 	self:loadQuestFromDB()
-
 	self:loadSpellSlotFromDB()
-
 	self:loadSpellCoolDownFromDB()
+
+	self:awardExp(0)
 end
 
 --[[ For Quest Issus ]]
@@ -225,7 +226,7 @@ function Player:loadBuffsFromDB()
 	local sql = "SELECT * FROM buff_instance WHERE character_guid = '%d'"
 	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
 	for k, v in pairs(queryResult) do
-		self.m_ActivatedSpells[v.spell_id] = v
+		self.m_Buffs[v.spell_id] = v
 	end
 end
 
@@ -233,7 +234,7 @@ function Player:saveBuffsFromDB()
 	local sql = "DELETE FROM buff_instance WHERE character_guid = %d"
 	DataBase:query(string.format(sql, self:getGuid()))
 	sql = "INSERT INTO buff_instance(character_guid, spell_id, time_left) VALUES('%d', '%d', '%d')"
-	for k, v in pairs(self.m_ActivatedSpells) do
+	for k, v in pairs(self.m_Buffs) do
 		DataBase:query(string.format(sql, self:getGuid(), v.spell_id, v.time_left))
 	end 
 end
@@ -358,7 +359,7 @@ end
 function Player:saveToDB()
 	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9			10				11
 	local sql = [[REPLACE INTO character_instance(guid, class, gender, faction, level, race, name, map, pos_x, pos_y, free_talent_point, current_exp) 
-										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%s', '%d','%d',  '%d', '%d', '%d') ]]
+										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%d', '%s','%d',  '%d', '%d', '%d', '%d') ]]
 	--										0				1				2					3				4					5
 	DataBase:query(string.format(sql, self:getGuid(), self:getClass(), self:getGender(), self:getFaction(), self:getLevel(), self:getRace(), 
 	--										6					7						8					9						10						11
@@ -466,14 +467,17 @@ function Player:awardExp(amount)
 	local startLevel = self:getLevel()
 	local sql = "SELECT * FROM level_exp WHERE currLevel >= '%d'"
 	local result = DataBase:query(string.format(sql, startLevel))
-	result = table.sort(result, function(a, b) return a > b end)
+	table.sort(result, function(a, b) return a.currLevel < b.currLevel end)
 
 	local targetLevel = startLevel
 	for _, info in pairs(result) do
-		if exp < info.exp then break end
+		release_print(exp)
+		release_print(info.exp)
+		if exp < info.exp then release_print("break") break end
 		exp = exp - info.exp
 		targetLevel = targetLevel + 1
 	end
+
 	if startLevel < targetLevel then self:setLevel(targetLevel) end
 	self.context.current_exp = exp
 	self:setExpDataDirty(true)
@@ -484,7 +488,9 @@ function Player:isExpDataDirty()
 end
 
 function Player:onExpDataChanged()
-	self:sendAppMsg("MSG_ON_EXP_DATA_CHANGED", self.context.exp)
+	local sql = "UPDATE character_instance SET current_exp = '%d' WHERE guid = '%d'"
+	DataBase:query(string.format(sql, self:getCurrExp(), self:getGuid()))
+	self:sendAppMsg("MSG_ON_EXP_DATA_CHANGED", { currExp = self:getCurrExp(), currLevel = self:getLevel() })
 	self:setExpDataDirty(false)
 end
 

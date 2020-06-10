@@ -31,11 +31,6 @@ function Unit:onCreate(objType)
 		maxRage					= 100,
 		maxEnergy				= 100,
 
-		rage 					= 100,
-		health 					= 100,
-		energy 					= 100,
-		mana 					= 100,
-
 		attackPower 			= 0,
 		magicAttackPower 		= 0,
 		armor 					= 0,
@@ -63,7 +58,12 @@ function Unit:onCreate(objType)
 		critMutiply				= 1.5
 
 	}
-	self.m_Attrs = {}
+	self.m_Attrs = {
+		rage 					= 100,
+		health 					= 100,
+		energy 					= 100,
+		mana 					= 100,
+	}
 	self.m_MovementMonitor = MovementMonitor:create(self)
 	self:regiestCustomEventListenter("onTouchButtonX", function() end)
 	self:regiestCustomEventListenter("onTouchButtonY", function() end)
@@ -112,6 +112,22 @@ end
 
 function Unit:getLevel()
 	return self.m_Level
+end
+
+function Unit:getGender()
+	return self.m_Gender
+end
+
+function Unit:setGender(gender)
+	self.m_Gender = gender
+end
+
+function Unit:getRace()
+	return self.m_Race
+end
+
+function Unit:setRace(race)
+	self.m_Race = race
 end
 
 function Unit:setLevel(lvl)
@@ -176,9 +192,14 @@ function Unit:updateBaseAttrs(init)
 		["rage"] 	= "maxRage",
 		["energy"] 	= "maxEnergy",
 	}
-	if self:isPlayer() and init then
-		self:setAttr("health", self.context.current_health)
-		self:setAttr("mana", self.context.current_mana)
+	if init then
+		if self:isPlayer() then
+			self:setAttr("health", self.context.current_health)
+			self:setAttr("mana", self.context.current_mana)
+		else
+			self:setAttr("health", self.context.maxHealth)
+			self:setAttr("mana", self.context.maxMana)
+		end
 	end
 	for k, v in pairs(recalc) do
 		local now = self:getAttr(k)
@@ -340,10 +361,10 @@ function Unit:justDie(killer)
 	self:updateAttrs()
 	self:setDeathTime(os.time())
 	if self:getAI() then self:getAI():onDead() end
-	-- if killer then
-	-- 	if self:isCreature() and killer:isPlayer() and killer:isAlive() then killer:awardExp(self.context.award_exp) end
-	-- 	if killer:getAI() then killer:onKill(self) end
-	-- end
+	if killer then
+		if self:isCreature() and killer:isPlayer() and killer:isAlive() then killer:awardExp(self.context.award_exp) end
+		if killer:getAI() then killer:onKill(self) end
+	end
 end
 			-----------------------
 			-- End Of Attr Issus --

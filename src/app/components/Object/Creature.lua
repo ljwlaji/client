@@ -72,8 +72,8 @@ function Creature:fetchQuest()
 	end
 end
 
-function Creature:justDie()
-	Unit.justDie(self)
+function Creature:justDie(victim)
+	Unit.justDie(self, victim)
 	self:saveToDB()
 end
 
