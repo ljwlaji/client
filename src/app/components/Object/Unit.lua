@@ -319,7 +319,6 @@ function Unit:modifyHealth(value)
 		value = currHealth + value <= 0 and -currHealth or value
 	end
 	local final = currHealth + value
-	if final == 0 then self:justDie() end
 	self:setAttr("health", final)
 end
 
@@ -331,7 +330,7 @@ function Unit:setDeathTime(time)
 	self.m_DeathTime = time
 end
 
-function Unit:justDie()
+function Unit:justDie(killer)
 	self:setAlive(false)
 	-- TODO
 	-- CleanUp All Areas
@@ -340,9 +339,11 @@ function Unit:justDie()
 	-- CleanUp All Threats And Targets
 	self:updateAttrs()
 	self:setDeathTime(os.time())
-	if self:getAI() then
-		self:getAI():onDead()
-	end
+	if self:getAI() then self:getAI():onDead() end
+	-- if killer then
+	-- 	if self:isCreature() and killer:isPlayer() and killer:isAlive() then killer:awardExp(self.context.award_exp) end
+	-- 	if killer:getAI() then killer:onKill(self) end
+	-- end
 end
 			-----------------------
 			-- End Of Attr Issus --
@@ -393,6 +394,7 @@ function Unit:dealDamage(damage, victim)
 	end 
 
 	victim:modifyHealth(-finalDamage)
+	if victim:getAttr("health") == 0 then victim:justDie(self) end
 end
 
 function Unit:addBuff(spell_id)

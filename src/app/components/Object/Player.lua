@@ -356,13 +356,13 @@ function Player:onInventoryDataChanged()
 end
 
 function Player:saveToDB()
-	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9			10
-	local sql = [[REPLACE INTO character_instance(guid, class, gender, faction, level, race, name, map, pos_x, pos_y, free_talent_point) 
-										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%s', '%d','%d',  '%d', '%d') ]]
+	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9			10				11
+	local sql = [[REPLACE INTO character_instance(guid, class, gender, faction, level, race, name, map, pos_x, pos_y, free_talent_point, current_exp) 
+										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%s', '%d','%d',  '%d', '%d', '%d') ]]
 	--										0				1				2					3				4					5
 	DataBase:query(string.format(sql, self:getGuid(), self:getClass(), self:getGender(), self:getFaction(), self:getLevel(), self:getRace(), 
-	--										6					7						8					9
-									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY(), self:getFreeTalentPoint() ))
+	--										6					7						8					9						10						11
+									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY(), self:getFreeTalentPoint(), self:getCurrExp() ))
 
 	self:saveInventoryToDB()
 	self:saveBuffsFromDB()
@@ -462,8 +462,37 @@ function Player:getCurrExp()
 end
 
 function Player:awardExp(amount)
-	self.context.current_exp = self.context.current_exp + amount
+	local exp = self.context.current_exp + amount
+	local startLevel = self:getLevel()
+	local sql = "SELECT * FROM level_exp WHERE currLevel >= '%d'"
+	local result = DataBase:query(string.format(sql, startLevel))
+	result = table.sort(result, function(a, b) return a > b end)
+
+	local targetLevel = startLevel
+	for _, info in pairs(result) do
+		if exp < info.exp then break end
+		exp = exp - info.exp
+		targetLevel = targetLevel + 1
+	end
+	if startLevel < targetLevel then self:setLevel(targetLevel) end
+	self.context.current_exp = exp
 	self:setExpDataDirty(true)
+end
+
+function Player:isExpDataDirty()
+	return self.m_ExpDataDirty
+end
+
+function Player:onExpDataChanged()
+	self:sendAppMsg("MSG_ON_EXP_DATA_CHANGED", self.context.exp)
+	self:setExpDataDirty(false)
+end
+
+function Player:onLevelUp(oldLevel, newLevel)
+	self:updateBaseAttrs()
+
+	self:tryAwardTalent(oldLevel, newLevel)
+	self:saveToDB()
 end
 
 function Player:tryAwardTalent(oldLevel, newLevel)
@@ -473,13 +502,10 @@ function Player:tryAwardTalent(oldLevel, newLevel)
 	self:setFreeTalentPoint( self:getFreeTalentPoint() + awardPoint )
 end
 
-function Player:onLevelUp(oldLevel, newLevel)
-	self:tryAwardTalent(oldLevel, newLevel)
-end
-
 function Player:onUpdate(diff)
 	Unit.onUpdate(self, diff)
 	if self:isInventoryDataDirty() then self:onInventoryDataChanged() end
+	if self:isExpDataDirty() then self:onExpDataChanged() end
 end
 
 function Player:resetGossipList()
