@@ -20,6 +20,7 @@ function Player:onCreate()
 	self.m_LearnedSpells = {}
 	self.m_QuestDatas = {}
 	self.m_SpellSlots = {}
+	self.m_FreeTalentPoint = 0
 	self:setAlive(true)
 	self:loadFromDB()
 	self:setControlByPlayer(true)
@@ -166,16 +167,41 @@ function Player:hasSpell(spellid)
 end
 
 function Player:learnSpell(spellid)
+	if self:hasSpell(spellid) then return false end
 	local spellInfo = SpellMgr:getSpellTemplate(spellid)
-	if self:getClass() ~= spellInfo.require_class then return end
-	if self:getLevel() < spellInfo.require_level then return end
-	if self:getMoney() < spellInfo.learn_cost then return end
+	if self:getClass() ~= spellInfo.require_class then return false end
+	if self:getLevel() < spellInfo.require_level then return false end
+	if self:getMoney() < spellInfo.learn_cost then return false end
 	table.insert(self.m_LearnedSpells, spellid)
 	self:saveAllLearnedSpellToDB()
+	return true
+end
+
+function Player:unLearnSpell(spellid)
+	for i=1, #self.m_LearnedSpells do
+		if self.m_LearnedSpells[i] == spellid then
+			table.remove(self.m_LearnedSpells, i)
+			self:saveAllLearnedSpellToDB()
+			self:cleanSpellSlots()
+			break
+		end
+	end
 end
 
 function Player:getLearnedSpells()
 	return self.m_LearnedSpells
+end
+
+function Player:cleanSpellSlots()
+	local newSlotInfo = {}
+	for slotID, spellid in pairs(self.m_SpellSlots) do
+		if self:hasSpell(spellid) then
+			newSlotInfo[slotID] = spellid
+		end
+	end
+	self.m_SpellSlots = newSlotInfo
+	self:saveSpellSlotToDB()
+	self:sendAppMsg("MSG_ON_SPELL_SLOT_CHANGED")
 end
 
 function Player:loadAllLearnedSpellsFromDB()
@@ -188,7 +214,7 @@ end
 
 function Player:saveAllLearnedSpellToDB()
 	local sql = "DELETE FROM character_spells WHERE character_guid = %d"
-	DataBase:query(sql)
+	DataBase:query(string.format(sql, self:getGuid()))
 	sql = "REPLACE INTO character_spells(character_guid, spell_id) VALUES('%d', '%d')"
 	for _, spell_id in pairs(self.m_LearnedSpells) do
 		DataBase:query(string.format(sql, self:getGuid(), spell_id))
@@ -330,13 +356,13 @@ function Player:onInventoryDataChanged()
 end
 
 function Player:saveToDB()
-	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9
-	local sql = [[REPLACE INTO character_instance(guid, class, gender, faction, level, race, name, map, pos_x, pos_y) 
-										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%s', '%d','%d',  '%d') ]]
+	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9			10
+	local sql = [[REPLACE INTO character_instance(guid, class, gender, faction, level, race, name, map, pos_x, pos_y, free_talent_point) 
+										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%s', '%d','%d',  '%d', '%d') ]]
 	--										0				1				2					3				4					5
 	DataBase:query(string.format(sql, self:getGuid(), self:getClass(), self:getGender(), self:getFaction(), self:getLevel(), self:getRace(), 
 	--										6					7						8					9
-									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY()))
+									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY(), self:getFreeTalentPoint() ))
 
 	self:saveInventoryToDB()
 	self:saveBuffsFromDB()
@@ -378,6 +404,77 @@ function Player:canEquip(itemData)
 	if itemTemplate.requie_spell and itemTemplate.requie_spell ~= 0 and not self:hasSpell(itemTemplate.requie_spell) then release_print("can Equip : require Spell : "..itemTemplate.requie_spell) return false end
 	if itemData.durable == 0 then return false end
 	return true
+end
+
+function Player:saveTalentPointToDB()
+	local sql = [[UPDATE character_instance SET free_talent_point = %d WHERE guid = %d]]
+	DataBase:query(string.format( sql, self:getFreeTalentPoint(), self:getGuid() ))
+end
+
+function Player:getFreeTalentPoint()
+	return self.context.free_talent_point
+end
+
+function Player:setFreeTalentPoint(point)
+	self.context.free_talent_point = point
+	self:saveTalentPointToDB()
+end
+
+function Player:tryLearnTalentSpell(spellid)
+	if not self:learnSpell(spellid) then return end
+	self:setFreeTalentPoint(self:getFreeTalentPoint() - 1)
+end
+
+function Player:resetTalent()
+	local function split( str,reps )
+	    local resultStrList = {}
+	    string.gsub(str,'[^'..reps..']+', function ( w )
+	    	table.insert(resultStrList, tonumber(w))
+	    end)
+	    return resultStrList
+	end
+
+	local sql = "SELECT spells FROM talent_template WHERE class = '%d'"
+	local talentInfo = DataBase:query(string.format( sql, self:getClass() ))
+	local allTalentSpellIDs = nil
+	for _, v in pairs(talentInfo) do
+		allTalentSpellIDs = allTalentSpellIDs and string.format("%s,%s", allTalentSpellIDs, v.spells) or v.spells
+	end
+	allTalentSpellIDs = split(allTalentSpellIDs, ",")
+
+	local freed_point = 0
+	for _, talentSpellID in pairs(allTalentSpellIDs) do
+		if self:hasSpell(talentSpellID) then
+			freed_point = freed_point + 1
+			self:unLearnSpell(talentSpellID)
+		end
+	end
+	self:setFreeTalentPoint(self:getFreeTalentPoint() + freed_point)
+end
+
+function Player:setExpDataDirty(value)
+	if self.m_ExpDataDirty == value then return end
+	self.m_ExpDataDirty = value
+end
+
+function Player:getCurrExp()
+	return self.context.current_exp
+end
+
+function Player:awardExp(amount)
+	self.context.current_exp = self.context.current_exp + amount
+	self:setExpDataDirty(true)
+end
+
+function Player:tryAwardTalent(oldLevel, newLevel)
+	local minLevel =  ShareDefine.talentAwardLevel()
+	local oldLevel = minLevel > oldLevel and minLevel or oldLevel
+	local awardPoint = newLevel - oldLevel
+	self:setFreeTalentPoint( self:getFreeTalentPoint() + awardPoint )
+end
+
+function Player:onLevelUp(oldLevel, newLevel)
+	self:tryAwardTalent(oldLevel, newLevel)
 end
 
 function Player:onUpdate(diff)

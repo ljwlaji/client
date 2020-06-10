@@ -144,6 +144,8 @@ local SIGHT_RANGE = 200
 
 local COMMON_HIT_CHANCE = 95
 
+local MIN_LEVEL_FOR_TALENT_POINT_AWARD = 10
+
 function ShareDefine.classWarrior() return CLASS_TYPES.CLASS_WARRIOR 	end
 function ShareDefine.classMage() 	return CLASS_TYPES.CLASS_MAGE 		end
 function ShareDefine.classPriest() 	return CLASS_TYPES.CLASS_PRIEST 	end
@@ -153,6 +155,10 @@ function ShareDefine.classWarlock() return CLASS_TYPES.CLASS_WARLOCK 	end
 function ShareDefine.classThief() 	return CLASS_TYPES.CLASS_THIEF 		end
 function ShareDefine.classDruid() 	return CLASS_TYPES.CLASS_DRUID 		end
 function ShareDefine.classShaman() 	return CLASS_TYPES.CLASS_SHAMAN 	end
+
+function ShareDefine.talentAwardLevel()
+	return MIN_LEVEL_FOR_TALENT_POINT_AWARD
+end
 
 function ShareDefine.hitChance()
 	return COMMON_HIT_CHANCE

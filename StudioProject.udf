@@ -7,13 +7,5 @@
         <LastRunType Value="Mac" />
       </Value>
     </Item>
-    <Item Key="TabsParamsKey">
-      <Value ctype="TabsInfo">
-        <OpenedDocuments>
-          <FilePathData Path="csb/layer/CSB_Layer_Talent.csd" />
-        </OpenedDocuments>
-        <ActiveDocument Path="csb/layer/CSB_Layer_Talent.csd" />
-      </Value>
-    </Item>
   </Properties>
 </UserData>

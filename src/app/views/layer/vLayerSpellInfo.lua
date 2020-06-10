@@ -45,6 +45,9 @@ function vLayerSpellInfo:resetSpellButtons()
 end
 
 function vLayerSpellInfo:onReset()
+	local plr = Player:getInstance()
+	if not plr or not plr:hasSpell(self.context.entry) then self:removeFromParent() return end
+
 	self:resetSpellButtons()
 	local desc = SpellMgr:getSpellDescString(self.context)
 	desc = table.concat(Utils.splitStrByLetterCount(desc, 30), "\n")
@@ -60,11 +63,13 @@ end
 
 function vLayerSpellInfo:onTouchSpellSlot(e)
 	if e.name ~= "ended" then return end
-	local plr = Player:getInstance()
-	local spellSlots = plr:getSpellSlotInfo()
+	local tag = e.target:getTag()
+	local spellid = self.context.entry
 	WindowMgr:popCheckWindow({
-		onConfirm = function() 
-			plr:changeSlotSpell(e.target:getTag(), self.context.entry)
+		onConfirm = function()
+			local plr = Player:getInstance()
+			if not plr:hasSpell(spellid) then return end
+			plr:changeSlotSpell(tag, spellid)
 		end,
 		block = true
 	})

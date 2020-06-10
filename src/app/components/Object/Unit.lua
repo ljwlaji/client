@@ -115,7 +115,11 @@ function Unit:getLevel()
 end
 
 function Unit:setLevel(lvl)
+	local oldLevel = self.m_Level
 	self.m_Level = lvl
+	if self:isPlayer() and oldLevel and lvl > oldLevel then
+		self:onLevelUp(oldLevel, self.m_Level)
+	end
 end
 
 function Unit:getClassString()

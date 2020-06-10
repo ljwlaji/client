@@ -36,7 +36,7 @@ function vLayerTalent:switchToCatagory(catagory)
 	self.m_Children["Panel_Slot"]:removeAllChildren()
 	local templateResult = DataBase:query(string.format("SELECT * FROM talent_template WHERE catagory = %d and class = %d", catagory, self.m_Class))
 	for k, info in pairs(templateResult) do
-		local ico = TalentIcon:create()
+			local ico = TalentIcon:create()
 							  :addTo(self.m_Children["Panel_Slot"])
 							  :onReset(info)
 							  :move((info.position_index % 4) * GAP + POS_START,
