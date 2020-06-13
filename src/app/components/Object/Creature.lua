@@ -6,9 +6,9 @@ local Pawn 			= import("app.views.node.vNodePawn")
 local FactionMgr	= import("app.components.FactionMgr")
 local Creature 		= class("Creature", Unit)
 
-function Creature:onCreate()
+function Creature:onCreate(pawn)
 	Unit.onCreate(self, ShareDefine:creatureType())
-	self:setPawn(Pawn:create():addTo(self):init(self))
+	self:setPawn(pawn:addTo(self):init(self))
 
 	self.m_QuestList = {}
 	self:setGuid(self.context.guid)
@@ -49,6 +49,21 @@ end
 
 function Creature:isQuestProvider()
 	return #self.m_QuestList > 0
+end
+
+function Creature:initAI(AIName)
+	local currAITemplate = import(string.format("app.scripts.%s", AIName))
+	assert(currAITemplate, "Cannot Find Current AI By Path Named: ["..AIName.."]")
+	self:setAI(currAITemplate:create(self):onReset())
+end
+
+function Creature:setAI(AIInstance)
+	if AIInstance == self.m_AI then return end
+	self.m_AI = AIInstance
+end
+
+function Creature:getAI()
+	return self.m_AI
 end
 
 function Creature:onTouched(pPlayer)

@@ -153,21 +153,6 @@ function Unit:getClassString()
 	return DataBase:getStringByID(self:getClass() + 100)
 end
 
-function Unit:initAI(AIName)
-	local currAITemplate = import(string.format("app.scripts.%s", AIName))
-	assert(currAITemplate, "Cannot Find Current AI By Path Named: ["..AIName.."]")
-	self:setAI(currAITemplate:create(self):onReset())
-end
-
-function Unit:setAI(AIInstance)
-	if AIInstance == self.m_AI then return end
-	self.m_AI = AIInstance
-end
-
-function Unit:getAI()
-	return self.m_AI
-end
-
 			--------------------
 			-- For Attr Issus --
 			--------------------
@@ -384,7 +369,7 @@ function Unit:justDie(killer)
 	self:getAI():onDead()
 	if killer then
 		if self:isCreature() and killer:isPlayer() and killer:isAlive() then killer:awardExp(self.context.award_exp) end
-		if killer:getAI() then killer:onKill(self) end
+		if killer:isCreature() and killer:getAI() then killer:onKill(self) end
 	end
 end
 			-----------------------

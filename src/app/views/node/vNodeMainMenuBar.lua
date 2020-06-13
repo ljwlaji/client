@@ -56,7 +56,7 @@ end
 
 function vNodeMainMenuBar:onTouchButtonSettings(e)
 	if e.name ~= "ended" then return end
-	
+	import("app.components.Object.Player"):getInstance():getMap():removeFromParent()
 end
 
 

@@ -17,11 +17,12 @@ function vNodePawn:onCreate()
 		end
 	end)
 	self:setDataDirty(true)
+	self:onNodeEvent("cleanup", handler(self, self.cleanUpBeforeDelete))
 end
 
 function vNodePawn:init(owner)
 	self.getOwner = function() return owner end
-	self.m_Model = self:getOwner():createModelByID():addTo(self.m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
+	self.m_Model = self.m_Model or self:getOwner():createModelByID():addTo(self.m_Children["Node_Character"]):setAnchorPoint(0.5, 0)
 	return self
 end
 
@@ -65,6 +66,10 @@ end
 function vNodePawn:setName(name)
 	self.m_Children["Label_Name"]:setString(name)
 	return self
+end
+
+function vNodePawn:cleanUpBeforeDelete()
+	release_print("[vNodePawn]:cleanUpBeforeDelete()")
 end
 
 

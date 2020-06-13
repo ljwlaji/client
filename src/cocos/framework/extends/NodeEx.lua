@@ -233,7 +233,7 @@ function Node:regiestCustomEventListenter(id, callback)
     if not self.___isExitEventRegiested then
         self:onNodeEvent("cleanup", function(event)
             for k, v in pairs(self.___eventListeners) do
-                release_print("Remove listener : "..v.id)
+                -- release_print("Remove listener : "..v.id)
                 self:getEventDispatcher():removeEventListener(v.listener)
             end
             self.___eventListeners = {}

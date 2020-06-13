@@ -6,6 +6,7 @@ local GameObject    = import("app.components.Object.GameObject")
 local Ground    	= import("app.components.Object.Ground")
 local Creature    	= import("app.components.Object.Creature")
 local FactionMgr	= import("app.components.FactionMgr")
+local Pawn 			= import("app.views.node.vNodePawn")
 
 -- 需要实现的功能
 -- 无缝地图
@@ -44,6 +45,7 @@ function Map:ctor(Entry, chosedCharacterID)
 	self.m_ObjectList 		= {}
 	self.m_SpellObjects		= {}
 	self.m_HotloadTimer 	= 0
+	self.m_PawnRecyclePool	= {}
 	self:onCreate(chosedCharacterID)
 
 	--For Testting
@@ -51,6 +53,7 @@ function Map:ctor(Entry, chosedCharacterID)
 	self.m_Sky = cc.Sprite:create("sky.jpg"):addTo(display.getWorld()):setAnchorPoint(0, 0):setLocalZOrder(-99999999 - 1):setScale(0.7)
 	self.m_Sky = cc.Sprite:create("Sun.png"):addTo(display.getWorld()):setAnchorPoint(0, 1):setLocalZOrder(-99999998):move(0, display.height)
 	-- self.m_Sky = cc.Sprite:create("skyring.png"):addTo(display.getWorld()):setAnchorPoint(0, 0):setLocalZOrder(-99999998):setScale(2.9)
+	self:onNodeEvent("cleanup", handler(self, self.cleanUpBeforeDelete))
 end
 
 function Map:getEntry()
@@ -152,8 +155,10 @@ function Map:tryLoadNewObjects()
 		end
 	end
 	for k, v in pairs(self.m_CreatureDatas) do 
-		if not v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) < DISTANCE_FOR_SHOWN_CREATURE then 
-			v.instance = Creature:create(v)
+		if not v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) < DISTANCE_FOR_SHOWN_CREATURE then
+			local pawn = self:dequeuePawn()
+			v.instance = Creature:create(v, pawn)
+			pawn:release()
 			self:addObject(v.instance)
 		end
 	end
@@ -170,6 +175,7 @@ function Map:tryRemoveObjects()
 	for k, v in pairs(self.m_CreatureDatas) do
 		if v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.instance:getPosition())) > DISTANCE_FOR_DISAPPEAR_CREATURE then 
 			self:removeObject(v.instance)
+			self:queuePawn(v.instance:getPawn())
 			v.instance:removeFromParent()
 			v.instance = nil
 		end
@@ -222,12 +228,30 @@ end
 function Map:cleanUpBeforeDelete()
 	-- TODO
 	-- Remove Player
+	self:getParent().currentMap = nil
 	Camera:changeFocus(nil)
 	local obj = nil
 	while #self.m_ObjectList > 0 do
 		obj = table.remove(self.m_ObjectList)
 		obj:removeFromParent()
 	end
+	while #self.m_PawnRecyclePool > 0 do
+		obj = table.remove(self.m_ObjectList)
+		obj:release()
+	end
+
+	release_print("CleanFinished With Object List : "..#self.m_ObjectList)
+	release_print("CleanFinished With Pawn List : "..#self.m_PawnRecyclePool)
+end
+
+function Map:queuePawn(pawnInstance)
+	pawnInstance:retain():removeFromParent()
+	table.insert(self.m_PawnRecyclePool, pawnInstance)
+end
+
+function Map:dequeuePawn()
+	local ret = #self.m_PawnRecyclePool == 0 and Pawn:create():retain() or table.remove(self.m_PawnRecyclePool, 1)
+	return ret
 end
 
 function Map:tryFixPosition(unit, offset)

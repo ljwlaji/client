@@ -2,12 +2,12 @@ local Object = class("Object", cc.Node)
 local DataBase = import("app.components.DataBase")
 local ShareDefine = import("app.ShareDefine")
 
-function Object:ctor(context)
+function Object:ctor(context, ...)
 	self.context = context
 	self.m_Type = 0
 	self.m_Guid = 0
 	self:onNodeEvent("cleanup", handler(self, self.cleanUpBeforeDelete))
-	if self.onCreate then self:onCreate() end
+	if self.onCreate then self:onCreate(...) end
 end
 
 function Object:onCreate(objType)
