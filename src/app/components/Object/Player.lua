@@ -352,8 +352,8 @@ end
 
 function Player:getItemCount(pItemEntry)
 	local count = 0
-	for itemEntry, itemData in pairs(self.m_InventoryData) do
-		if itemEntry == pItemEntry then
+	for slotIndex, itemData in pairs(self.m_InventoryData) do
+		if itemData.item_entry == pItemEntry then
 			count = count + itemData.item_amount
 		end
 	end
@@ -377,7 +377,7 @@ function Player:hasSpaceFor(itemEntry, amount)
 			freeSpace = freeSpace + (itemTemplate.max_amount - self.m_InventoryData[i].item_amount)
 		end
 	end
-	
+
 	if freeSlot >= (requireSlot + (requireSpace > 0 and 1 or 0)) then
 		return true
 	elseif freeSlot >= requireSlot and freeSpace > requireSpace then
@@ -415,7 +415,22 @@ function Player:addItem(itemEntry, amount)
 end
 
 function Player:destoryItem(itemEntry, amount)
+	local slotBegin 		= ShareDefine.inventorySlotBegin()
+	local slotEnded 		= slotBegin + self:getInventorySlotCount()
+	local amount_left = amount
 
+	for i = slotBegin, slotEnded do
+		local itemInfo = self.m_InventoryData[i]
+		if itemInfo and itemInfo.item_entry == itemEntry then
+			local destory_amount = itemInfo.item_amount > amount_left and amount_left or itemInfo.item_amount
+			itemInfo.item_amount = itemInfo.item_amount - destory_amount
+			if itemInfo.item_amount == 0 then self.m_InventoryData[i] = nil end
+			amount_left = amount_left - destory_amount
+			if destory_amount == 0 then break end
+			assert(destory_amount >= 0, "destory_amount Cannot Less Than 0!")
+		end
+	end
+	self:setInventoryDataDirty(true)
 end
 
 function Player:updateEquipmentAttrs()
