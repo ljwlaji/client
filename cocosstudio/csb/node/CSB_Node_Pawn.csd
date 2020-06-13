@@ -31,11 +31,11 @@
             <AnchorPoint ScaleX="0.5000" />
             <Position X="0.5106" Y="202.6811" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
-            <CColor A="255" R="0" G="0" B="0" />
+            <CColor A="255" R="255" G="255" B="255" />
             <PrePosition />
             <PreSize X="0.0000" Y="0.0000" />
             <OutlineColor A="255" R="255" G="0" B="0" />
-            <ShadowColor A="255" R="110" G="110" B="110" />
+            <ShadowColor A="255" R="255" G="255" B="255" />
           </AbstractNodeData>
           <AbstractNodeData Name="Node_Character" ActionTag="907312021" Tag="19" IconVisible="True" ctype="SingleNodeObjectData">
             <Size X="0.0000" Y="0.0000" />

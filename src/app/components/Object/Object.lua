@@ -55,7 +55,7 @@ function Object:onRemoveFromWorld()
 end
 
 function Object:onUpdate(diff)
-	if self.m_AI then self.m_AI:onUpdate(diff) end
+
 end
 
 function Object:setName(nameString)
@@ -65,15 +65,6 @@ end
 
 function Object:getName()
 	return self.m_Name
-end
-
-function Object:setAI(AIInstance)
-	self.m_AI = AIInstance
-	if self.m_AI.reset then self.m_AI:reset() end
-end
-
-function Object:getAI()
-	return self.m_AI
 end
 
 function Object:cleanUpBeforeDelete()

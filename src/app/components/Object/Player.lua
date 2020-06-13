@@ -97,7 +97,7 @@ function Player:canSubmitQuest(questEntry)
 	if not self.m_QuestDatas[questEntry] then return false end
 	if self.m_QuestDatas[questEntry].complished == QUEST_COMPLISHED then return false end --已完成过相同任务
 	local canSubmit = true
-	for item_entry, item_amount in pairs(questTemplate.quest_targets) do
+	for item_entry, item_amount in pairs(questTemplate.quest_targets or {}) do
 		if self:getItemCount(item_entry) < item_amount then
 			canSubmit = false
 			break
@@ -471,9 +471,7 @@ function Player:awardExp(amount)
 
 	local targetLevel = startLevel
 	for _, info in pairs(result) do
-		release_print(exp)
-		release_print(info.exp)
-		if exp < info.exp then release_print("break") break end
+		if exp < info.exp then break end
 		exp = exp - info.exp
 		targetLevel = targetLevel + 1
 	end

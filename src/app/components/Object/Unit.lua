@@ -76,13 +76,24 @@ function Unit:onUpdate(diff)
 	-- module for testting --
 	-- end of testting --
 	Object.onUpdate(self, diff)
-	self.m_MovementMonitor:update(diff)
-	if self.m_CasttingSpell then self.m_CasttingSpell:onUpdate(diff) end
-	self:updateSpellCoolDown(diff)
 	if self:isAttrDataDirty() then 
 		self:sendAppMsg("MSG_ON_ATTR_CHANGED")
 		self:setAttrDataDirty(false)
 	end
+
+	if not self:isAlive() then return end
+	self.m_MovementMonitor:update(diff)
+	if self.m_CasttingSpell then self.m_CasttingSpell:onUpdate(diff) end
+	self:updateSpellCoolDown(diff)
+end
+
+function Unit:reborn()
+	local seed = self:isPlayer() and 0.2 or 1
+	self:setAttr("health", 	self:getAttr("maxHealth") * seed)
+	self:setAttr("mana", 	self:getAttr("maxMana") * seed)
+	self:updateAttrs()
+	self:getMovementMonitor():onReset()
+	self:setAlive(true)
 end
 
 function Unit:updateSpellCoolDown(diff)
@@ -145,8 +156,18 @@ end
 function Unit:initAI(AIName)
 	local currAITemplate = import(string.format("app.scripts.%s", AIName))
 	assert(currAITemplate, "Cannot Find Current AI By Path Named: ["..AIName.."]")
-	self:setAI(currAITemplate:create(self))
+	self:setAI(currAITemplate:create(self):onReset())
 end
+
+function Unit:setAI(AIInstance)
+	if AIInstance == self.m_AI then return end
+	self.m_AI = AIInstance
+end
+
+function Unit:getAI()
+	return self.m_AI
+end
+
 			--------------------
 			-- For Attr Issus --
 			--------------------
@@ -360,7 +381,7 @@ function Unit:justDie(killer)
 	-- CleanUp All Threats And Targets
 	self:updateAttrs()
 	self:setDeathTime(os.time())
-	if self:getAI() then self:getAI():onDead() end
+	self:getAI():onDead()
 	if killer then
 		if self:isCreature() and killer:isPlayer() and killer:isAlive() then killer:awardExp(self.context.award_exp) end
 		if killer:getAI() then killer:onKill(self) end

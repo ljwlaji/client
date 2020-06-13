@@ -49,9 +49,7 @@ function vLayerItemDetail:onReset(itemData, slotType)
 	end
 
 	-- 耐久度
-	if itemData.durable > 0 then
-		self:newLine(string.format( DataBase:getStringByID(295), itemData.durable or itemTemplate.max_durable, itemTemplate.max_durable ))
-	end
+	self:newLine(string.format( DataBase:getStringByID(295), itemData.durable or itemTemplate.max_durable, itemTemplate.max_durable ))
 
 	if itemTemplate.require_class > 0 then
 		self:newLine(string.format(DataBase:getStringByID(294), DataBase:getStringByID(itemTemplate.require_class + 100)), itemTemplate.require_class == plr:getClass() and cc.c3b(255,255,255) or cc.c3b(255,50,50))

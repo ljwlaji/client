@@ -15,6 +15,7 @@ vLayerTalent.RESOURCE_BINDING = {
 
 local GAP = 74				--列间距
 local POS_START	= 42		--起点
+
 function vLayerTalent:onCreate()
 	self.m_Class = nil
 	self.m_DisplayCatagory = nil
@@ -26,6 +27,7 @@ function vLayerTalent:onReset()
 	self.m_Class = plr:getClass()
 	for i=1, 3 do
 		self.m_Children["Text_Catagory_"..i]:setString(DataBase:getStringByID(500 + plr:getClass() * 10 + i))
+		-- cc.Label.getLetter(self.m_Children["Text_Catagory_"..i]:getVirtualRenderer(), 1):setVisible(false) -- for hide testting
 	end
 	self:switchToCatagory(1)
 end
@@ -36,7 +38,7 @@ function vLayerTalent:switchToCatagory(catagory)
 	self.m_Children["Panel_Slot"]:removeAllChildren()
 	local templateResult = DataBase:query(string.format("SELECT * FROM talent_template WHERE catagory = %d and class = %d", catagory, self.m_Class))
 	for k, info in pairs(templateResult) do
-			local ico = TalentIcon:create()
+		local ico = TalentIcon:create()
 							  :addTo(self.m_Children["Panel_Slot"])
 							  :onReset(info)
 							  :move((info.position_index % 4) * GAP + POS_START,
@@ -53,7 +55,7 @@ end
 
 function vLayerTalent:onTouchPanelExit(e)
 	if e.name ~= "ended" then return end
-	self:removeFromParent	()
+	self:removeFromParent()
 end
 
 return vLayerTalent

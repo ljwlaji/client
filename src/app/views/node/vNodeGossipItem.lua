@@ -1,4 +1,5 @@
 local ViewBaseEx 		= import("app.views.ViewBaseEx")
+local DataBase 			= import("app.components.DataBase")
 local vNodeGossipItem 	= class("vNodeGossipItem", ViewBaseEx)
 
 vNodeGossipItem.RESOURCE_FILENAME = "res/csb/node/CSB_Node_GossipItem.csb"
@@ -22,11 +23,8 @@ end
 
 function vNodeGossipItem:refresh(context)
 	self.m_Children["Image_Icon"]:setTexture("ui/common/"..MenuIcons[context.IconIndex])
+	self.m_Children["Text_Gossip"]:setString(DataBase:getStringByID(context.StringID))
 	self.context = context
-end
-
-function vNodeGossipItem:onEnterTransitionFinish()
-
 end
 
 function vNodeGossipItem:onTouchCell(e)

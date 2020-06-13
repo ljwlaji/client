@@ -1,6 +1,7 @@
 local ViewBaseEx 	= import("app.views.ViewBaseEx")
 local DataBase 		= import("app.components.DataBase")
 local ShareDefine 	= import("app.ShareDefine")
+local FactionMgr	= import("app.components.FactionMgr")
 local vNodePawn 	= class("vNodePawn", ViewBaseEx)
 
 
@@ -25,6 +26,7 @@ function vNodePawn:init(owner)
 end
 
 function vNodePawn:onReset()
+	local plr = import("app.components.Object.Player"):getInstance()
 	local owner = self:getOwner()
 	self.m_Children["HealthBar"]:setPercent(owner:getAttr("health") / owner:getAttr("maxHealth") * 100)
 
@@ -40,6 +42,11 @@ function vNodePawn:onReset()
 	end
 
 	self.m_Children["ManaBar"]:setPercent(owner:getAttr(displayManaName) / owner:getAttr(displayManaMaxName) * 100)
+	if owner:isPlayer() then
+		self.m_Children["Label_Name"]:setColor(cc.c3b(0,0,0))
+	else
+		self.m_Children["Label_Name"]:setColor(FactionMgr:isHostile(owner:getFaction(), plr:getFaction()) and cc.c3b(255, 0, 0) or cc.c3b(0, 255, 0))
+	end
 end
 
 function vNodePawn:isDataDirty()

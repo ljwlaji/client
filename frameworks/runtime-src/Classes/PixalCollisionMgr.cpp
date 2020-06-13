@@ -10,7 +10,6 @@ PixalCollisionMgr::~PixalCollisionMgr()
 	while (m_PixalTemplate.size())
 	{
 		PixalData* data = m_PixalTemplate.begin()->second;
-		m_PixalTemplate.begin()->second = nullptr;
 		delete data;
 		m_PixalTemplate.erase(m_PixalTemplate.begin());
 	}
@@ -106,7 +105,7 @@ bool PixalCollisionMgr::loadPNGData(const char * url)
 				currPos = floor(step / SINGLE_STEP);
 				offset = step % (uint32)SINGLE_STEP;
 				auto pixel = ((unsigned int *)imgData) + ((totalHeight - y - 1) * totalWidth + x);
-				bool isVisible = (*pixel >> 24) & 0xff == 255;
+				bool isVisible = ((*pixel >> 24) & 0xff) == 255;
 				SetByteValue(buffer[currPos], offset, isVisible);
 			}
 		data->m_RefrenceCount++;

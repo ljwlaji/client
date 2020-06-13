@@ -3,6 +3,7 @@ local Player        = import("app.components.Object.Player")
 local ShareDefine 	= import("app.ShareDefine")
 local DataBase 		= import("app.components.DataBase")
 local Pawn 			= import("app.views.node.vNodePawn")
+local FactionMgr	= import("app.components.FactionMgr")
 local Creature 		= class("Creature", Unit)
 
 function Creature:onCreate()
@@ -17,7 +18,6 @@ function Creature:onCreate()
 	self:setLevel(self.context.level)
 	self:fetchQuest()
 	self:fetchMovePaths()
-
 	self:move(self.context.x, self.context.y)
 	self:setName(DataBase:getStringByID(self.context.name_id))
 	self:updateBaseAttrs()
@@ -28,6 +28,7 @@ function Creature:onCreate()
 	else
 		self:initAI("ScriptAI")
 	end
+	self.m_RebornCheckTimer = 1000
 end
 
 function Creature:getEntry()
@@ -46,7 +47,7 @@ function Creature:getQuestList()
 	return self.m_QuestList
 end
 
-function Creature:isQuestGiver()
+function Creature:isQuestProvider()
 	return #self.m_QuestList > 0
 end
 
@@ -54,7 +55,10 @@ function Creature:onTouched(pPlayer)
 	-- 判断阵营
 	-- 判断声望
 	-- 判断生死情况
-	return self:getAI():onGossipHello(pPlayer, self)
+
+	if not self:isAlive() then release_print(" Creature:onTouched(pPlayer) 目标已死亡！") return end
+	if FactionMgr:isHostile(self:getFaction(), pPlayer:getFaction()) then release_print("Creature:onTouched(pPlayer) 敌对状态 无法响应") return end
+	return self:getAI():onNativeGossipHello(pPlayer, self)
 end
 
 function Creature:fetchMovePaths()
@@ -65,8 +69,8 @@ function Creature:fetchMovePaths()
 end
 
 function Creature:fetchQuest()
-	local sql = "SELECT * FROM quest_template WHERE accept_npc == '%d' or submit_npc == '%d'"
-	local queryResult = DataBase:query(string.format(sql, self:getGuid(), self:getGuid()))
+	local sql = "SELECT * FROM quest_template WHERE accept_npc == '%d'"
+	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
 	for k, v in pairs(queryResult) do
 		self.m_QuestList[v.entry] = v
 	end
@@ -83,8 +87,27 @@ function Creature:saveToDB()
 	DataBase:query(sql)
 end
 
+function Creature:reborn()
+	Unit.reborn(self)
+	self:getAI():onReset()
+	self:move(self.context.x, self.context.y)
+end
+
 function Creature:onUpdate(diff)
 	Unit.onUpdate(self, diff)
+	if self:isAlive() then
+		if self.m_AI then self.m_AI:onUpdate(diff) end
+	else
+		if self.m_RebornCheckTimer <= diff then
+			release_print("Try Reborn")
+			self.m_RebornCheckTimer = 1000
+			if os.time() - self:getDeathTime() >= self.context.reborn_time then
+				self:reborn()
+			end
+		else
+			self.m_RebornCheckTimer = self.m_RebornCheckTimer - diff
+		end
+	end
 end
 
 function Creature:cleanUpBeforeDelete()

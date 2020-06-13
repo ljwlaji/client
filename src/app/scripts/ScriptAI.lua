@@ -19,13 +19,14 @@ local SPELL_ID_MELEE_ATTACK = 200000
 function ScriptAI:ctor(me)
 	self.getOwner = function() return me end
 	self.m_AttackTimer = 0
-	self:onReset()
 end
 
-function ScriptAI:onGossipHello(pPlayer, pObject)
-	if not pObject:isQuestGiver() and not pObject:isVendor() and not pObject:isTrainer() then return false end
+function ScriptAI:onNativeGossipHello(pPlayer, pObject)
+	if self.onGossipHello then return self:onGossipHello(pPlayer, pObject) end
+
+	if not pObject:isQuestProvider() and not pObject:isVendor() and not pObject:isTrainer() then return false end
 	for quest_entry, v in pairs(pObject:getQuestList()) do
-		pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_QUEST, 1, GOSSIP_SENDER_TYPES.TYPE_QUEST, quest_entry)
+		pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_QUEST, v.title_string, GOSSIP_SENDER_TYPES.TYPE_QUEST, quest_entry)
 	end
 	if pObject:isTrainer() then
 		pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_TRAINER, 1, GOSSIP_SENDER_TYPES.TYPE_TRAINER, 0)
@@ -34,23 +35,30 @@ function ScriptAI:onGossipHello(pPlayer, pObject)
 		pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_VENDOR, 1, GOSSIP_SENDER_TYPES.TYPE_VENDOR, 0)
 	end
 	pPlayer:sendGossipMenu(pObject, 1)
-	return true
 end
 
-function ScriptAI:onGossipSelect(pPlayer, pObject, pSender, pIndex)
+--	@ return bool
+--	true 销毁窗口 false 保留
+function ScriptAI:onNativeGossipSelect(pPlayer, pObject, pSender, pIndex)
+	if self.onGossipSelect then return self:onGossipSelect(pPlayer, pObject, pSender, pIndex) end
+	local ret = nil
 	if pSender == GOSSIP_SENDER_TYPES.TYPE_QUEST then
-		WindowMgr:createWindow("app.views.layer.vLayerQuestMenu", pObject:getQuestList()[pIndex])
+		ret = WindowMgr:createWindow("app.views.layer.vLayerQuestMenu", pObject:getQuestList()[pIndex])
 	elseif pSender == GOSSIP_SENDER_TYPES.TYPE_TRAINER then
-		WindowMgr:createWindow("app.views.layer.vLayerTrainerMenu", pObject:getEntry())
+		ret = WindowMgr:createWindow("app.views.layer.vLayerTrainerMenu", pObject:getEntry())
 	elseif pSender == GOSSIP_SENDER_TYPES.TYPE_VENDOR then
-		WindowMgr:createWindow("app.views.layer.vLayerVendorMenu", pObject:getEntry())
+		ret = WindowMgr:createWindow("app.views.layer.vLayerVendorMenu", pObject:getEntry())
 	end
+	return ret ~= nil
 end
 
 function ScriptAI:onReset()
-	self.m_Victim = nil
 	self.m_ThreadList = {}
 	self.m_MoveInLineOfSightTimer = 0
+	self:setVictim(nil)
+	self:setInCombat(false)
+	self:setTraceOn(nil)
+	return self
 end
 
 function ScriptAI:onTranceMove(victim)
@@ -139,7 +147,8 @@ end
 
 function ScriptAI:onUpdate(diff)
 	if self.m_MoveInLineOfSightTimer >= MOVE_IN_LINE_OF_SIGHT_TIMER then
-		local units = self:getOwner():getMap():fetchUnitInRange(self:getOwner(), SIGHT_RANGE, true, true, true, 999, true)
+		--															(who, 			range, 	ingnoreSelf, aliveOnly, hostileOnly, maxNumber, checkFacing)
+		local units = self:getOwner():getMap():fetchUnitInRange(self:getOwner(), SIGHT_RANGE, true, 		true, 	true, 			999, 		true)
 		for k, v in pairs(units) do
 			self:moveInLineOfSight(v.obj)
 		end

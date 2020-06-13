@@ -29,8 +29,12 @@ local FactionMgr	= import("app.components.FactionMgr")
 
 ]]
 
-local DISTANCE_FOR_SHOWN 		= 600--display.width * 1.3
-local DISTANCE_FOR_DISAPPEAR 	= 1000--display.width * 2
+local DISTANCE_FOR_SHOWN 				= 1000
+local DISTANCE_FOR_DISAPPEAR 			= 1200
+
+-- 生物的加载和消失范围都比地面更小
+local DISTANCE_FOR_SHOWN_CREATURE 		= DISTANCE_FOR_SHOWN 		* 0.5
+local DISTANCE_FOR_DISAPPEAR_CREATURE 	= DISTANCE_FOR_DISAPPEAR 	* 0.5
 
 
 function Map:ctor(Entry, chosedCharacterID)
@@ -148,7 +152,7 @@ function Map:tryLoadNewObjects()
 		end
 	end
 	for k, v in pairs(self.m_CreatureDatas) do 
-		if not v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) < DISTANCE_FOR_SHOWN then 
+		if not v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) < DISTANCE_FOR_SHOWN_CREATURE then 
 			v.instance = Creature:create(v)
 			self:addObject(v.instance)
 		end
@@ -163,8 +167,8 @@ function Map:tryRemoveObjects()
 			v.instance = nil
 		end
 	end 
-	for k, v in pairs(self.m_CreatureDatas) do 
-		if v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) > DISTANCE_FOR_DISAPPEAR then 
+	for k, v in pairs(self.m_CreatureDatas) do
+		if v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.instance:getPosition())) > DISTANCE_FOR_DISAPPEAR_CREATURE then 
 			self:removeObject(v.instance)
 			v.instance:removeFromParent()
 			v.instance = nil
@@ -262,22 +266,6 @@ function Map:tryFixPosition(unit, offset)
 	-- Out Of Left Edge
 	if nextPos.x < 10 then nextPos.x = 10 end
 	return nextPos, hitGround, hitGObject
-end
-
-function Map:getStandingObject(nextPos)
-	local obj = nil
-	for k, v in pairs(self.m_ObjectList) do
-		if (v:isGameObject() or v:isGround()) then
-			if cc.rectContainsPoint(v:getBoundingBox(), nextPos) then
-				if v:hasPixalCollision() then
-				else
-					obj = v
-				end
-			end
-			if obj then break end
-		end
-	end
-	return obj
 end
 
 return Map

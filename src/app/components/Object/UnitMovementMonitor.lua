@@ -14,25 +14,15 @@ UnitMovementMonitor.MovementStates = {
 	STATE_JUMP_FALL_LAND  	= 6,
 }
 local MovementStates 		= UnitMovementMonitor.MovementStates
-local STATE_IDLE 			= 0
-local STATE_IDLE_RUN 		= 1
-local STATE_RUN_IDLE  		= 2
-local STATE_RUN  			= 3
-local STATE_JUMP_HIGH   	= 4
-local STATE_JUMP_FALL   	= 5
-local STATE_JUMP_FALL_LAND  = 6
 
 local SPEED_REDUCTION 		= 0.7
 local MAX_FALL_SPEED 		= 20
 
 function UnitMovementMonitor:ctor(who)
 	self.m_Paths = {}
-	self:resetPathMoveTimer()
-	self.m_Direction = "right"
-	self.m_MoveSpeed = 0
-	self.m_FallSpeed = -1
 	self.m_Unit = who
 	self:init()
+	self:onReset()
 end
 
 function UnitMovementMonitor:getOwner()
@@ -55,6 +45,15 @@ function UnitMovementMonitor:init()
 					   :run()
 end
 
+function UnitMovementMonitor:onReset()
+	self:resetPathMoveTimer()
+	self:setMovementPath(self:getMovmentPath())
+	self.m_Direction = "right"
+	self.m_MoveSpeed = 0
+	self.m_FallSpeed = -1
+	self.m_StateMachine:setState(MovementStates.STATE_IDLE)
+end
+
 function UnitMovementMonitor:update(diff)
 	self.m_StateMachine:executeStateProgress(diff)
 end
@@ -67,6 +66,10 @@ end
 function UnitMovementMonitor:setMovementPath(context)
     self.m_Paths = context or {}
     self.m_PathMoveIndex = 1
+end
+
+function UnitMovementMonitor:getMovmentPath()
+	return self.m_Paths
 end
 
 function UnitMovementMonitor:canDoPathMove()

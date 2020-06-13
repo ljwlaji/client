@@ -21,6 +21,7 @@
             <Project Name="CSB_Layer_SpellInfo.csd" Type="Node" />
             <Project Name="CSB_Layer_Talent.csd" Type="Node" />
             <Project Name="CSB_Layer_VendorMenu.csd" Type="Node" />
+            <Project Name="CSB_Layer_QuestMenu.csd" Type="Node" />
           </Folder>
           <Folder Name="maps">
             <Project Name="0.csd" Type="Layer" />
@@ -41,6 +42,9 @@
             <Project Name="CSB_Node_TalentIcon.csd" Type="Node" />
             <Project Name="CSB_Node_VendorMenuCell.csd" Type="Node" />
           </Folder>
+        </Folder>
+        <Folder Name="font">
+          <TTF Name="fnt.ttf" />
         </Folder>
         <Folder Name="ui">
           <Folder Name="common">
