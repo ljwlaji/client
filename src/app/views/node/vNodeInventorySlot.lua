@@ -21,6 +21,7 @@ function vNodeInventorySlot:onReset(context, forPreview)
 	end
 	if context then self.m_Children["Sprite_Icon"]:setTexture(ShareDefine.getItemIconPath(context.template)) end
 	self.m_Children["Panel_Icon"]:setVisible(true)
+	self.m_Children["Text_Amount"]:setString(context.item_amount)
 end
 
 function vNodeInventorySlot:onTouchSlot(e)

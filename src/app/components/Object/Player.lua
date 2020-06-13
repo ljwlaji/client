@@ -4,11 +4,17 @@ local ShareDefine 		= import("app.ShareDefine")
 local WindowMgr			= import("app.components.WindowMgr")
 local Pawn 				= import("app.views.node.vNodePawn")
 local SpellMgr 			= import("app.components.SpellMgr")
+local Utils             = import("app.components.Utils")
 local Player 			= class("Player", Unit)
 
 Player.instance = nil
 
-local QUEST_COMPLISHED = 1
+local QuestStates = ShareDefine.questStates()
+--[[
+	IN_PROGRESS 	= 1,
+	WAIT_FOR_SUBMIT = 2,
+	FINISHED 		= 3,
+]]
 
 function Player.getInstance()
 	return Player.instance
@@ -59,11 +65,9 @@ function Player:loadFromDB()
 	self:loadQuestFromDB()
 	self:loadSpellSlotFromDB()
 	self:loadSpellCoolDownFromDB()
-
 	self:awardExp(0)
 end
 
---[[ For Quest Issus ]]
 function Player:loadSpellCoolDownFromDB()
 	local sql = "SELECT spell_id, cooldown_time_left FROM spell_cool_down WHERE character_guid = '%d'"
 	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
@@ -71,6 +75,10 @@ function Player:loadSpellCoolDownFromDB()
 		self:insertSpellCoolDown(v.spell_id, cooldown_time_left * 1000)
 	end
 end
+
+--							[[ =============== ]]
+--							[[ For Quest Issus ]]
+--							[[ =============== ]]
 
 function Player:loadQuestFromDB()
 	local sql = "SELECT * FROM character_quest WHERE character_guid = '%d'"
@@ -83,46 +91,79 @@ end
 function Player:saveQuestToDB()
 	local sql = "DELETE FROM character_quest WHERE character_guid = '%d'"
 	DataBase:query(sql)
-	sql = "REPLACE INTO character_quest(character_guid, quest_entry, complished, complished_date) VALUES('%d', '%d', '%d', '%d')"
+	sql = "REPLACE INTO character_quest(character_guid, quest_entry, state, finish_time) VALUES('%d', '%d', '%d', '%d')"
 	for k, v in pairs(self.m_QuestDatas) do
-		DataBase:query(string.format(sql, self:getGuid(), v.quest_entry, complished, complished_date))
+		DataBase:query(string.format(sql, self:getGuid(), v.quest_entry, v.state, v.finish_time))
 	end
 end
 
-function Player:isQuestComplished(questEntry)
+function Player:isQuestFinished(questEntry)
 	return self.m_QuestDatas[questEntry] and self.m_QuestDatas[questEntry].complished == QUEST_COMPLISHED
 end
 
-function Player:canSubmitQuest(questEntry)
-	if not self.m_QuestDatas[questEntry] then return false end
-	if self.m_QuestDatas[questEntry].complished == QUEST_COMPLISHED then return false end --已完成过相同任务
-	local canSubmit = true
-	for item_entry, item_amount in pairs(questTemplate.quest_targets or {}) do
-		if self:getItemCount(item_entry) < item_amount then
-			canSubmit = false
-			break
-		end
-	end
-	return canSubmit
-end
+-- function Player:canSubmitQuest(questEntry)
+-- 	if not self.m_QuestDatas[questEntry] then return false end -- 没有任务
+-- 	if self.m_QuestDatas[questEntry].state ~= QuestStates.WAIT_FOR_SUBMIT then return false end --已完成过相同任务
+
+
+-- 	local canSubmit = true
+-- 	for item_entry, item_amount in pairs(questTemplate.quest_targets or {}) do
+-- 		if self:getItemCount(item_entry) < item_amount then
+-- 			canSubmit = false
+-- 			break
+-- 		end
+-- 	end
+-- 	return canSubmit
+-- end
 
 function Player:canAcceptQuest(questTemplate)
-	if self.m_QuestDatas[questTemplate.entry] then return false end
-	if self.m_QuestDatas[questTemplate.previous_quest_entry].complished ~= QUEST_COMPLISHED then return false end --未完成前置任务
+	if self.m_QuestDatas[questTemplate.entry] then release_print("已有同样的任务") return false end
+
+	if questTemplate.previous_quest_entry ~= 0 and not self:isQuestFinished(questTemplate.previous_quest_entry) then 
+		return false 
+	end
+
 	if questTemplate.require_level > self:getLevel() then return false end -- 等级不足
-	if questTemplate.require_class ~= self:getClass() then return false end
+	if questTemplate.require_class ~= 0 and questTemplate.require_class ~= self:getClass() then return false end
 
 	local nextTime = 0
 	if questTemplate.quest_type == ShareDefine.dailyQuest() then
-		nextTime = self.m_QuestDatas[questTemplate.entry].complished_date + ShareDefine.DAY()
+		nextTime = self.m_QuestDatas[questTemplate.entry].finish_time + ShareDefine.DAY()
 	elseif questTemplate.quest_type == ShareDefine.weeklyQuest() then
-		nextTime = self.m_QuestDatas[questTemplate.entry].complished_date + ShareDefine.WEEK()
+		nextTime = self.m_QuestDatas[questTemplate.entry].finish_time + ShareDefine.WEEK()
 	end
-
 	return nextTime <= os.time()
 end
 
---[[ End Quest Issus ]]
+function Player:acceptQuest(questEntry)
+	if self.m_QuestDatas[questEntry] ~= nil then return end
+	self.m_QuestDatas[questEntry] = {
+		character_guid 	= self:getGuid(),
+		quest_entry 	= questEntry,
+		state 			= QuestStates.IN_PROGRESS,
+		finish_time		= 0,
+	}
+	release_print("接取任务 : "..questEntry)
+	self:sendAppMsg("MSG_ON_QUEST_DATA_CHANGED")
+	self:saveQuestToDB()
+end
+
+function Player:removeQuest(questEntry)
+	if self.m_QuestDatas[questEntry] == nil then return end
+	self.m_QuestDatas[questEntry] = nil
+	self:sendAppMsg("MSG_ON_QUEST_DATA_CHANGED")
+	self:saveQuestToDB()
+end
+
+--							[[ =============== ]]
+--							[[ End Quest Issus ]]
+--							[[ =============== ]]
+
+--							[[ =============== ]]
+--							[[ For Spell Issus ]]
+--							[[ =============== ]]
+
+
 function Player:changeSlotSpell(pSlotID, pSpellID)
 	if self.m_SpellSlots[pSlotID] == pSpellID then return end
 
@@ -222,6 +263,10 @@ function Player:saveAllLearnedSpellToDB()
 	end
 end
 
+--							[[ =============== ]]
+--							[[ End Spell Issus ]]
+--							[[ =============== ]]
+
 function Player:loadBuffsFromDB()
 	local sql = "SELECT * FROM buff_instance WHERE character_guid = '%d'"
 	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
@@ -238,6 +283,10 @@ function Player:saveBuffsFromDB()
 		DataBase:query(string.format(sql, self:getGuid(), v.spell_id, v.time_left))
 	end 
 end
+
+--							[[ ======================== ]]
+--							[[ End Inventory/Item Issus ]]
+--							[[ ======================== ]]
 
 function Player:loadInventoryFromDB()
 	local sql = "SELECT * FROM character_inventory WHERE character_guid = %d"
@@ -260,14 +309,45 @@ function Player:getInventorySlotCount()
 	return count - 1
 end
 
-function Player:getEmptyInventorySlot()
-	local slotBegin 	= ShareDefine.inventorySlotBegin()
-	local slotEnded 	= slotBegin + self:getInventorySlotCount()
-	local emptySlotIndex = nil
+function Player:getEmptyInventorySlot(compareItem, compareAmount)
+	local slotBegin 		= ShareDefine.inventorySlotBegin()
+	local slotEnded 		= slotBegin + self:getInventorySlotCount()
+	local emptySlotIndex 	= nil
+	local freeSpace 		= 0
+	-- 先查找有相同物品的情况
 	for i = slotBegin, slotEnded do
-		if not self.m_InventoryData[i] then emptySlotIndex = i break end
+		if self.m_InventoryData[i] and 
+			self.m_InventoryData[i].item_entry == compareItem and
+			self.m_InventoryData[i].item_amount < compareAmount then
+			emptySlotIndex 	= i
+			freeSpace 		= compareAmount - self.m_InventoryData[i].item_amount
+			break
+		end
 	end
-	return emptySlotIndex
+	if emptySlotIndex then return emptySlotIndex, freeSpace end
+	for i = slotBegin, slotEnded do
+		if not self.m_InventoryData[i] then 
+			emptySlotIndex 	= i
+			freeSpace 		= compareAmount
+			break 
+		end
+	end
+	return emptySlotIndex, freeSpace
+end
+
+function Player:setInventoryDataDirty(dirty)
+	self.m_InventoryDataDirty = dirty
+end
+
+function Player:isInventoryDataDirty()
+	return self.m_InventoryDataDirty
+end
+
+function Player:onInventoryDataChanged()
+	self:saveInventoryToDB()
+	self:updateBaseAttrs()
+	self:sendAppMsg("MSG_INVENTORY_DATA_CHANGED")
+	self:setInventoryDataDirty(false)
 end
 
 function Player:getItemCount(pItemEntry)
@@ -278,6 +358,64 @@ function Player:getItemCount(pItemEntry)
 		end
 	end
 	return count
+end
+
+function Player:hasSpaceFor(itemEntry, amount)
+	local itemTemplate 		= DataBase:getItemTemplateByEntry(itemEntry)
+	local requireSlot	 	= math.floor(amount / itemTemplate.max_amount)
+	local requireSpace		= amount % itemTemplate.max_amount
+
+	local slotBegin 		= ShareDefine.inventorySlotBegin()
+	local slotEnded 		= slotBegin + self:getInventorySlotCount()
+	local freeSlot 			= 0
+	local freeSpace			= 0
+
+	for i = slotBegin, slotEnded do
+		if not self.m_InventoryData[i] then 
+			freeSlot = freeSlot + 1
+		elseif self.m_InventoryData[i].item_entry == itemEntry then
+			freeSpace = freeSpace + (itemTemplate.max_amount - self.m_InventoryData[i].item_amount)
+		end
+	end
+	
+	if freeSlot >= (requireSlot + (requireSpace > 0 and 1 or 0)) then
+		return true
+	elseif freeSlot >= requireSlot and freeSpace > requireSpace then
+		return true
+	end
+
+	release_print(string.format("Not Enough Space! require [%d Slot] And [%d Space] More!", requireSlot - freeSlot, requireSpace - freeSpace))
+	return false
+end
+
+function Player:addItem(itemEntry, amount)
+	amount = amount or 1
+	local itemTemplate = DataBase:getItemTemplateByEntry(itemEntry)
+	while amount > 0 do
+		local slotIndex, freeSpace = self:getEmptyInventorySlot(itemEntry, itemTemplate.max_amount)
+		if not slotIndex then release_print("没有足够的包裹空间！ 溢出 : ".. amount) return false end
+		local genAmount = amount > freeSpace and freeSpace or amount
+
+		-- newItem
+		self.m_InventoryData[slotIndex] = self.m_InventoryData[slotIndex] or {
+			character_guid 	= self:getGuid(),
+			slot_id 		= slotIndex,
+			item_entry 		= itemEntry,
+			item_guid 		= DataBase:newItemGuid(),
+			item_amount 	= 0,
+			enchant 		= 0,
+			durable 		= itemTemplate.max_durable,
+			template 		= itemTemplate,
+		}
+		self.m_InventoryData[slotIndex].item_amount = self.m_InventoryData[slotIndex].item_amount + genAmount
+		amount = amount - freeSpace
+		self:setInventoryDataDirty(true)
+	end
+	return true
+end
+
+function Player:destoryItem(itemEntry, amount)
+
 end
 
 function Player:updateEquipmentAttrs()
@@ -341,20 +479,13 @@ function Player:tryEquipItem(itemSlot)
 	return true
 end
 
-function Player:setInventoryDataDirty(dirty)
-	self.m_InventoryDataDirty = dirty
-end
+--							[[ ======================== ]]
+--							[[ End Inventory/Item Issus ]]
+--							[[ ======================== ]]
 
-function Player:isInventoryDataDirty()
-	return self.m_InventoryDataDirty
-end
 
-function Player:onInventoryDataChanged()
-	self:saveInventoryToDB()
-	self:updateBaseAttrs()
-	self:sendAppMsg("MSG_INVENTORY_DATA_CHANGED")
-	self:setInventoryDataDirty(false)
-end
+
+
 
 function Player:saveToDB()
 	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9			10				11
@@ -382,6 +513,8 @@ function Player:saveSpellCoolDownToDB()
 		DataBase:query(string.format(sql, self:getGuid(), spellid, math.floor(timeleft * 0.001)))
 	end
 end
+
+
 
 function Player:saveInventoryToDB()
 	local sql = "DELETE FROM character_inventory WHERE character_guid = '%d'"

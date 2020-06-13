@@ -23,6 +23,17 @@
                     <FileData Type="Default" Path="Default/Sprite.png" Plist="" />
                     <BlendFunc Src="1" Dst="771" />
                   </AbstractNodeData>
+                  <AbstractNodeData Name="Text_Amount" ActionTag="1362644673" Tag="81" IconVisible="False" PositionPercentXEnabled="True" LeftMargin="27.0000" TopMargin="38.0000" FontSize="22" LabelText="999" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ShadowEnabled="True" ctype="TextObjectData">
+                    <Size X="37.0000" Y="26.0000" />
+                    <AnchorPoint ScaleX="1.0000" />
+                    <Position X="64.0000" />
+                    <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                    <CColor A="255" R="255" G="165" B="0" />
+                    <PrePosition X="1.0000" />
+                    <PreSize X="0.5781" Y="0.4063" />
+                    <OutlineColor A="255" R="255" G="0" B="0" />
+                    <ShadowColor A="255" R="0" G="0" B="0" />
+                  </AbstractNodeData>
                 </Children>
                 <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
                 <Position X="40.0000" Y="40.0000" />

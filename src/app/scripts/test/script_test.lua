@@ -2,7 +2,7 @@ local ScriptAI = import("app.scripts.ScriptAI")
 local script_test = class("script_test", ScriptAI)
 
 function script_test:onReset()
-	ScriptAI.onReset(self)
+	return ScriptAI.onReset(self)
 end
 
 -- function script_test:onGossipHello(pPlayer, pObject)

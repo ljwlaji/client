@@ -89,8 +89,6 @@ local INVENTORY_SLOTS = {
 	SLOT_CONTAINER_END	 = 23,
 
 	SLOT_INVENTORY_BEGIN = 24,
-
-	SLOT_BAG_BEGIN		= 16,
 }
 
 local STATE_INDEXES = {
@@ -138,6 +136,12 @@ local GOSSIP_SENDER_TYPES = {
 local DAMAGE_TYPES = {
 	MELEE_DAMAGE = 1,
 	MAGIC_DAMAGE = 2
+}
+
+local QUEST_FINISH_STATE = {
+	IN_PROGRESS 	= 1,
+	WAIT_FOR_SUBMIT = 2,
+	FINISHED 		= 3,
 }
 
 local SIGHT_RANGE = 200
@@ -194,6 +198,10 @@ end
 
 function ShareDefine.dailyQuest()
 	return QUEST_TYPE.DAILY
+end
+
+function ShareDefine.questStates()
+	return QUEST_FINISH_STATE
 end
 
 function ShareDefine.getQualityColor(quality)

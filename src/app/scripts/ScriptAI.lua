@@ -35,6 +35,7 @@ function ScriptAI:onNativeGossipHello(pPlayer, pObject)
 		pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_VENDOR, 1, GOSSIP_SENDER_TYPES.TYPE_VENDOR, 0)
 	end
 	pPlayer:sendGossipMenu(pObject, 1)
+	return true
 end
 
 --	@ return bool

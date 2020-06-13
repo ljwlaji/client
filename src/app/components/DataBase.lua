@@ -11,29 +11,30 @@ local DBPATH        = "res/datas.db"
 
 function DataBase:ctor()
 	self:openDB()
-    self.m_ItemTemplate = nil
+    self.m_ItemTemplate = {}
 end
 
-function DataBase:fetchItemTemplate()
-    local queryResult = self:query("SELECT * FROM item_template")
-    local itemTmeplate = {}
-    for k, v in pairs(queryResult) do
-        v.attrs     = v.attrs   and loadstring("return "..v.attrs)()  or {}
-        v.spells    = v.spells  and loadstring("return "..v.spells)() or {}
-        itemTmeplate[v.entry] = v
-    end
-    return itemTmeplate
+function DataBase:fetchItemTemplate(itemEntry)
+    local queryResult = self:query(string.format("SELECT * FROM item_template WHERE entry = '%d'", itemEntry))[1]
+    queryResult.attrs             = queryResult.attrs   and loadstring("return "..queryResult.attrs)()  or {}
+    queryResult.spells            = queryResult.spells  and loadstring("return "..queryResult.spells)() or {}
+    queryResult.isQuestItem       = queryResult.is_quest_item == 1
+    self.m_ItemTemplate[queryResult.entry] = queryResult
+    return queryResult
 end
 
 function DataBase:getItemTemplateByEntry(itemEntry)
-    self.m_ItemTemplate = self.m_ItemTemplate or self:fetchItemTemplate()
-    return self.m_ItemTemplate[itemEntry]
+    return self.m_ItemTemplate[itemEntry] or self:fetchItemTemplate(itemEntry)
 end
 
 function DataBase:openDB()
 	if self.db then return self.db end
     self.db = sqlite3.open(Utils.getCurrentResPath()..DBPATH)
 	return self.db
+end
+
+function DataBase:newItemGuid()
+    return self:query("SELECT max(item_guid) AS g FROM character_inventory")[1]["g"] + 1
 end
 
 function DataBase:getStringByID(id)
