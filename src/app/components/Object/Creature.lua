@@ -71,8 +71,8 @@ function Creature:onTouched(pPlayer)
 	-- 判断声望
 	-- 判断生死情况
 
-	if not self:isAlive() then release_print(" Creature:onTouched(pPlayer) 目标已死亡！") return end
-	if FactionMgr:isHostile(self:getFaction(), pPlayer:getFaction()) then release_print("Creature:onTouched(pPlayer) 敌对状态 无法响应") return end
+	-- if not self:isAlive() then release_print(" Creature:onTouched(pPlayer) 目标已死亡！") return end
+	-- if FactionMgr:isHostile(self:getFaction(), pPlayer:getFaction()) then release_print("Creature:onTouched(pPlayer) 敌对状态 无法响应") return end
 	return self:getAI():onNativeGossipHello(pPlayer, self)
 end
 
@@ -84,11 +84,9 @@ function Creature:fetchMovePaths()
 end
 
 function Creature:fetchQuest()
-	local sql = "SELECT * FROM quest_template WHERE accept_npc == '%d'"
+	local sql = "SELECT entry, title_string FROM quest_template WHERE accept_npc == '%d'"
 	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
-	for k, v in pairs(queryResult) do
-		self.m_QuestList[v.entry] = v
-	end
+	for k, v in pairs(queryResult) do table.insert(self.m_QuestList, v) end
 end
 
 function Creature:justDie(victim)
@@ -114,7 +112,6 @@ function Creature:onUpdate(diff)
 		if self.m_AI then self.m_AI:onUpdate(diff) end
 	else
 		if self.m_RebornCheckTimer <= diff then
-			release_print("Try Reborn")
 			self.m_RebornCheckTimer = 1000
 			if os.time() - self:getDeathTime() >= self.context.reborn_time then
 				self:reborn()
@@ -126,7 +123,6 @@ function Creature:onUpdate(diff)
 end
 
 function Creature:cleanUpBeforeDelete()
-	release_print("Creature : cleanUpBeforeDelete()")
 	self:saveToDB()
 	Unit.cleanUpBeforeDelete(self)
 end

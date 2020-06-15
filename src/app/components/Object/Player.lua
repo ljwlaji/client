@@ -9,7 +9,7 @@ local Player 			= class("Player", Unit)
 
 Player.instance = nil
 
-local QuestStates = ShareDefine.questStates()
+local questStates = ShareDefine.questStates()
 --[[
 	IN_PROGRESS 	= 1,
 	WAIT_FOR_SUBMIT = 2,
@@ -97,26 +97,16 @@ function Player:saveQuestToDB()
 	end
 end
 
-function Player:isQuestFinished(questEntry)
-	return self.m_QuestDatas[questEntry] and self.m_QuestDatas[questEntry].complished == QUEST_COMPLISHED
+function Player:getQuestDatas()
+	return self.m_QuestDatas
 end
 
--- function Player:canSubmitQuest(questEntry)
--- 	if not self.m_QuestDatas[questEntry] then return false end -- 没有任务
--- 	if self.m_QuestDatas[questEntry].state ~= QuestStates.WAIT_FOR_SUBMIT then return false end --已完成过相同任务
+function Player:isQuestFinished(questEntry)
+	return self.m_QuestDatas[questEntry] and self.m_QuestDatas[questEntry].state == questStates.FINISHED
+end
 
-
--- 	local canSubmit = true
--- 	for item_entry, item_amount in pairs(questTemplate.quest_targets or {}) do
--- 		if self:getItemCount(item_entry) < item_amount then
--- 			canSubmit = false
--- 			break
--- 		end
--- 	end
--- 	return canSubmit
--- end
-
-function Player:canAcceptQuest(questTemplate)
+function Player:canAcceptQuest(questEntry)
+	local questTemplate = DataBase:getQuestTemplateByEntry(questEntry)
 	if self.m_QuestDatas[questTemplate.entry] then release_print("已有同样的任务") return false end
 
 	if questTemplate.previous_quest_entry ~= 0 and not self:isQuestFinished(questTemplate.previous_quest_entry) then 
@@ -140,7 +130,7 @@ function Player:acceptQuest(questEntry)
 	self.m_QuestDatas[questEntry] = {
 		character_guid 	= self:getGuid(),
 		quest_entry 	= questEntry,
-		state 			= QuestStates.IN_PROGRESS,
+		state 			= questStates.IN_PROGRESS,
 		finish_time		= 0,
 	}
 	release_print("接取任务 : "..questEntry)

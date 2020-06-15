@@ -68,7 +68,6 @@ function Object:getName()
 end
 
 function Object:cleanUpBeforeDelete()
-	release_print("Object : cleanUpBeforeDelete")
 	return self
 end
 

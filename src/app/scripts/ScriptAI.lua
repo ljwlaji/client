@@ -25,8 +25,10 @@ function ScriptAI:onNativeGossipHello(pPlayer, pObject)
 	if self.onGossipHello then return self:onGossipHello(pPlayer, pObject) end
 
 	if not pObject:isQuestProvider() and not pObject:isVendor() and not pObject:isTrainer() then return false end
-	for quest_entry, v in pairs(pObject:getQuestList()) do
-		pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_QUEST, v.title_string, GOSSIP_SENDER_TYPES.TYPE_QUEST, quest_entry)
+	for _, v in pairs(pObject:getQuestList()) do
+		if pPlayer:canAcceptQuest(v.entry) then
+			pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_QUEST, v.title_string, GOSSIP_SENDER_TYPES.TYPE_QUEST, v.entry)
+		end
 	end
 	if pObject:isTrainer() then
 		pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_TRAINER, 1, GOSSIP_SENDER_TYPES.TYPE_TRAINER, 0)
@@ -44,7 +46,7 @@ function ScriptAI:onNativeGossipSelect(pPlayer, pObject, pSender, pIndex)
 	if self.onGossipSelect then return self:onGossipSelect(pPlayer, pObject, pSender, pIndex) end
 	local ret = nil
 	if pSender == GOSSIP_SENDER_TYPES.TYPE_QUEST then
-		ret = WindowMgr:createWindow("app.views.layer.vLayerQuestMenu", pObject:getQuestList()[pIndex])
+		ret = WindowMgr:createWindow("app.views.layer.vLayerQuestMenu", pIndex)
 	elseif pSender == GOSSIP_SENDER_TYPES.TYPE_TRAINER then
 		ret = WindowMgr:createWindow("app.views.layer.vLayerTrainerMenu", pObject:getEntry())
 	elseif pSender == GOSSIP_SENDER_TYPES.TYPE_VENDOR then

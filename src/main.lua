@@ -2,6 +2,7 @@ cc.FileUtils:getInstance():setPopupNotify(false)
 
 require "config"
 require "cocos.init"
+require "app.components.UITextEx"
 
 __G__TRACKBACK__ = function(msg)
     -- record the message

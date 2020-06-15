@@ -12,6 +12,20 @@ local DBPATH        = "res/datas.db"
 function DataBase:ctor()
 	self:openDB()
     self.m_ItemTemplate = {}
+    self.m_QuestTemplate = {}
+    self.m_Strings = {}
+end
+
+function DataBase:fetchQuestTemplate(questEntry)
+    local queryResult = self:query(string.format("SELECT * FROM quest_template WHERE entry = '%d'", questEntry))[1]
+    queryResult.quest_targets     = queryResult.quest_targets   and loadstring("return "..queryResult.quest_targets)()  or {}
+    queryResult.awards            = queryResult.awards          and loadstring("return "..queryResult.awards)()         or {}
+    self.m_QuestTemplate[queryResult.entry] = queryResult
+    return queryResult
+end
+
+function DataBase:getQuestTemplateByEntry(questEntry)
+    return self.m_QuestTemplate[questEntry] or self:fetchQuestTemplate(questEntry)
 end
 
 function DataBase:fetchItemTemplate(itemEntry)
@@ -38,8 +52,11 @@ function DataBase:newItemGuid()
 end
 
 function DataBase:getStringByID(id)
-    local queryResult = self:query(string.format("SELECT * FROM string_template WHERE id = %d", id))
-    return #queryResult == 1 and queryResult[1][languageMode] or "NullString"
+    if not self.m_Strings[id] then
+        local queryResult = self:query(string.format("SELECT * FROM string_template WHERE id = %d", id))
+        self.m_Strings[id] = queryResult[1]
+    end
+    return (self.m_Strings[id] and self.m_Strings[id][languageMode]) and self.m_Strings[id][languageMode] or "NullString"
 end
 
 function DataBase.getInstance()

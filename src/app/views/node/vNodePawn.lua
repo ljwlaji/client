@@ -69,7 +69,6 @@ function vNodePawn:setName(name)
 end
 
 function vNodePawn:cleanUpBeforeDelete()
-	release_print("[vNodePawn]:cleanUpBeforeDelete()")
 end
 
 

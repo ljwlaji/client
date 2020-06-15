@@ -14,7 +14,6 @@ function vLayerGossipMenu:onCreate(GossipItems, player, sender, titleStringID)
 	self.GossipItems = GossipItems
 	self.player = player
 	self.sender = sender
-	-- self:autoAlgin()
 end
 
 function vLayerGossipMenu:onEnterTransitionFinish()

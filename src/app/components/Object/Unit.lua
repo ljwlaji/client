@@ -498,7 +498,6 @@ function Unit:isControlByPlayer()
 end
 
 function Unit:cleanUpBeforeDelete()
-	release_print("Unit : cleanUpBeforeDelete()")
 	self.m_MovementMonitor:cleanUpBeforeDelete()
 	self.m_MovementMonitor = nil
     Object.cleanUpBeforeDelete(self)
