@@ -33,11 +33,11 @@
                 <EndColor A="255" R="255" G="255" B="255" />
                 <ColorVector ScaleY="1.0000" />
               </AbstractNodeData>
-              <AbstractNodeData Name="Panel_Inventory" ActionTag="-1412259549" Tag="31" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="201.7302" RightMargin="15.2698" TopMargin="10.0000" BottomMargin="10.0000" TouchEnable="True" ClipAble="False" BackColorAlpha="86" ComboBoxIndex="1" ColorAngle="90.0000" LeftEage="422" RightEage="422" TopEage="237" BottomEage="237" Scale9OriginX="-422" Scale9OriginY="-237" Scale9Width="844" Scale9Height="474" ctype="PanelObjectData">
+              <AbstractNodeData Name="Panel_Inventory" ActionTag="-1412259549" Tag="31" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="201.7697" RightMargin="15.2303" TopMargin="10.0000" BottomMargin="10.0000" TouchEnable="True" ClipAble="False" BackColorAlpha="86" ComboBoxIndex="1" ColorAngle="90.0000" LeftEage="422" RightEage="422" TopEage="237" BottomEage="237" Scale9OriginX="-422" Scale9OriginY="-237" Scale9Width="844" Scale9Height="474" ctype="PanelObjectData">
                 <Size X="850.0000" Y="500.0000" />
                 <Children>
                   <AbstractNodeData Name="Panel_Quaily" ActionTag="1457237530" Tag="32" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" PercentWidthEnable="True" PercentHeightEnable="True" PercentWidthEnabled="True" PercentHeightEnabled="True" LeftMargin="8.5000" RightMargin="8.5000" TopMargin="10.0000" BottomMargin="440.0000" TouchEnable="True" ClipAble="False" BackColorAlpha="86" ComboBoxIndex="1" ColorAngle="90.0000" Scale9Width="1" Scale9Height="1" ctype="PanelObjectData">
-                    <Size X="832.9999" Y="50.0000" />
+                    <Size X="833.0000" Y="50.0000" />
                     <AnchorPoint ScaleX="0.5000" ScaleY="1.0000" />
                     <Position X="425.0000" Y="490.0000" />
                     <Scale ScaleX="1.0000" ScaleY="1.0000" />
@@ -64,7 +64,7 @@
                   </AbstractNodeData>
                 </Children>
                 <AnchorPoint ScaleY="0.5000" />
-                <Position X="201.7302" Y="260.0000" />
+                <Position X="201.7697" Y="260.0000" />
                 <Scale ScaleX="1.0000" ScaleY="1.0000" />
                 <CColor A="255" R="255" G="255" B="255" />
                 <PrePosition X="0.1891" Y="0.5000" />
@@ -74,10 +74,10 @@
                 <EndColor A="255" R="255" G="255" B="255" />
                 <ColorVector ScaleY="1.0000" />
               </AbstractNodeData>
-              <AbstractNodeData Name="ButtonExit" ActionTag="-1729655355" Tag="40" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="1022.0000" RightMargin="-5.0000" TopMargin="-77.0000" BottomMargin="547.0000" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" LeftEage="14" RightEage="14" TopEage="14" BottomEage="14" Scale9OriginX="14" Scale9OriginY="14" Scale9Width="16" Scale9Height="17" ctype="PanelObjectData">
+              <AbstractNodeData Name="ButtonExit" ActionTag="-1729655355" Tag="40" IconVisible="False" PositionPercentXEnabled="True" PositionPercentYEnabled="True" LeftMargin="1022.0471" RightMargin="-5.0471" TopMargin="-77.0000" BottomMargin="547.0000" TouchEnable="True" ClipAble="False" BackColorAlpha="0" ComboBoxIndex="1" ColorAngle="90.0000" LeftEage="14" RightEage="14" TopEage="14" BottomEage="14" Scale9OriginX="14" Scale9OriginY="14" Scale9Width="16" Scale9Height="17" ctype="PanelObjectData">
                 <Size X="50.0000" Y="50.0000" />
                 <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
-                <Position X="1047.0000" Y="572.0000" />
+                <Position X="1047.0471" Y="572.0000" />
                 <Scale ScaleX="1.0000" ScaleY="1.0000" />
                 <CColor A="255" R="255" G="255" B="255" />
                 <PrePosition X="0.9813" Y="1.1000" />
@@ -106,6 +106,17 @@
             <Position Y="306.6263" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <CColor A="255" R="199" G="38" B="38" />
+            <PrePosition />
+            <PreSize X="0.0000" Y="0.0000" />
+            <OutlineColor A="255" R="255" G="0" B="0" />
+            <ShadowColor A="255" R="110" G="110" B="110" />
+          </AbstractNodeData>
+          <AbstractNodeData Name="Text_Money" ActionTag="-1652283545" Tag="129" IconVisible="False" LeftMargin="373.0218" RightMargin="-507.0218" TopMargin="267.5410" BottomMargin="-290.5410" FontSize="20" LabelText="999999999999" ShadowOffsetX="2.0000" ShadowOffsetY="-2.0000" ctype="TextObjectData">
+            <Size X="134.0000" Y="23.0000" />
+            <AnchorPoint ScaleX="1.0000" />
+            <Position X="507.0218" Y="-290.5410" />
+            <Scale ScaleX="1.0000" ScaleY="1.0000" />
+            <CColor A="255" R="255" G="255" B="255" />
             <PrePosition />
             <PreSize X="0.0000" Y="0.0000" />
             <OutlineColor A="255" R="255" G="0" B="0" />

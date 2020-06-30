@@ -27,6 +27,20 @@ function vLayerQuestMenu:onReset(questEntry)
 	local questTemplate = DataBase:getQuestTemplateByEntry(questEntry)
 	self.m_Children["Text_QuestDesc"]:setString(self:fillQuestDesc(questTemplate)):autoScaleHeight()
 	self.m_Children["Text_QuestTitle"]:setString(DataBase:getStringByID(questTemplate.title_string))
+
+	local strID = 10000
+	local ButtonVisible = true
+	local plr = import("app.components.Object.Player"):getInstance()
+	if plr:canAcceptQuest(questEntry) then
+		release_print("可以接取任务")
+	elseif plr:canSubmitQuest(questEntry) then
+		release_print("可以提交任务")
+		strID = 10001
+	else
+		ButtonVisible = false
+	end
+	self.m_Children["Button_Accept"]:setVisible(ButtonVisible)
+	self.m_Children["Text_Accept"]:setString(DataBase:getStringByID(strID))
 	self.tableView:reloadData()
 	self.context = questEntry
 end
@@ -80,8 +94,12 @@ end
 function vLayerQuestMenu:onTouchButtonAccept(e)
 	if e.name ~= "ended" then return end
 	local plr = import("app.components.Object.Player"):getInstance()
-	if plr and plr:canAcceptQuest(self.context) then
+	if not plr then return end
+	if plr:canAcceptQuest(self.context) then
 		plr:acceptQuest(self.context)
+	elseif plr:canSubmitQuest(self.context) then
+		release_print("trySubmit")
+		plr:trySubmitQuest(self.context)
 	end
 	self:removeFromParent()
 end

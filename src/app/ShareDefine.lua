@@ -192,6 +192,10 @@ function ShareDefine.WEEK()
 	return 560000
 end
 
+function ShareDefine.normalQuest()
+	return QUEST_TYPE.NORMAIL
+end
+
 function ShareDefine.weeklyQuest()
 	return QUEST_TYPE.WEEKLY
 end

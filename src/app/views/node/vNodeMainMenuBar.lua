@@ -47,6 +47,7 @@ end
 
 function vNodeMainMenuBar:onTouchButtonQuest(e)
 	if e.name ~= "ended" then return end
+	WindowMgr:createWindow("app.views.layer.vLayerQuestBook")
 end
 
 function vNodeMainMenuBar:onTouchButtonTalent(e)
@@ -56,7 +57,20 @@ end
 
 function vNodeMainMenuBar:onTouchButtonSettings(e)
 	if e.name ~= "ended" then return end
-	import("app.components.Object.Player"):getInstance():getMap():removeFromParent()
+	-- import("app.components.Object.Player"):getInstance():getMap():removeFromParent()
+	-- import("app.components.Object.Player"):getInstance():addItem(1, 111)
+
+	local entry = 3
+	local amount = 81
+	-- if import("app.components.Object.Player"):getInstance():hasSpaceFor(entry, amount) then
+	-- 	import("app.components.Object.Player"):getInstance():addItem(entry, amount)
+	-- end
+	dump(import("app.components.Object.Player"):getInstance():getItemCount(entry))
+	if import("app.components.Object.Player"):getInstance():getItemCount(entry) > 55 then
+		import("app.components.Object.Player"):getInstance():destoryItem(entry, 55)
+	else
+		release_print("Item Count Less Than 55!")
+	end
 end
 
 

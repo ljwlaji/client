@@ -38,6 +38,7 @@ function Player:onCreate()
 
 
     self:setInventoryDataDirty(false)
+    self:setQuestDataDirty(false)
     	-- :setContentSize(sp:getContentSize())
 	-- self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", function() end)
 
@@ -59,6 +60,7 @@ function Player:loadFromDB()
 	self:setFaction(queryResult.faction)
 	self:setGender(queryResult.gender)
 	self:setRace(queryResult.race)
+	self:setMoney(queryResult.money)
 	self:loadInventoryFromDB()
 	self:loadAllLearnedSpellsFromDB()
 	self:loadBuffsFromDB()
@@ -76,9 +78,27 @@ function Player:loadSpellCoolDownFromDB()
 	end
 end
 
+function Player:isAchivementCompleted(AchiveEntry)
+	return true
+end
+
 --							[[ =============== ]]
 --							[[ For Quest Issus ]]
 --							[[ =============== ]]
+
+function Player:setQuestDataDirty(value)
+	self.m_QuestDataDirty = value
+end
+
+function Player:isQuestDataDirty()
+	return self.m_QuestDataDirty
+end
+
+function Player:onQuestDataDirty()
+	self:sendAppMsg("MSG_ON_QUEST_DATA_CHANGED")
+	self:saveQuestToDB()
+	self:setQuestDataDirty(false)
+end
 
 function Player:loadQuestFromDB()
 	local sql = "SELECT * FROM character_quest WHERE character_guid = '%d'"
@@ -89,8 +109,10 @@ function Player:loadQuestFromDB()
 end
 
 function Player:saveQuestToDB()
+	release_print("Saving Quest Datas...")
+	dump(self.m_QuestDatas)
 	local sql = "DELETE FROM character_quest WHERE character_guid = '%d'"
-	DataBase:query(sql)
+	DataBase:query(string.format(sql, self:getGuid()))
 	sql = "REPLACE INTO character_quest(character_guid, quest_entry, state, finish_time) VALUES('%d', '%d', '%d', '%d')"
 	for k, v in pairs(self.m_QuestDatas) do
 		DataBase:query(string.format(sql, self:getGuid(), v.quest_entry, v.state, v.finish_time))
@@ -105,9 +127,48 @@ function Player:isQuestFinished(questEntry)
 	return self.m_QuestDatas[questEntry] and self.m_QuestDatas[questEntry].state == questStates.FINISHED
 end
 
+function Player:canSubmitQuest(questEntry)
+	local questData = self.m_QuestDatas[questEntry]
+	if not questData or questData.state == questStates.FINISHED then return false end
+	local canSubmit = true
+	local questTemplate = DataBase:getQuestTemplateByEntry(questEntry)
+	for target_type, target_info in pairs(questTemplate.quest_targets) do
+		for entry, amount in pairs(target_info) do
+			if target_type == "items" then
+				if self:getItemCount(entry) < amount then canSubmit = false break end 
+			elseif target_type == "achive" then
+				if not self:isAchivementCompleted(entry) then canSubmit = false break end
+			end
+		end
+	end
+	return canSubmit
+end
+
+function Player:trySubmitQuest(questEntry)
+	local questTemplate = DataBase:getQuestTemplateByEntry(questEntry)
+	for awards_type, awards_info in pairs(questTemplate.awards) do
+		for entry, amount in pairs(awards_info) do
+			if awards_type == "money" then
+				self:addMoney(amount)
+			elseif awards_type == "items" then
+				self:addItem(entry, amount)
+			elseif awards_type == "exp" then
+				self:awardExp(amount)
+			elseif awards_type == "reputation" then
+			end
+		end
+	end
+	self.m_QuestDatas[questEntry].state = questStates.FINISHED
+	self.m_QuestDatas[questEntry].finish_time = os.time()
+	self:setQuestDataDirty(true)
+end
+
 function Player:canAcceptQuest(questEntry)
 	local questTemplate = DataBase:getQuestTemplateByEntry(questEntry)
-	if self.m_QuestDatas[questTemplate.entry] then release_print("已有同样的任务") return false end
+	local questData = self.m_QuestDatas[questEntry]
+	if questData and questTemplate.quest_type == ShareDefine.normalQuest() then
+		return false 
+	end
 
 	if questTemplate.previous_quest_entry ~= 0 and not self:isQuestFinished(questTemplate.previous_quest_entry) then 
 		return false 
@@ -133,16 +194,13 @@ function Player:acceptQuest(questEntry)
 		state 			= questStates.IN_PROGRESS,
 		finish_time		= 0,
 	}
-	release_print("接取任务 : "..questEntry)
-	self:sendAppMsg("MSG_ON_QUEST_DATA_CHANGED")
-	self:saveQuestToDB()
+	self:setQuestDataDirty(true)
 end
 
 function Player:removeQuest(questEntry)
 	if self.m_QuestDatas[questEntry] == nil then return end
 	self.m_QuestDatas[questEntry] = nil
-	self:sendAppMsg("MSG_ON_QUEST_DATA_CHANGED")
-	self:saveQuestToDB()
+	self:setQuestDataDirty(true)
 end
 
 --							[[ =============== ]]
@@ -275,7 +333,7 @@ function Player:saveBuffsFromDB()
 end
 
 --							[[ ======================== ]]
---							[[ End Inventory/Item Issus ]]
+--							[[ For Inventory/Item Issus ]]
 --							[[ ======================== ]]
 
 function Player:loadInventoryFromDB()
@@ -348,6 +406,20 @@ function Player:getItemCount(pItemEntry)
 		end
 	end
 	return count
+end
+
+function Player:setMoney(m)
+	self.m_Money = m
+end
+
+function Player:addMoney(m)
+	self.m_Money = self.m_Money + m
+	if self.m_Money < 0 then self.m_Money = 0 end
+	self:setInstanceDataDirty(true)
+end
+
+function Player:getMoney()
+	return self.m_Money
 end
 
 function Player:hasSpaceFor(itemEntry, amount)
@@ -484,43 +556,6 @@ function Player:tryEquipItem(itemSlot)
 	return true
 end
 
---							[[ ======================== ]]
---							[[ End Inventory/Item Issus ]]
---							[[ ======================== ]]
-
-
-
-
-
-function Player:saveToDB()
-	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9			10				11
-	local sql = [[REPLACE INTO character_instance(guid, class, gender, faction, level, race, name, map, pos_x, pos_y, free_talent_point, current_exp) 
-										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%d', '%s','%d',  '%d', '%d', '%d', '%d') ]]
-	--										0				1				2					3				4					5
-	DataBase:query(string.format(sql, self:getGuid(), self:getClass(), self:getGender(), self:getFaction(), self:getLevel(), self:getRace(), 
-	--										6					7						8					9						10						11
-									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY(), self:getFreeTalentPoint(), self:getCurrExp() ))
-
-	self:saveInventoryToDB()
-	self:saveBuffsFromDB()
-	self:saveAllLearnedSpellToDB()
-	self:saveQuestToDB()
-	self:saveSpellSlotToDB()
-	self:saveSpellCoolDownToDB()
-end
-
-function Player:saveSpellCoolDownToDB()
-	local sql = "DELETE FROM spell_cool_down WHERE character_guid = '%d'"
-	DataBase:query(string.format(sql, self:getGuid()))
-
-	sql = "INSERT INTO spell_cool_down(character_guid, spell_id, cooldown_time_left) VALUES(%d, %d, %d)"
-	for spelid, timeleft in pairs(self:getSpellCoolDownList()) do
-		DataBase:query(string.format(sql, self:getGuid(), spellid, math.floor(timeleft * 0.001)))
-	end
-end
-
-
-
 function Player:saveInventoryToDB()
 	local sql = "DELETE FROM character_inventory WHERE character_guid = '%d'"
 	DataBase:query(string.format(sql, self:getGuid()))
@@ -543,6 +578,55 @@ function Player:canEquip(itemData)
 	if itemTemplate.requie_spell and itemTemplate.requie_spell ~= 0 and not self:hasSpell(itemTemplate.requie_spell) then release_print("can Equip : require Spell : "..itemTemplate.requie_spell) return false end
 	if itemData.durable == 0 then return false end
 	return true
+end
+
+--							[[ ======================== ]]
+--							[[ End Inventory/Item Issus ]]
+--							[[ ======================== ]]
+
+function Player:setInstanceDataDirty(value)
+	self.m_InstanceDataDirty = value
+end
+
+function Player:isInstanceDataDirty()
+	return self.m_InstanceDataDirty
+end
+
+function Player:onInstanceDataDirty()
+	self:sendAppMsg("MSG_ON_INSTANCE_DATA_DIRTY")
+	self:saveInstanceToDB()
+	self:setInstanceDataDirty(false)
+end
+
+function Player:saveInstanceToDB()
+	-- Save Instance Stuff						  0		1		2		3	   	4		5	  6		7	   8	9			10				11			12
+	local sql = [[REPLACE INTO character_instance(guid, class, gender, faction, level, race, name, map, pos_x, pos_y, free_talent_point, current_exp, money) 
+										   VALUES('%d', '%d',  '%d',   '%d',  '%d', '%d', '%s','%d',  '%d', '%d', '%d', '%d', '%d') ]]
+	--										0				1				2					3				4					5
+	DataBase:query(string.format(sql, self:getGuid(), self:getClass(), self:getGender(), self:getFaction(), self:getLevel(), self:getRace(), 
+	--										6					7						8					9						10						11
+									  self:getName(), self:getMap():getEntry(), self:getPositionX(), self:getPositionY(), self:getFreeTalentPoint(), self:getCurrExp(), self:getMoney() ))
+
+end
+
+function Player:saveToDB()
+	self:saveInstanceToDB()
+	self:saveInventoryToDB()
+	self:saveBuffsFromDB()
+	self:saveAllLearnedSpellToDB()
+	self:saveQuestToDB()
+	self:saveSpellSlotToDB()
+	self:saveSpellCoolDownToDB()
+end
+
+function Player:saveSpellCoolDownToDB()
+	local sql = "DELETE FROM spell_cool_down WHERE character_guid = '%d'"
+	DataBase:query(string.format(sql, self:getGuid()))
+
+	sql = "INSERT INTO spell_cool_down(character_guid, spell_id, cooldown_time_left) VALUES(%d, %d, %d)"
+	for spelid, timeleft in pairs(self:getSpellCoolDownList()) do
+		DataBase:query(string.format(sql, self:getGuid(), spellid, math.floor(timeleft * 0.001)))
+	end
 end
 
 function Player:saveTalentPointToDB()
@@ -647,6 +731,7 @@ end
 function Player:onUpdate(diff)
 	Unit.onUpdate(self, diff)
 	if self:isInventoryDataDirty() then self:onInventoryDataChanged() end
+	if self:isQuestDataDirty() then self:onQuestDataDirty() end
 	if self:isExpDataDirty() then self:onExpDataChanged() end
 end
 

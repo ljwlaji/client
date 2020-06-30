@@ -7,10 +7,8 @@ local Cell 				= import("app.views.node.vNodeQuestBookTargetCell")
 local vLayerQuestBook 	= class("vLayerQuestBook", ViewBaseEx)
 
 vLayerQuestBook.DisableDuplicateCreation = true
-vLayerQuestBook.RESOURCE_FILENAME = "res/csb/layer/CSB_Layer_QuestBook.csb"
-vLayerQuestBook.RESOURCE_BINDING = {
-	PanelExit = "onTouchPanelExit",
-}
+vLayerQuestBook.RESOURCE_FILENAME 	= "res/csb/layer/CSB_Layer_QuestBook.csb"
+vLayerQuestBook.RESOURCE_BINDING 	= { PanelExit = "onTouchPanelExit" }
 
 local questStates = ShareDefine.questStates()
 
@@ -22,18 +20,12 @@ function vLayerQuestBook:onCreate()
         fillOrder = cc.TABLEVIEW_FILL_TOPDOWN,
         size = contentSize,
     }):addTo(self.m_Children["Panel_TableView"])
-    
-    self.rightView = TableView:create({
-                size = cc.size(460, 480),
-                cellSize = handler(self, self.rightSize),
-            })
-        :onCellAtIndex(handler(self, self.RefreshRightView))
-        :addTo(self.m_Children["Panel_Frame"])
-        :setPosition(180, 0)
-
+    self.rightView = TableView:create({size = cc.size(460, 480),cellSize = handler(self, self.rightSize)})
+						      :onCellAtIndex(handler(self, self.RefreshRightView))
+						      :addTo(self.m_Children["Panel_Frame"])
+						      :setPosition(180, 0)
 	self.m_Children["Title_Targets"]:setString(DataBase:getStringByID(400003))
     self.m_Children["Title_Awards"]:setString(DataBase:getStringByID(400004))
-
     self.leftView:onCellAtIndex(handler(self, self.onCellAtIndex))
 	self:onReset()
 end
@@ -73,8 +65,7 @@ function vLayerQuestBook:rightSize(_, idx)
 end
 
 function vLayerQuestBook:RefreshRightView(cell, idx)
-	if cell.item then return end
-	cell.item = self.m_Children["RightNode"]:retain():removeFromParent():addTo(cell):release():move(0, 0)
+	cell.item = cell.item or self.m_Children["RightNode"]:retain():removeFromParent():addTo(cell):release():move(0, 0)
 	local height = 0
 	for k, v in pairs({"Panel_Awards", "Panel_Targets", "Text_Desc"}) do
 		self.m_Children[v]:retain()
@@ -122,14 +113,14 @@ function vLayerQuestBook:updateQuestAwards(awards)
 		for entry, amount in pairs(awards_info) do
 			local item 			= Cell:create()
 			local name_str 		= ""
-			if awards_type == "gold" then
+			if awards_type == "money" then
 				name_str = DataBase:getStringByID(50)
-			elseif awards_type == "items" then
-				name_str = DataBase:getStringByID(DataBase:getItemTemplateByEntry(entry).name_string)
-			elseif awards_type == "exp" then
-				name_str = DataBase:getStringByID(52)
 			elseif awards_type == "reputation" then
 				name_str = DataBase:getStringByID(51)
+			elseif awards_type == "exp" then
+				name_str = DataBase:getStringByID(52)
+			elseif awards_type == "items" then
+				name_str = DataBase:getStringByID(DataBase:getItemTemplateByEntry(entry).name_string)
 			end
 			item:onReset(name_str, string.format(" *%d", amount))
 				:addTo(self.m_Children["Panel_Awards"])
@@ -146,10 +137,8 @@ end
 function vLayerQuestBook:switchToQuest(questInfo)
 	local questTemplate = DataBase:getQuestTemplateByEntry(questInfo.quest_entry)
 	self.m_Children["Text_Desc"]:setString(DataBase:getStringByID(questTemplate.description_string)):autoScaleHeight()
-
 	self:updateQuestTargets(questTemplate.quest_targets)
 	self:updateQuestAwards(questTemplate.awards)
-
 	self.rightView:setNumbers(1)
 				  :reloadData()
 				  :reloadData()

@@ -26,7 +26,7 @@ function ScriptAI:onNativeGossipHello(pPlayer, pObject)
 
 	if not pObject:isQuestProvider() and not pObject:isVendor() and not pObject:isTrainer() then return false end
 	for _, v in pairs(pObject:getQuestList()) do
-		if pPlayer:canAcceptQuest(v.entry) then
+		if pPlayer:canAcceptQuest(v.entry) or pPlayer:canSubmitQuest(v.entry) then
 			pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_QUEST, v.title_string, GOSSIP_SENDER_TYPES.TYPE_QUEST, v.entry)
 		end
 	end

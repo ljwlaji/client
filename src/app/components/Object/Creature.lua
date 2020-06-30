@@ -84,8 +84,8 @@ function Creature:fetchMovePaths()
 end
 
 function Creature:fetchQuest()
-	local sql = "SELECT entry, title_string FROM quest_template WHERE accept_npc == '%d'"
-	local queryResult = DataBase:query(string.format(sql, self:getGuid()))
+	local sql = "SELECT entry, title_string FROM quest_template WHERE accept_npc == '%d' or submit_npc == '%d'"
+	local queryResult = DataBase:query(string.format(sql, self:getGuid(), self:getGuid()))
 	for k, v in pairs(queryResult) do table.insert(self.m_QuestList, v) end
 end
 

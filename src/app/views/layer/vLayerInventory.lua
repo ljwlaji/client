@@ -22,6 +22,7 @@ function vLayerInventory:onCreate()
 	self.m_Children["Text_Title"]:setString(DataBase:getStringByID(100001))
 	self:onReset()
 	self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", handler(self, self.onReset))
+	self:regiestCustomEventListenter("MSG_ON_INSTANCE_DATA_DIRTY", handler(self, self.updateMoney))
 end
 
 function vLayerInventory:onReset()
@@ -30,6 +31,12 @@ function vLayerInventory:onReset()
 	self:fetchCatagorys()
 	self:sortInventory()
 	self.gridView:setDatas(self.inventoryDatas)
+	self:updateMoney()
+end
+
+function vLayerInventory:updateMoney()
+	local plr = Player:getInstance()
+	self.m_Children["Text_Money"]:setString(plr:getMoney())
 end
 
 function vLayerInventory:initViews()
