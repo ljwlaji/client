@@ -1,6 +1,7 @@
 local ShareDefine 	= import("app.ShareDefine")
 local WindowMgr		= import("app.components.WindowMgr")
 local FactionMgr	= import("app.components.FactionMgr")
+local DataBase 		= import("app.components.DataBase")
 local ScriptAI 		= class("ScriptAI")
 
 local GOSSIP_SENDER_TYPES = ShareDefine.gossipSenderTypes()
@@ -26,7 +27,8 @@ function ScriptAI:onNativeGossipHello(pPlayer, pObject)
 
 	if not pObject:isQuestProvider() and not pObject:isVendor() and not pObject:isTrainer() then return false end
 	for _, v in pairs(pObject:getQuestList()) do
-		if pPlayer:canAcceptQuest(v.entry) or pPlayer:canSubmitQuest(v.entry) then
+		local template = DataBase:getQuestTemplateByEntry(v.entry)
+		if (pPlayer:canAcceptQuest(v.entry) and template.accept_npc == pObject:getEntry()) or (pPlayer:canSubmitQuest(v.entry) and template.submit_npc == pObject:getEntry() ) then
 			pPlayer:addGossipItem(GOSSIP_SENDER_TYPES.TYPE_QUEST, v.title_string, GOSSIP_SENDER_TYPES.TYPE_QUEST, v.entry)
 		end
 	end

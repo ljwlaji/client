@@ -6,9 +6,10 @@ local Pawn 			= import("app.views.node.vNodePawn")
 local FactionMgr	= import("app.components.FactionMgr")
 local Creature 		= class("Creature", Unit)
 
-function Creature:onCreate(pawn)
+function Creature:onCreate()
 	Unit.onCreate(self, ShareDefine:creatureType())
-	self:setPawn(pawn:addTo(self):init(self))
+	self:setContentSize(self.context.width, self.context.height)
+	self:setPawn(Pawn:create(self):addTo(self):init(self))
 
 	self.m_QuestList = {}
 	self:setGuid(self.context.guid)
@@ -21,7 +22,6 @@ function Creature:onCreate(pawn)
 	self:move(self.context.x, self.context.y)
 	self:setName(DataBase:getStringByID(self.context.name_id))
 	self:updateBaseAttrs()
-    self:setContentSize(50, 90)
 
     if self.context.script_name and self.context.script_name ~= "" then
 		self:initAI(self.context.script_name)
@@ -29,6 +29,12 @@ function Creature:onCreate(pawn)
 		self:initAI("ScriptAI")
 	end
 	self.m_RebornCheckTimer = 1000
+end
+
+function Creature:getTouchBox()
+	local box = self:getBoundingBox()
+	box.x = box.x - self:getContentSize().width * .5
+	return box
 end
 
 function Creature:getEntry()
@@ -68,11 +74,12 @@ end
 
 function Creature:onTouched(pPlayer)
 	-- 判断阵营
-	-- 判断声望
 	-- 判断生死情况
-
-	-- if not self:isAlive() then release_print(" Creature:onTouched(pPlayer) 目标已死亡！") return end
-	-- if FactionMgr:isHostile(self:getFaction(), pPlayer:getFaction()) then release_print("Creature:onTouched(pPlayer) 敌对状态 无法响应") return end
+	-- 判断声望
+	if FactionMgr:isHostile(pPlayer:getFaction(), self:getFaction()) or self:isAlive() then 
+		return false 
+	end
+	if self:isAlive() then return false end
 	return self:getAI():onNativeGossipHello(pPlayer, self)
 end
 

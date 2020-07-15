@@ -50,6 +50,8 @@ local SPELL_DAMAGE_TYPES = {
 	MAGIC_DAMAGE = 2,
 }
 
+local FEET = 7
+
 function Spell:ctor(caster, spellInfo)
 	self.m_Caster = caster
 	self.m_Targets = {}
@@ -119,6 +121,7 @@ function Spell:launchSpell()
 	-- TODO
 	-- fetch targets
 	self:fetchTargets()
+	local caster = self:getCaster()
 	-- just launch
 	local damages = self:calcSpellDamage()
 	-- 这边分为即时伤害和子弹时间伤害
@@ -131,7 +134,7 @@ function Spell:launchSpell()
 
 	-- 直接造成伤害
 	for k, victim in pairs(self.m_Targets) do
-		self:getCaster():dealDamage(damages, victim)
+		caster:dealDamage(damages, victim)
 	end
 	-- launch spell effect
 	self.m_StateMachine:stop()
@@ -169,7 +172,7 @@ function Spell:fetchTargets()
 	local maxNumber 	= spellInfo.max_target_count
 	local checkFacingTo = spellInfo.check_facing_to == 1
 
-	local fetchResult 	= self:getCaster():getMap():fetchUnitInRange(self:getCaster(), range, ingnoreSelf, aliveOnly, hostileOnly, maxNumber, checkFacingTo)
+	local fetchResult 	= self:getCaster():getMap():fetchUnitInRange(self:getCaster(), range * FEET, ingnoreSelf, aliveOnly, hostileOnly, maxNumber, checkFacingTo)
 	local results = {}
 	for k, v in pairs(fetchResult) do table.insert(results, v.obj) end
 	

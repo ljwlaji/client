@@ -6,7 +6,6 @@ local GameObject    = import("app.components.Object.GameObject")
 local Ground    	= import("app.components.Object.Ground")
 local Creature    	= import("app.components.Object.Creature")
 local FactionMgr	= import("app.components.FactionMgr")
-local Pawn 			= import("app.views.node.vNodePawn")
 
 -- 需要实现的功能
 -- 无缝地图
@@ -31,7 +30,7 @@ local Pawn 			= import("app.views.node.vNodePawn")
 ]]
 
 local DISTANCE_FOR_SHOWN 				= 1000
-local DISTANCE_FOR_DISAPPEAR 			= 1200
+local DISTANCE_FOR_DISAPPEAR 			= 1500
 
 -- 生物的加载和消失范围都比地面更小
 local DISTANCE_FOR_SHOWN_CREATURE 		= DISTANCE_FOR_SHOWN 		* 0.5
@@ -44,8 +43,8 @@ function Map:ctor(Entry, chosedCharacterID)
 	self.m_CreatureDatas 	= {}
 	self.m_ObjectList 		= {}
 	self.m_SpellObjects		= {}
+	self.m_DamageEffects	= {}
 	self.m_HotloadTimer 	= 0
-	self.m_PawnRecyclePool	= {}
 	self:onCreate(chosedCharacterID)
 
 	--For Testting
@@ -88,8 +87,10 @@ function Map:onTouchEnded(touch, event)
 	if math.abs(Delta.x) >= 10 or math.abs(Delta.y) >= 10 then release_print("偏移量过大, 丢弃这个触摸!") return end
 	local TouchPosition = self:getParent():convertToNodeSpace(touch:getLocation())
 	for k, object in pairs(self.m_ObjectList) do
-		if 	object:isCreature() and 
-			cc.rectContainsPoint(object:getBoundingBox(), self:convertToNodeSpace(touch:getLocation())) and 
+		if 	object:isCreature() and  
+			--非生物不对话
+			cc.rectContainsPoint(object:getTouchBox(), self:convertToNodeSpace(touch:getLocation())) and 
+			--未触摸不对话
 			object:onTouched(self.mPlayer) then
 			break
 		end
@@ -156,9 +157,7 @@ function Map:tryLoadNewObjects()
 	end
 	for k, v in pairs(self.m_CreatureDatas) do 
 		if not v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.x,v.y)) < DISTANCE_FOR_SHOWN_CREATURE then
-			local pawn = self:dequeuePawn()
-			v.instance = Creature:create(v, pawn)
-			pawn:release()
+			v.instance = Creature:create(v)
 			self:addObject(v.instance)
 		end
 	end
@@ -175,7 +174,6 @@ function Map:tryRemoveObjects()
 	for k, v in pairs(self.m_CreatureDatas) do
 		if v.instance and cc.pGetDistance(cc.p(self.mPlayer:getPosition()), cc.p(v.instance:getPosition())) > DISTANCE_FOR_DISAPPEAR_CREATURE then 
 			self:removeObject(v.instance)
-			self:queuePawn(v.instance:getPawn())
 			v.instance:removeFromParent()
 			v.instance = nil
 		end
@@ -225,6 +223,10 @@ function Map:setPlayer(pPlayer)
 	self:addObject(self.mPlayer)
 end
 
+function Map:createDamageEffect(pos, number)
+	
+end
+
 function Map:cleanUpBeforeDelete()
 	-- TODO
 	-- Remove Player
@@ -235,23 +237,7 @@ function Map:cleanUpBeforeDelete()
 		obj = table.remove(self.m_ObjectList)
 		obj:removeFromParent()
 	end
-	while #self.m_PawnRecyclePool > 0 do
-		obj = table.remove(self.m_ObjectList)
-		obj:release()
-	end
-
 	release_print("CleanFinished With Object List : "..#self.m_ObjectList)
-	release_print("CleanFinished With Pawn List : "..#self.m_PawnRecyclePool)
-end
-
-function Map:queuePawn(pawnInstance)
-	pawnInstance:retain():removeFromParent()
-	table.insert(self.m_PawnRecyclePool, pawnInstance)
-end
-
-function Map:dequeuePawn()
-	local ret = #self.m_PawnRecyclePool == 0 and Pawn:create():retain() or table.remove(self.m_PawnRecyclePool, 1)
-	return ret
 end
 
 function Map:tryFixPosition(unit, offset)

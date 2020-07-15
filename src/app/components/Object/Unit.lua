@@ -70,6 +70,7 @@ function Unit:onCreate(objType)
 	self:regiestCustomEventListenter("onTouchButtonA", function() end)
 	self:regiestCustomEventListenter("onControllerJump", function() if self:isControlByPlayer() then self.m_MovementMonitor:jump() end end)
 	self:setAttrDataDirty(true)
+
 end
 
 function Unit:onUpdate(diff)
@@ -420,6 +421,7 @@ function Unit:dealDamage(damage, victim)
 		end
 	end 
 
+	self:getMap():createDamageEffect(cc.p(victim:getPosition()), finalDamage)
 	victim:modifyHealth(-finalDamage)
 	if victim:getAttr("health") == 0 then victim:justDie(self) end
 end

@@ -114,6 +114,7 @@ end
 function UnitMovementMonitor:updateMovement(diff, isJumpping)
 	local offset = self:onHorizonMove(diff, isJumpping)
 	local currState = self.m_StateMachine:getCurrentState()
+	local owner = self:getOwner()
 	local finalState = nil
 	if currState == MovementStates.STATE_JUMP_HIGH then
 		if self.m_FallSpeed < 1 then finalState = MovementStates.STATE_JUMP_FALL end
@@ -122,7 +123,7 @@ function UnitMovementMonitor:updateMovement(diff, isJumpping)
 		self.m_FallSpeed = self.m_FallSpeed * 1.1
 	end
 	offset.y = self.m_FallSpeed
-	local finalPos, hitGround, hitGObject = self:getOwner():getMap():tryFixPosition( self:getOwner(), offset )
+	local finalPos, hitGround, hitGObject = owner:getMap():tryFixPosition( self:getOwner(), offset )
 	if hitGround then 
 		finalState = math.abs(offset.x) == 0 and MovementStates.STATE_IDLE or MovementStates.STATE_RUN
 		self.m_FallSpeed = -1
@@ -130,9 +131,9 @@ function UnitMovementMonitor:updateMovement(diff, isJumpping)
 		self.m_JumpDirection = self.m_Direction
 		finalState = MovementStates.STATE_JUMP_FALL
 	end
-	if hitGObject and not self:getOwner():isControlByPlayer() then finalState = nil self:jump() end
+	if hitGObject and not owner:isControlByPlayer() then finalState = nil self:jump() end
 	if finalState then self.m_StateMachine:setState(finalState) end
-	self:getOwner():move(finalPos)
+	owner:move(finalPos)
 	self:updateDirection()
 end
 
