@@ -17,12 +17,12 @@
             <Project Name="CSB_Layer_HUD.csd" Type="Layer" />
             <Project Name="CSB_Layer_Inventory.csd" Type="Node" />
             <Project Name="CSB_Layer_ItemDetail.csd" Type="Node" />
+            <Project Name="CSB_Layer_QuestBook.csd" Type="Node" />
+            <Project Name="CSB_Layer_QuestMenu.csd" Type="Node" />
             <Project Name="CSB_Layer_SpellBook.csd" Type="Node" />
             <Project Name="CSB_Layer_SpellInfo.csd" Type="Node" />
             <Project Name="CSB_Layer_Talent.csd" Type="Node" />
             <Project Name="CSB_Layer_VendorMenu.csd" Type="Node" />
-            <Project Name="CSB_Layer_QuestMenu.csd" Type="Node" />
-            <Project Name="CSB_Layer_QuestBook.csd" Type="Node" />
           </Folder>
           <Folder Name="maps">
             <Project Name="0.csd" Type="Layer" />
@@ -30,6 +30,7 @@
           <Folder Name="node">
             <Project Name="CSB_Node_Controller.csd" Type="Layer" />
             <Project Name="CSB_Node_Controller_New.csd" Type="Layer" />
+            <Project Name="CSB_Node_DamageEffecct.csd" Type="Node" />
             <Project Name="CSB_Node_GossipItem.csd" Type="Node" />
             <Project Name="CSB_Node_InventoryCatagory.csd" Type="Node" />
             <Project Name="CSB_Node_InventorySlot.csd" Type="Node" />
@@ -38,16 +39,13 @@
             <Project Name="CSB_Node_ItemIcon.csd" Type="Node" />
             <Project Name="CSB_Node_MainMenuBar.csd" Type="Node" />
             <Project Name="CSB_Node_Pawn.csd" Type="Node" />
+            <Project Name="CSB_Node_QuestBook_Target_Cell.csd" Type="Node" />
+            <Project Name="CSB_Node_QuestBookCell.csd" Type="Node" />
             <Project Name="CSB_Node_SkillButtons.csd" Type="Node" />
             <Project Name="CSB_Node_SpellBookCell.csd" Type="Node" />
             <Project Name="CSB_Node_TalentIcon.csd" Type="Node" />
             <Project Name="CSB_Node_VendorMenuCell.csd" Type="Node" />
-            <Project Name="CSB_Node_QuestBookCell.csd" Type="Node" />
-            <Project Name="CSB_Node_QuestBook_Target_Cell.csd" Type="Node" />
           </Folder>
-        </Folder>
-        <Folder Name="font">
-          <TTF Name="fnt.ttf" />
         </Folder>
         <Folder Name="ui">
           <Folder Name="common">

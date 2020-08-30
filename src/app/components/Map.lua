@@ -1,11 +1,13 @@
-local Map 			= class("Map", cc.Node)
-local DataBase 		= import("app.components.DataBase")
-local Camera 		= import("app.components.Camera")
-local Player        = import("app.components.Object.Player")
-local GameObject    = import("app.components.Object.GameObject")
-local Ground    	= import("app.components.Object.Ground")
-local Creature    	= import("app.components.Object.Creature")
-local FactionMgr	= import("app.components.FactionMgr")
+local Map 				= class("Map", cc.Node)
+local DataBase 			= import("app.components.DataBase")
+local Camera 			= import("app.components.Camera")
+local Player        	= import("app.components.Object.Player")
+local GameObject    	= import("app.components.Object.GameObject")
+local Ground    		= import("app.components.Object.Ground")
+local Creature    		= import("app.components.Object.Creature")
+local DamageEffectNode 	= import("app.views.node.vNodeDamageEffect")
+local ShareDefine 		= import("app.ShareDefine")
+local FactionMgr		= import("app.components.FactionMgr")
 
 -- 需要实现的功能
 -- 无缝地图
@@ -38,13 +40,13 @@ local DISTANCE_FOR_DISAPPEAR_CREATURE 	= DISTANCE_FOR_DISAPPEAR 	* 0.5
 
 
 function Map:ctor(Entry, chosedCharacterID)
-	self.m_Entry 			= Entry
-	self.m_GroundDatas 		= {}
-	self.m_CreatureDatas 	= {}
-	self.m_ObjectList 		= {}
-	self.m_SpellObjects		= {}
-	self.m_DamageEffects	= {}
-	self.m_HotloadTimer 	= 0
+	self.m_Entry 				= Entry
+	self.m_GroundDatas 			= {}
+	self.m_CreatureDatas 		= {}
+	self.m_ObjectList 			= {}
+	self.m_SpellObjects			= {}
+	self.m_DamageEffectNodes	= {}
+	self.m_HotloadTimer 		= 0
 	self:onCreate(chosedCharacterID)
 
 	--For Testting
@@ -223,8 +225,27 @@ function Map:setPlayer(pPlayer)
 	self:addObject(self.mPlayer)
 end
 
+function Map:queueEffectNode(node)
+	table.insert(self.m_DamageEffectNodes, node:retain():removeFromParent():hide())
+end
+
+function Map:DequeueEffectNode()
+	local node = nil
+	if #self.m_DamageEffectNodes > 0 then
+		node = table.remove(self.m_DamageEffectNodes, 1):addTo(self):show():release()
+	end
+	return node or DamageEffectNode:create(queueFunc):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_DAMAGE_EFFECT")):addTo(self)
+end
+
 function Map:createDamageEffect(pos, number)
-	
+	local number = number > 99999999 and 99999999 or number
+	local numbers = {}
+	while true do
+		table.insert(numbers, #numbers, number % 10)
+		number = math.floor(number / 10)
+		if number == 0 then break end
+	end
+	self:DequeueEffectNode():move(pos):reset(numbers)
 end
 
 function Map:cleanUpBeforeDelete()
@@ -232,10 +253,12 @@ function Map:cleanUpBeforeDelete()
 	-- Remove Player
 	self:getParent().currentMap = nil
 	Camera:changeFocus(nil)
-	local obj = nil
 	while #self.m_ObjectList > 0 do
-		obj = table.remove(self.m_ObjectList)
-		obj:removeFromParent()
+		table.remove(self.m_ObjectList, 1):removeFromParent()
+	end
+
+	while #self.m_DamageEffectNodes > 0 do
+		table.remove(self.m_DamageEffectNodes, 1):release()
 	end
 	release_print("CleanFinished With Object List : "..#self.m_ObjectList)
 end

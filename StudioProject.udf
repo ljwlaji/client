@@ -12,8 +12,9 @@
         <OpenedDocuments>
           <FilePathData Path="csb/layer/CSB_Layer_QuestMenu.csd" />
           <FilePathData Path="csb/layer/CSB_Layer_Inventory.csd" />
+          <FilePathData Path="csb/node/CSB_Node_DamageEffecct.csd" />
         </OpenedDocuments>
-        <ActiveDocument Path="csb/layer/CSB_Layer_Inventory.csd" />
+        <ActiveDocument Path="csb/node/CSB_Node_DamageEffecct.csd" />
       </Value>
     </Item>
   </Properties>

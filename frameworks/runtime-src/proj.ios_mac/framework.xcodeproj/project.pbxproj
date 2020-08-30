@@ -625,7 +625,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					F293B3C715EB7BE500256477 = {
-						DevelopmentTeam = QK59W4N455;
+						DevelopmentTeam = 6R735A8VJX;
 					};
 				};
 			};
@@ -1020,7 +1020,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
-				DEVELOPMENT_TEAM = QK59W4N455;
+				DEVELOPMENT_TEAM = 6R735A8VJX;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1075,7 +1075,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
-				DEVELOPMENT_TEAM = QK59W4N455;
+				DEVELOPMENT_TEAM = 6R735A8VJX;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

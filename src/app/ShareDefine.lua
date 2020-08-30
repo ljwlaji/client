@@ -22,8 +22,9 @@ local MAP_Z_ORDERS = {
 	ZORDER_PLAYER			= ZORDER_START + 500, --✔
 	ZORDER_LOOT 			= ZORDER_START + 600, --✔
 	ZORDER_FRONT_GROUND		= ZORDER_START + 700, --✔
-	ZORDER_HUD_LAYER		= ZORDER_START + 800, --✔
-	ZORDER_WINDOW_START		= ZORDER_START + 900, --✔
+	ZORDER_DAMAGE_EFFECT	= ZORDER_START + 800,
+	ZORDER_HUD_LAYER		= ZORDER_START + 900, --✔
+	ZORDER_WINDOW_START		= ZORDER_START + 1000, --✔
 }
 
 local ITEM_TYPES = {
@@ -209,18 +210,19 @@ function ShareDefine.questStates()
 end
 
 function ShareDefine.getQualityColor(quality)
-	local ret = cc.c3b(200,200,200)
-	if quality == 1 then
+	local ret = nil
+	if quality == 0 then
+		ret = cc.c3b(200,200,200)
+	elseif quality == 1 then
 		ret = cc.c3b(255,255,255)
 	elseif quality == 2 then
 		ret = cc.c3b(118,249,75)
 	elseif quality == 3 then
 		ret = cc.c3b(40,112,215)
-	elseif quality == 3 then
-		ret = cc.c3b(148,117,230)
-	elseif quality == 3 then
+	elseif quality == 4 then
 		ret = cc.c3b(148,117,230)
 	end
+	assert(ret, "Cannot Find Current Color For Quality "..quality)
 	return ret
 end
 

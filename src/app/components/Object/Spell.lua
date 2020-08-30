@@ -42,7 +42,6 @@ local SpellTargetType = Spell.SpellTargetType
 
 local SPELL_CAST_STATES = {
 	STATE_CASTTING 		= 1,
-	-- STATE_LAUNCHING 	= 2,
 }
 
 local SPELL_DAMAGE_TYPES = {
