@@ -14,7 +14,7 @@ function vNodeItemDetailUpper:onReset(context)
 	local isWeapon = not ShareDefine.isArmorType(context.type)
 	if isWeapon then self.m_Children["Text_Speed"]:setString(string.format("%.02f", context.attack_speed * 0.01)) end
 	self.m_Children["Text_Speed"]:setVisible(isWeapon)
-	self.m_Children["Text_ItemName"]:setColor(ShareDefine.getQualityColor(context.quailty))
+	self.m_Children["Text_ItemName"]:setColor(ShareDefine.getQualityColor(context.quality))
 	self.m_Children["Text_ItemName"]:setString(DataBase:getStringByID(context.name_string))
 	self.m_Children["Text_ItemLevel"]:setString(string.format(DataBase:getStringByID(297), context.item_level))
 	self.m_Children["Text_Slot"]:setString(DataBase:getStringByID(context.equip_slot + 300))
