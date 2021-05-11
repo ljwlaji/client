@@ -78,7 +78,6 @@
 		72DAFE162386E59100B93FAE /* CrashReport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 72DAFE142386E59100B93FAE /* CrashReport.mm */; };
 		72DAFE172386E59100B93FAE /* CrashReport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 72DAFE142386E59100B93FAE /* CrashReport.mm */; };
 		72DAFE192386E5ED00B93FAE /* libBuglyAgent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE182386E5ED00B93FAE /* libBuglyAgent.a */; };
-		72DAFE1A2386E5ED00B93FAE /* libBuglyAgent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE182386E5ED00B93FAE /* libBuglyAgent.a */; };
 		9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */; };
 		9FF504841A5E87B100AFDA55 /* ConsoleWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */; };
 		9FF504851A5E87B100AFDA55 /* ConsoleWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF504831A5E87B100AFDA55 /* ConsoleWindowController.m */; };
@@ -318,7 +317,6 @@
 				5023813E17EBBCE400990C9B /* QuartzCore.framework in Frameworks */,
 				5023814017EBBCE400990C9B /* OpenAL.framework in Frameworks */,
 				5023814117EBBCE400990C9B /* AudioToolbox.framework in Frameworks */,
-				72DAFE1A2386E5ED00B93FAE /* libBuglyAgent.a in Frameworks */,
 				5023814417EBBCE400990C9B /* Foundation.framework in Frameworks */,
 				5023814517EBBCE400990C9B /* CoreGraphics.framework in Frameworks */,
 			);
@@ -582,7 +580,6 @@
 			);
 			dependencies = (
 				9FEE0E441A5FC95000FEA1B0 /* PBXTargetDependency */,
-				9FF505C11A5F0F0900AFDA55 /* PBXTargetDependency */,
 				152A34B9199CE758004B68DC /* PBXTargetDependency */,
 				C0A2F04118975FF80072A7AB /* PBXTargetDependency */,
 			);
@@ -851,10 +848,6 @@
 			name = libsimulator_iOS;
 			targetProxy = 9FF504881A5E8B4C00AFDA55 /* PBXContainerItemProxy */;
 		};
-		9FF505C11A5F0F0900AFDA55 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = libsimulator;
-		};
 		C0A2F04118975FF80072A7AB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "cocos2dx Mac";
@@ -904,7 +897,7 @@
 				);
 				INFOPLIST_FILE = mac/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				OTHER_LDFLAGS = (
 					"-image_base",
 					100000000,
@@ -947,7 +940,7 @@
 				);
 				INFOPLIST_FILE = mac/Info.plist;
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				OTHER_LDFLAGS = (
 					"-image_base",
 					100000000,
