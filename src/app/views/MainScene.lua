@@ -1,4 +1,3 @@
-
 local MainScene     = class("MainScene", cc.load("mvc").ViewBase)
 local Camera        = import("app.components.Camera")
 local GridView      = import("app.components.GridView")
@@ -17,13 +16,21 @@ function MainScene:onEnterTransitionFinish()
     local chosedCharacterID = 1
     self:run()
     self:createView("layer.LayerEntrance", function()
-        self.m_LayerHUD = import("app.views.layer.vLayerHUD"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
+        self.m_HUDLayer = import("app.views.layer.vLayerHUD"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
         self:startGame(chosedCharacterID)
-        self.m_LayerHUD:onReset()
+        self.m_HUDLayer:onReset()
     end):addTo(self)
 end
 
 function MainScene:run()
+    -- local sp = cc.Sprite:create("test_character.png")
+    --                     :addTo(self)
+    --                     :move(display.cx, display.cy)
+    --                     :setScale(0.3)
+
+
+    -- self:testShader(sp)
+    -- do return end
     if not self.Timmer then
         self.Timmer = cc.Timmer:create():addTo(self)
         self:onUpdate(handler(self, self.onNativeUpdate))
@@ -197,20 +204,17 @@ function MainScene:testPixalCollisionMgr()
 end
 
 local vertSource = "\n"..
-    "attribute vec4 a_position; \n" ..
-    "attribute vec2 a_texCoord; \n" ..
-    "attribute vec4 a_color; \n" ..
-    "#ifdef GL_ES \n" .. 
-    "varying lowp vec4 v_fragmentColor;\n" ..
-    "varying mediump vec2 v_texCoord;\n" ..
-    "#else \n" ..
-    "varying vec4 v_fragmentColor;\n" ..
-    "varying vec2 v_texCoord;\n" ..
-    "#endif\n" ..
-    "void main()\n" ..
+"attribute vec4 a_position; \n" ..
+"attribute vec2 a_texCoord; \n" ..
+"#ifdef GL_ES \n" .. 
+"varying mediump vec2 v_texCoord;\n" ..
+"#else \n" ..
+"varying vec2 v_texCoord;\n" ..
+"#endif\n" ..
+
+"void main()\n" ..
     "{\n" .. 
     " gl_Position = CC_PMatrix * a_position;\n"..
-    " v_fragmentColor = a_color;\n"..
     " v_texCoord = a_texCoord;\n" ..
 "}\n"
 
@@ -230,7 +234,7 @@ local fragSource =  "\n" ..
 "void main(void)\n" ..
 "{\n" ..
 "    vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;\n" ..
-"    gl_FragColor = vec4(col) * v_fragmentColor;\n" ..
+"    gl_FragColor = vec4(col);\n" ..
 "}\n" ..
 "\n" ..
 
@@ -239,7 +243,7 @@ local fragSource =  "\n" ..
 "    if (blurRadius > 0.0 && sampleNum > 1.0)\n" ..
 "    {\n" ..
 "        vec4 col = vec4(0);\n" ..
-"        vec2 unit = 1.0 / resolution.xy;\n" ..
+"        vec2 unit = 1.0 / resolution.xy;\n" .. -- 这边是步进长度
 " \n" ..       
 "        float r = blurRadius;\n" ..
 "        float sampleStep = r / sampleNum;\n" ..
@@ -263,7 +267,6 @@ local fragSource =  "\n" ..
 "}\n"
 
 function MainScene:setShader(spr)
-    local maskOpacity = 0.1
     local pProgram = cc.GLProgram:createWithByteArrays(vertSource,fragSource)
     -- local pProgram = cc.GLProgram:create("res/shader/base.vsh","res/shader/gblur.fsh")
     local glprogramstate = cc.GLProgramState:getOrCreateWithGLProgram(pProgram)
@@ -271,9 +274,9 @@ function MainScene:setShader(spr)
     spr.m_GLPrograme = pProgram
     spr.m_GLProgrameState = glprogramstate
     spr:setGLProgramState(glprogramstate)
-    glprogramstate:setUniformVec2("resolution", cc.p(size.width, size.height));
-    glprogramstate:setUniformFloat("blurRadius", 0);
-    glprogramstate:setUniformFloat("sampleNum", 0)
+    glprogramstate:setUniformVec2(pProgram:getUniform("resolution").location, cc.p(size.width, size.height));
+    glprogramstate:setUniformFloat(pProgram:getUniform("blurRadius").location, 0);
+    glprogramstate:setUniformFloat(pProgram:getUniform("sampleNum").location, 0)
 end
 
 
@@ -287,9 +290,8 @@ function MainScene:testShader(sp)
     local resolution = cc.p(size.width, size.height)
     local i = 2
     sp:onUpdate(function()
-            if blurRadius > 15 then return end
+            if blurRadius > 30 then return end
             blurRadius = blurRadius + 0.2
-            release_print(blurRadius)
             local glprogramstate = sp.m_GLProgrameState
             local prog = sp.m_GLPrograme
 

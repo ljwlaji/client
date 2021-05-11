@@ -73,13 +73,14 @@ function Creature:getAI()
 end
 
 function Creature:onTouched(pPlayer)
-	-- 判断阵营
 	-- 判断生死情况
-	-- 判断声望
-	if FactionMgr:isHostile(pPlayer:getFaction(), self:getFaction()) or self:isAlive() then 
+	if not self:isAlive() then return false end
+	-- 判断阵营
+	if FactionMgr:isHostile(pPlayer:getFaction(), self:getFaction()) or self:isAlive() then
 		return false 
 	end
-	if self:isAlive() then return false end
+	-- 判断声望
+	-- Code Here
 	return self:getAI():onNativeGossipHello(pPlayer, self)
 end
 
