@@ -33,14 +33,15 @@ bool PixalCollisionMgr::GetAlpha(const char * url, uint32 x, uint32 y)
 void PixalCollisionMgr::link(const char* url)
 {
 	if (PixalData* data = GetData(url))
-		data->m_RefrenceCount++;
+		data->retain();
 }
 
 void PixalCollisionMgr::unLink(const char* url)
 {
 	if (PixalData* data = GetData(url))
 	{
-		if (--data->m_RefrenceCount <= 0)
+		data->release()
+		if (data->getRefrenceCount() <= 0)
 		{
 			delete data;
 			data = nullptr;
@@ -75,7 +76,7 @@ bool PixalCollisionMgr::loadPNGData(const char * url)
 {
 	if (m_PixalTemplate.find(url) != m_PixalTemplate.end())
 	{
-		m_PixalTemplate.find(url)->second->m_RefrenceCount++;
+		m_PixalTemplate.find(url)->second->retain();
 		return true;
 	}
 	cocos2d::Image* image = nullptr;
@@ -108,7 +109,7 @@ bool PixalCollisionMgr::loadPNGData(const char * url)
 				bool isVisible = ((*pixel >> 24) & 0xff) == 255;
 				SetByteValue(buffer[currPos], offset, isVisible);
 			}
-		data->m_RefrenceCount++;
+		data->retain();
 		m_PixalTemplate[url] = data;
 		ret = true;
 	} while (0);

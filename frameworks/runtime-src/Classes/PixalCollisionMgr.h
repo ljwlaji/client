@@ -39,8 +39,11 @@ public:
 	{
 		return m_Data;
 	}
-	uint32 m_RefrenceCount;
+	uint32 getRefrenceCount() 	{ return m_RefrenceCount; }
+	void retain() 				{ --m_RefrenceCount; }
+	void release()				{ --m_RefrenceCount; }
 private:
+	uint32 m_RefrenceCount;
 	uint32 m_Height;
 	uint32 m_Width;
 	uint8* m_Data;
