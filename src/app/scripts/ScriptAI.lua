@@ -19,7 +19,7 @@ local SPELL_ID_MELEE_ATTACK = 200000
 
 function ScriptAI:ctor(me)
 	self.getOwner = function() return me end
-	self:clearThreatList()
+	self.m_ThreadList = {}
 	self.m_AttackTimer = 0
 end
 
@@ -59,8 +59,8 @@ function ScriptAI:onNativeGossipSelect(pPlayer, pObject, pSender, pIndex)
 end
 
 function ScriptAI:onReset()
-	self.m_ThreadList = {}
 	self.m_MoveInLineOfSightTimer = 0
+	self:clearThreatList()
 	self:setVictim(nil)
 	self:setInCombat(false)
 	self:setTraceOn(nil)
@@ -87,26 +87,37 @@ end
 
 	--[[ For Threat Issus]]
 function ScriptAI:addThreat(who, val)
-	local currThreat = self._threadList[who] or 0
+	local currThreat = self.m_ThreadList[who] or 0
 	currThreat = math.min(1, currThreat + val)
-	self._threadList[who] = currThreat
+	self.m_ThreadList[who] = currThreat
 end
 
 function ScriptAI:clearThreatList()
 	-- mind to exit Combat
-	self._threadList = {}
-	for unit, threat in pairs(self._threadList) do
-		if unit:isCreture() then
-			
+	for unit, threat in pairs(self.m_ThreadList) do
+		if unit:isPlayer() then
+
 		end
 	end
+	self.m_ThreadList = {}
 end
 
 	--[[ End Threat Issus]]
 function ScriptAI:moveInLineOfSight(who)
 	if not self:isInCombat() and FactionMgr:isHostile(self:getOwner():getFaction(), who:getFaction()) then
-		self:setVictim(who)
-		self:setInCombat(true)
+		self:setInCombatWith(who)
+	end
+end
+
+function ScriptAI:setInCombatWith(who)
+	-- body
+	if self:isCreature() then
+		local script = self:getScript()
+		script:setInCombat(true)
+		script:addThreat(who, 1) --[[ 添加一点基础的威胁值 ]]
+	else -- Player
+		local script = self:getScript()
+		script:setInCombat(true)
 	end
 end
 
@@ -114,10 +125,8 @@ function ScriptAI:setInCombat(enabled)
 	if self.m_Combat == enabled then return end
 	self.m_Combat = enabled
 	if self.m_Combat == true then
-		self:getOwner():startCombat()
 		self:onStartCombat()
 	else
-		self:getOwner():leaveCombat()
 		self:onExitCombat()
 	end
 end
@@ -142,7 +151,8 @@ function ScriptAI:getThreadList()
 	return self.m_ThreadList
 end
 
-function ScriptAI:onDead()
+function ScriptAI:onNativeDead()
+	if self.onDead then self:onDead() end
 	self:setInCombat(false)
 end
 

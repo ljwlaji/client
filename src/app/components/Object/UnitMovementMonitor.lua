@@ -156,10 +156,10 @@ function UnitMovementMonitor:onHorizonMove(diff, isJumpping)
 			local _c = Controller:getInstance()
 			self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION + (_c and _c:getHorizonOffset() or 0)
 		else
-            if self:canDoPathMove() and not mover:getAI():isInCombat() then 
+            if self:canDoPathMove() and not mover:getScript():isInCombat() then 
             	self:doPathMove(mover, diff)
             else
-                self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION + (mover:getAI() and mover:getAI():onAIMove(diff) or 0)
+                self.m_MoveSpeed = self.m_MoveSpeed * SPEED_REDUCTION + (mover:getScript() and mover:getScript():onAIMove(diff) or 0)
             end
 		end
 	end

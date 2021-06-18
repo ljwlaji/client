@@ -46,10 +46,10 @@ function vLayerGossipMenu:onCellAtIndex(cell, index)
 end
 
 function vLayerGossipMenu:onTouchedGossipItem(context)
-	local ai = self.sender:getAI()
-	if ai then
+	local script = self.sender:getScript()
+	if script then
 		-- 如果创建了额外窗口则移除自身
-		if ai:onNativeGossipSelect(self.player, self.sender, context.GossipSender, context.GossipIndex) then self:removeFromParent() end
+		if script:onNativeGossipSelect(self.player, self.sender, context.GossipSender, context.GossipIndex) then self:removeFromParent() end
 	end
 end
 

@@ -39,9 +39,7 @@ function Player:onCreate()
 
     self:setInventoryDataDirty(false)
     self:setQuestDataDirty(false)
-    	-- :setContentSize(sp:getContentSize())
-	-- self:regiestCustomEventListenter("MSG_INVENTORY_DATA_CHANGED", function() end)
-
+	self:loadScript("PlayerScript")
 end
 
 function Player:loadFromDB()
@@ -81,11 +79,20 @@ end
 function Player:isAchivementCompleted(AchiveEntry)
 	return true
 end
+--							[[ ================ ]]
+--							[[ For Script Issus ]]
+--							[[ ================ ]]
+function Player:getScript()
+	return self.m_PlayerScript
+end
+
+function Player:loadScript(scriptPath)
+	self.m_PlayerScript = import("app.scripts."..scriptPath)
+end
 
 --							[[ =============== ]]
 --							[[ For Quest Issus ]]
 --							[[ =============== ]]
-
 function Player:setQuestDataDirty(value)
 	self.m_QuestDataDirty = value
 end
@@ -716,9 +723,9 @@ end
 
 function Player:onLevelUp(oldLevel, newLevel)
 	self:updateBaseAttrs()
-
 	self:tryAwardTalent(oldLevel, newLevel)
 	self:saveToDB()
+	self:getScript():onNativeLevelUp(oldLevel, newLevel)
 end
 
 function Player:tryAwardTalent(oldLevel, newLevel)

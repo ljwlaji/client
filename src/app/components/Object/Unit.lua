@@ -1,6 +1,7 @@
 local DataBase 			= import("app.components.DataBase")
 local Object 			= import("app.components.Object.Object")
 local MovementMonitor 	= import("app.components.Object.UnitMovementMonitor")
+local AnimationMonitor 	= import("app.components.Object.UnitAnimationMonitor")
 local SpellMgr 			= import("app.components.SpellMgr")
 local Spell 			= import("app.components.Object.Spell")
 local ShareDefine 		= import("app.ShareDefine")
@@ -64,13 +65,13 @@ function Unit:onCreate(objType)
 		energy 					= 100,
 		mana 					= 100,
 	}
-	self.m_MovementMonitor = MovementMonitor:create(self)
+	self.m_MovementMonitor 	= MovementMonitor:create(self)
+	self.m_AnimationMonitor = AnimationMonitor:create(self)
 	self:regiestCustomEventListenter("onTouchButtonX", function() end)
 	self:regiestCustomEventListenter("onTouchButtonY", function() end)
 	self:regiestCustomEventListenter("onTouchButtonA", function() end)
 	self:regiestCustomEventListenter("onControllerJump", function() if self:isControlByPlayer() then self.m_MovementMonitor:jump() end end)
 	self:setAttrDataDirty(true)
-
 end
 
 function Unit:onUpdate(diff)
@@ -83,7 +84,8 @@ function Unit:onUpdate(diff)
 	end
 
 	if not self:isAlive() then return end
-	self.m_MovementMonitor:update(diff)
+	self:getMovementMonitor():update(diff)
+	self:getAnimationMonitor():update(diff)
 	if self.m_CasttingSpell then self.m_CasttingSpell:onUpdate(diff) end
 	self:updateSpellCoolDown(diff)
 end
@@ -93,8 +95,9 @@ function Unit:reborn()
 	self:setAttr("health", 	self:getAttr("maxHealth") * seed)
 	self:setAttr("mana", 	self:getAttr("maxMana") * seed)
 	self:updateAttrs()
-	self:getMovementMonitor():onReset()
 	self:setAlive(true)
+	self:getMovementMonitor():onReset()
+	self:getAnimationMonitor():onReset()
 end
 
 function Unit:updateSpellCoolDown(diff)
@@ -200,7 +203,7 @@ function Unit:updateBaseAttrs(init)
 		["energy"] 	= "maxEnergy",
 	}
 	if init then
-		if self:isPlayer() then
+		if self:isPlayer() then -- For player issus we just set the hp and mp to last offline records.
 			self:setAttr("health", self.context.current_health)
 			self:setAttr("mana", self.context.current_mana)
 		else
@@ -367,26 +370,15 @@ function Unit:justDie(killer)
 	-- CleanUp All Threats And Targets
 	self:updateAttrs()
 	self:setDeathTime(os.time())
-	self:getAI():onDead()
+	self:getScript():onNativeDead()
 	if killer then
 		if self:isCreature() and killer:isPlayer() and killer:isAlive() then killer:awardExp(self.context.award_exp) end
-		if killer:isCreature() and killer:getAI() then killer:onKill(self) end
+		if killer:isCreature() and killer:getScript() then killer:onKill(self) end
 	end
 end
 			-----------------------
 			-- End Of Attr Issus --
 			-----------------------
-
---[[ For Combat Issus ]]
-function Unit:startCombat()
-	local ai = self:getAI()
-	if ai then 
-	end
-end
-
-function Unit:leaveCombat()
-	-- return to home pos
-end
 
 function Unit:isFacingTo(otherUnit)
 	local offset = self:getPositionX() - otherUnit:getPositionX()
@@ -469,17 +461,6 @@ end
 function Unit:getSpellCoolDownList()
 	return self.m_SpellCoolDowns
 end
-	--[[ For Threat Issus ]]
-function Unit:setInCombatWith(who)
-	-- body
-	if self:isCreature() then
-		
-	else -- Player
-
-	end
-end
-	--[[ End Threat Issus ]]
---[[ End Combat Issus ]]
 
 			--------------------
 			-- For Pawn Issus --
@@ -499,6 +480,11 @@ end
 function Unit:getMovementMonitor()
 	return self.m_MovementMonitor
 end
+
+function Unit:getAnimationMonitor()
+	return self.m_AnimationMonitor
+end
+
 function Unit:getMaxMoveSpeed()
 	return self:getAttr("moveSpeed")
 end

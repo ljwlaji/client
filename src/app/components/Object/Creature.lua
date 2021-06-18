@@ -24,9 +24,9 @@ function Creature:onCreate()
 	self:updateBaseAttrs()
 
     if self.context.script_name and self.context.script_name ~= "" then
-		self:initAI(self.context.script_name)
+		self:initScript(self.context.script_name)
 	else
-		self:initAI("ScriptAI")
+		self:initScript("ScriptAI")
 	end
 	self.m_RebornCheckTimer = 1000
 end
@@ -57,19 +57,19 @@ function Creature:isQuestProvider()
 	return #self.m_QuestList > 0
 end
 
-function Creature:initAI(AIName)
-	local currAITemplate = import(string.format("app.scripts.%s", AIName))
-	assert(currAITemplate, "Cannot Find Current AI By Path Named: ["..AIName.."]")
+function Creature:initScript(ScriptName)
+	local currAITemplate = import(string.format("app.scripts.%s", ScriptName))
+	assert(currAITemplate, "Cannot Find Current AI By Path Named: ["..ScriptName.."]")
 	self:setAI(currAITemplate:create(self):onReset())
 end
 
-function Creature:setAI(AIInstance)
-	if AIInstance == self.m_AI then return end
-	self.m_AI = AIInstance
+function Creature:setAI(ScriptInstance)
+	if ScriptInstance == self.m_Script then return end
+	self.m_Script = ScriptInstance
 end
 
-function Creature:getAI()
-	return self.m_AI
+function Creature:getScript()
+	return self.m_Script
 end
 
 function Creature:onTouched(pPlayer)
@@ -81,7 +81,7 @@ function Creature:onTouched(pPlayer)
 	end
 	-- 判断声望
 	-- Code Here
-	return self:getAI():onNativeGossipHello(pPlayer, self)
+	return self:getScript():onNativeGossipHello(pPlayer, self)
 end
 
 function Creature:fetchMovePaths()
@@ -110,7 +110,7 @@ end
 
 function Creature:reborn()
 	Unit.reborn(self)
-	self:getAI():onReset()
+	self:getScript():onReset()
 	self:move(self.context.x, self.context.y)
 end
 
