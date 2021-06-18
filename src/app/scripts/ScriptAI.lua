@@ -19,6 +19,7 @@ local SPELL_ID_MELEE_ATTACK = 200000
 
 function ScriptAI:ctor(me)
 	self.getOwner = function() return me end
+	self:clearThreatList()
 	self.m_AttackTimer = 0
 end
 
@@ -84,6 +85,24 @@ end
 
 --[[ For Combat Issus]]
 
+	--[[ For Threat Issus]]
+function ScriptAI:addThreat(who, val)
+	local currThreat = self._threadList[who] or 0
+	currThreat = math.min(1, currThreat + val)
+	self._threadList[who] = currThreat
+end
+
+function ScriptAI:clearThreatList()
+	-- mind to exit Combat
+	self._threadList = {}
+	for unit, threat in pairs(self._threadList) do
+		if unit:isCreture() then
+			
+		end
+	end
+end
+
+	--[[ End Threat Issus]]
 function ScriptAI:moveInLineOfSight(who)
 	if not self:isInCombat() and FactionMgr:isHostile(self:getOwner():getFaction(), who:getFaction()) then
 		self:setVictim(who)

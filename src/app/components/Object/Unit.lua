@@ -379,7 +379,9 @@ end
 
 --[[ For Combat Issus ]]
 function Unit:startCombat()
-	
+	local ai = self:getAI()
+	if ai then 
+	end
 end
 
 function Unit:leaveCombat()
@@ -467,6 +469,16 @@ end
 function Unit:getSpellCoolDownList()
 	return self.m_SpellCoolDowns
 end
+	--[[ For Threat Issus ]]
+function Unit:setInCombatWith(who)
+	-- body
+	if self:isCreature() then
+		
+	else -- Player
+
+	end
+end
+	--[[ End Threat Issus ]]
 --[[ End Combat Issus ]]
 
 			--------------------
