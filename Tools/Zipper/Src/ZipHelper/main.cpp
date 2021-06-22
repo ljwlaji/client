@@ -6,12 +6,14 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    if (argc < 4)
+    {
+        printf("usage : [inputDir] [outputDir] [mode (compress/uncompress)]");
+        return -1;
+    }
 	std::string inputDir = argv[1];
 	std::string ouputDir = argv[2];
-	std::string mode = "compress";
-	if (argc == 4)
-		mode = argv[3];
-
+	std::string mode = argv[3];
 
 	cout << "From : " 	<< inputDir.c_str() << endl;
 	cout << "To : " 	<< ouputDir.c_str() << endl;

@@ -400,26 +400,6 @@ void ZipReader::ExecuteAll(std::string Path)
 		_executeFile(i->second, Path);
 }
 
-void ZipReader::ExecuteFile(int Index)
-{
-	FCFile* CurrFile = FindFile(Index);
-	if (!CurrFile)
-	{
-		printf("No Such Index => %d", Index);
-		return;
-	}
-
-	std::string Temp2 = RootPath;
-	std::string TempPath = GetLastStr(RootPath, "/");
-	TempPath = GetLastStr(TempPath, "\\");
-	int pos = RootPath.find(TempPath);
-	while (Temp2.size() != pos)
-	{
-		Temp2.erase(Temp2.size() - 1);
-	}
-	_executeFile(CurrFile, Temp2);
-}
-
 void ZipReader::_executeFile(FCFile * file, std::string RootPath)
 {
 	std::string CurrDir = RootPath + "/";

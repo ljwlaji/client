@@ -190,7 +190,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 
 
 	local fileTo = string.gsub(updateDir.."/AllUpdates", "\\", "/")
-	local fileWrite = io.open(fileTo,"w")
+	local fileWrite = io.open(fileTo, "w")
 	fileWrite:write(TableToString(originData))
 	fileWrite:close()
 
