@@ -96,13 +96,13 @@ static int register_all_packages()
 bool AppDelegate::applicationDidFinishLaunching()
 {
     // set default FPS
-    Director::getInstance()->setAnimationInterval(1.0 / 1000.0f);
+    Director::getInstance()->setAnimationInterval(1.0 / 60.0f);
 
     // register lua module
     auto engine = LuaEngine::getInstance();
     // For Bugly Issus
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    CrashReport::initCrashReport("86536930d0", false);
+    CrashReport::initCrashReport("86536930d0", true);
     BuglyLuaAgent::registerLuaExceptionHandler(engine);
 #endif
     ScriptEngineManager::getInstance()->setScriptEngine(engine);

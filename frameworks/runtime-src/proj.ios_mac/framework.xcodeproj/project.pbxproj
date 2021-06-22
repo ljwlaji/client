@@ -55,12 +55,14 @@
 		720EB5FF230E58FC003ADE72 /* ZipHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */; };
 		720EB600230E58FC003ADE72 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5F1230E58FC003ADE72 /* Session.cpp */; };
 		720EB601230E58FC003ADE72 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720EB5F1230E58FC003ADE72 /* Session.cpp */; };
-		72106C4A2386F4EE0024F109 /* BuglyLuaAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72106C482386F4EE0024F109 /* BuglyLuaAgent.cpp */; };
-		72106C4B2386F4EE0024F109 /* BuglyLuaAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72106C482386F4EE0024F109 /* BuglyLuaAgent.cpp */; };
-		7223C0242371E3C4006E1527 /* sqlite3secure.c in Sources */ = {isa = PBXBuildFile; fileRef = 7223C0132371E3C3006E1527 /* sqlite3secure.c */; };
-		7223C0252371E3C4006E1527 /* sqlite3secure.c in Sources */ = {isa = PBXBuildFile; fileRef = 7223C0132371E3C3006E1527 /* sqlite3secure.c */; };
-		7223C02C2371E3C4006E1527 /* lsqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 7223C01C2371E3C3006E1527 /* lsqlite3.c */; };
-		7223C02D2371E3C4006E1527 /* lsqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 7223C01C2371E3C3006E1527 /* lsqlite3.c */; };
+		721C427B26823F8100F18557 /* BuglyLuaAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 721C427826823F8100F18557 /* BuglyLuaAgent.cpp */; };
+		721C427C26823F8100F18557 /* BuglyLuaAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 721C427826823F8100F18557 /* BuglyLuaAgent.cpp */; };
+		721C427D26823F8100F18557 /* CrashReport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 721C427A26823F8100F18557 /* CrashReport.mm */; };
+		721C427E26823F8100F18557 /* CrashReport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 721C427A26823F8100F18557 /* CrashReport.mm */; };
+		721C42B32682415900F18557 /* lsqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 721C42B22682415900F18557 /* lsqlite3.c */; };
+		721C42B42682415900F18557 /* lsqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 721C42B22682415900F18557 /* lsqlite3.c */; };
+		721C42BB2682418500F18557 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 721C42B92682418500F18557 /* sqlite3.c */; };
+		721C42BC2682418500F18557 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 721C42B92682418500F18557 /* sqlite3.c */; };
 		722DCD65231C21F4002818CC /* PixalCollisionMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD61231C21F2002818CC /* PixalCollisionMgr.cpp */; };
 		722DCD66231C21F4002818CC /* PixalCollisionMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD61231C21F2002818CC /* PixalCollisionMgr.cpp */; };
 		722DCD69231C871C002818CC /* lfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 722DCD67231C871C002818CC /* lfs.c */; };
@@ -75,8 +77,6 @@
 		72DAFE0A2386E33500B93FAE /* Bugly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE072386E33500B93FAE /* Bugly.framework */; };
 		72DAFE0D2386E36500B93FAE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE0C2386E36500B93FAE /* SystemConfiguration.framework */; };
 		72DAFE0F2386E36E00B93FAE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE0E2386E36E00B93FAE /* Security.framework */; };
-		72DAFE162386E59100B93FAE /* CrashReport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 72DAFE142386E59100B93FAE /* CrashReport.mm */; };
-		72DAFE172386E59100B93FAE /* CrashReport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 72DAFE142386E59100B93FAE /* CrashReport.mm */; };
 		72DAFE192386E5ED00B93FAE /* libBuglyAgent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE182386E5ED00B93FAE /* libBuglyAgent.a */; };
 		9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */; };
 		9FF504841A5E87B100AFDA55 /* ConsoleWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */; };
@@ -246,12 +246,14 @@
 		720EB5EE230E58FC003ADE72 /* ZipHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZipHelper.cpp; path = ../Classes/ZipHelper.cpp; sourceTree = "<group>"; };
 		720EB5F0230E58FC003ADE72 /* Session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Session.h; path = ../Classes/Session.h; sourceTree = "<group>"; };
 		720EB5F1230E58FC003ADE72 /* Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Session.cpp; path = ../Classes/Session.cpp; sourceTree = "<group>"; };
-		72106C482386F4EE0024F109 /* BuglyLuaAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BuglyLuaAgent.cpp; path = ../../../Classes/TencentBugly/lua/BuglyLuaAgent.cpp; sourceTree = "<group>"; };
-		72106C492386F4EE0024F109 /* BuglyLuaAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BuglyLuaAgent.h; path = ../../../Classes/TencentBugly/lua/BuglyLuaAgent.h; sourceTree = "<group>"; };
-		7223C0132371E3C3006E1527 /* sqlite3secure.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3secure.c; path = ../../Classes/sqlite3/sqlite3secure.c; sourceTree = "<group>"; };
-		7223C0142371E3C3006E1527 /* lsqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lsqlite3.h; path = ../../Classes/sqlite3/lsqlite3.h; sourceTree = "<group>"; };
-		7223C0192371E3C3006E1527 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = ../../Classes/sqlite3/sqlite3.h; sourceTree = "<group>"; };
-		7223C01C2371E3C3006E1527 /* lsqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lsqlite3.c; path = ../../Classes/sqlite3/lsqlite3.c; sourceTree = "<group>"; };
+		721C427726823F8100F18557 /* BuglyLuaAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuglyLuaAgent.h; sourceTree = "<group>"; };
+		721C427826823F8100F18557 /* BuglyLuaAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuglyLuaAgent.cpp; sourceTree = "<group>"; };
+		721C427926823F8100F18557 /* CrashReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrashReport.h; sourceTree = "<group>"; };
+		721C427A26823F8100F18557 /* CrashReport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CrashReport.mm; sourceTree = "<group>"; };
+		721C42B12682415900F18557 /* lsqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lsqlite3.h; sourceTree = "<group>"; };
+		721C42B22682415900F18557 /* lsqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lsqlite3.c; sourceTree = "<group>"; };
+		721C42B92682418500F18557 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
+		721C42BA2682418500F18557 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
 		722DCD61231C21F2002818CC /* PixalCollisionMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PixalCollisionMgr.cpp; path = ../Classes/PixalCollisionMgr.cpp; sourceTree = "<group>"; };
 		722DCD64231C21F3002818CC /* PixalCollisionMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PixalCollisionMgr.h; path = ../Classes/PixalCollisionMgr.h; sourceTree = "<group>"; };
 		722DCD67231C871C002818CC /* lfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lfs.c; path = ../Classes/lfs.c; sourceTree = "<group>"; };
@@ -268,8 +270,6 @@
 		72DAFE0E2386E36E00B93FAE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		72DAFE102386E37D00B93FAE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		72DAFE112386E38900B93FAE /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
-		72DAFE142386E59100B93FAE /* CrashReport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CrashReport.mm; path = ../../Classes/TencentBugly/CrashReport.mm; sourceTree = "<group>"; };
-		72DAFE152386E59100B93FAE /* CrashReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CrashReport.h; path = ../../Classes/TencentBugly/CrashReport.h; sourceTree = "<group>"; };
 		72DAFE182386E5ED00B93FAE /* libBuglyAgent.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libBuglyAgent.a; sourceTree = "<group>"; };
 		9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		9FF504781A5E86D600AFDA55 /* libsimulator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libsimulator.xcodeproj; path = "../../cocos2d-x/tools/simulator/libsimulator/proj.ios_mac/libsimulator.xcodeproj"; sourceTree = "<group>"; };
@@ -409,24 +409,36 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
-		72106C472386F4DF0024F109 /* lua */ = {
+		721C427526823F8100F18557 /* TencentBugly */ = {
 			isa = PBXGroup;
 			children = (
-				72106C482386F4EE0024F109 /* BuglyLuaAgent.cpp */,
-				72106C492386F4EE0024F109 /* BuglyLuaAgent.h */,
+				721C427626823F8100F18557 /* lua */,
+				721C427926823F8100F18557 /* CrashReport.h */,
+				721C427A26823F8100F18557 /* CrashReport.mm */,
+			);
+			name = TencentBugly;
+			path = ../Classes/TencentBugly;
+			sourceTree = "<group>";
+		};
+		721C427626823F8100F18557 /* lua */ = {
+			isa = PBXGroup;
+			children = (
+				721C427726823F8100F18557 /* BuglyLuaAgent.h */,
+				721C427826823F8100F18557 /* BuglyLuaAgent.cpp */,
 			);
 			path = lua;
 			sourceTree = "<group>";
 		};
-		7223C0122371E3B0006E1527 /* sqlite3 */ = {
+		721C42852682406E00F18557 /* sqlite3 */ = {
 			isa = PBXGroup;
 			children = (
-				7223C01C2371E3C3006E1527 /* lsqlite3.c */,
-				7223C0142371E3C3006E1527 /* lsqlite3.h */,
-				7223C0192371E3C3006E1527 /* sqlite3.h */,
-				7223C0132371E3C3006E1527 /* sqlite3secure.c */,
+				721C42B92682418500F18557 /* sqlite3.c */,
+				721C42BA2682418500F18557 /* sqlite3.h */,
+				721C42B22682415900F18557 /* lsqlite3.c */,
+				721C42B12682415900F18557 /* lsqlite3.h */,
 			);
-			path = sqlite3;
+			name = sqlite3;
+			path = ../Classes/sqlite3;
 			sourceTree = "<group>";
 		};
 		7267CC7023729944004EC500 /* GausBlurSprite */ = {
@@ -436,16 +448,6 @@
 				7267CC7423729955004EC500 /* GausBlurSprite.h */,
 			);
 			name = GausBlurSprite;
-			sourceTree = "<group>";
-		};
-		72DAFE132386E57400B93FAE /* TencentBugly */ = {
-			isa = PBXGroup;
-			children = (
-				72106C472386F4DF0024F109 /* lua */,
-				72DAFE152386E59100B93FAE /* CrashReport.h */,
-				72DAFE142386E59100B93FAE /* CrashReport.mm */,
-			);
-			path = TencentBugly;
 			sourceTree = "<group>";
 		};
 		9FF504791A5E86D600AFDA55 /* Products */ = {
@@ -532,10 +534,10 @@
 		F293BB7C15EB830F00256477 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				72DAFE132386E57400B93FAE /* TencentBugly */,
+				721C427526823F8100F18557 /* TencentBugly */,
 				7267CC7023729944004EC500 /* GausBlurSprite */,
-				7223C0122371E3B0006E1527 /* sqlite3 */,
 				725AF5B22362D9F50033F8A1 /* UpdateMgr.cpp */,
+				721C42852682406E00F18557 /* sqlite3 */,
 				725AF5B12362D9F50033F8A1 /* UpdateMgr.h */,
 				722DCD6E231EE304002818CC /* MD5.cpp */,
 				722DCD6B231EE304002818CC /* MD5.h */,
@@ -622,7 +624,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					F293B3C715EB7BE500256477 = {
-						DevelopmentTeam = 6R735A8VJX;
+						DevelopmentTeam = QK59W4N455;
 					};
 				};
 			};
@@ -771,25 +773,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				720EB5F7230E58FC003ADE72 /* UnitTest.cpp in Sources */,
-				72DAFE172386E59100B93FAE /* CrashReport.mm in Sources */,
 				7267CC7623729955004EC500 /* GausBlurSprite.cpp in Sources */,
 				C07828FA18B4D72E00BD2287 /* SimulatorApp.mm in Sources */,
+				721C427C26823F8100F18557 /* BuglyLuaAgent.cpp in Sources */,
 				5023813317EBBCE400990C9B /* AppDelegate.cpp in Sources */,
 				720EB5FB230E58FC003ADE72 /* CustomModule.cpp in Sources */,
 				720EB601230E58FC003ADE72 /* Session.cpp in Sources */,
 				720EB5FF230E58FC003ADE72 /* ZipHelper.cpp in Sources */,
 				9FF504851A5E87B100AFDA55 /* ConsoleWindowController.m in Sources */,
 				720EB5F5230E58FC003ADE72 /* Timmer.cpp in Sources */,
-				72106C4B2386F4EE0024F109 /* BuglyLuaAgent.cpp in Sources */,
 				720EB5F9230E58FC003ADE72 /* Zipper.cpp in Sources */,
 				722DCD72231EE304002818CC /* MD5.cpp in Sources */,
 				725AF5B42362D9F50033F8A1 /* UpdateMgr.cpp in Sources */,
 				722DCD6A231C871C002818CC /* lfs.c in Sources */,
-				7223C0252371E3C4006E1527 /* sqlite3secure.c in Sources */,
+				721C427E26823F8100F18557 /* CrashReport.mm in Sources */,
+				721C42B42682415900F18557 /* lsqlite3.c in Sources */,
 				722DCD66231C21F4002818CC /* PixalCollisionMgr.cpp in Sources */,
-				7223C02D2371E3C4006E1527 /* lsqlite3.c in Sources */,
 				720EB5F3230E58FC003ADE72 /* SocketClient.cpp in Sources */,
 				C07828F818B4D72E00BD2287 /* main.m in Sources */,
+				721C42BC2682418500F18557 /* sqlite3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -797,11 +799,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				72DAFE162386E59100B93FAE /* CrashReport.mm in Sources */,
-				72106C4A2386F4EE0024F109 /* BuglyLuaAgent.cpp in Sources */,
 				720EB5F6230E58FC003ADE72 /* UnitTest.cpp in Sources */,
 				7267CC7523729955004EC500 /* GausBlurSprite.cpp in Sources */,
 				5023812517EBBCAC00990C9B /* RootViewController.mm in Sources */,
+				721C427B26823F8100F18557 /* BuglyLuaAgent.cpp in Sources */,
 				F293BB9C15EB831F00256477 /* AppDelegate.cpp in Sources */,
 				720EB5FA230E58FC003ADE72 /* CustomModule.cpp in Sources */,
 				720EB600230E58FC003ADE72 /* Session.cpp in Sources */,
@@ -812,11 +813,12 @@
 				722DCD71231EE304002818CC /* MD5.cpp in Sources */,
 				725AF5B32362D9F50033F8A1 /* UpdateMgr.cpp in Sources */,
 				722DCD69231C871C002818CC /* lfs.c in Sources */,
-				7223C0242371E3C4006E1527 /* sqlite3secure.c in Sources */,
+				721C427D26823F8100F18557 /* CrashReport.mm in Sources */,
+				721C42B32682415900F18557 /* lsqlite3.c in Sources */,
 				722DCD65231C21F4002818CC /* PixalCollisionMgr.cpp in Sources */,
-				7223C02C2371E3C4006E1527 /* lsqlite3.c in Sources */,
 				720EB5F2230E58FC003ADE72 /* SocketClient.cpp in Sources */,
 				5023811817EBBCAC00990C9B /* AppController.mm in Sources */,
+				721C42BB2682418500F18557 /* sqlite3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1013,7 +1015,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
-				DEVELOPMENT_TEAM = 6R735A8VJX;
+				DEVELOPMENT_TEAM = QK59W4N455;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1022,10 +1024,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ios/Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"SQLITE_HAS_CODEC=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../Classes/protobuf-lite",
 					"$(SRCROOT)/../Classes",
@@ -1068,7 +1067,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
-				DEVELOPMENT_TEAM = 6R735A8VJX;
+				DEVELOPMENT_TEAM = QK59W4N455;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1076,10 +1075,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ios/Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"SQLITE_HAS_CODEC=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../Classes/protobuf-lite",
 					"$(SRCROOT)/../Classes",

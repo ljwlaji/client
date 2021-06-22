@@ -40,7 +40,7 @@ void PixalCollisionMgr::unLink(const char* url)
 {
 	if (PixalData* data = GetData(url))
 	{
-		data->release()
+        data->release();
 		if (data->getRefrenceCount() <= 0)
 		{
 			delete data;

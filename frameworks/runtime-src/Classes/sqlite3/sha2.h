@@ -48,8 +48,7 @@
 #define SHA2_TYPES
 typedef unsigned char uint8;
 typedef unsigned int  uint32;
-
-typedef sqlite3_uint64 uint64;
+typedef unsigned long long uint64;
 
 #if defined(_MSC_VER) || defined(__BORLANDC__)
   #define li_64(h) 0x##h##ui64
