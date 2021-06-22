@@ -19,8 +19,11 @@ local SPELL_ID_MELEE_ATTACK = 200000
 
 function ScriptAI:ctor(me)
 	self.getOwner = function() return me end
-	self.m_ThreadList = {}
-	self.m_AttackTimer = 0
+	self.m_IsInCombat 	= false
+	self.m_TracedUnit 	= nil
+	self.m_Victim 		= nil
+	self.m_ThreadList 	= {}
+	self.m_AttackTimer 	= 0
 end
 
 function ScriptAI:onNativeGossipHello(pPlayer, pObject)
@@ -60,10 +63,10 @@ end
 
 function ScriptAI:onReset()
 	self.m_MoveInLineOfSightTimer = 0
-	self:clearThreatList()
 	self:setVictim(nil)
 	self:setInCombat(false)
 	self:setTraceOn(nil)
+	self:clearThreatList()
 	return self
 end
 
@@ -96,7 +99,7 @@ function ScriptAI:clearThreatList()
 	-- mind to exit Combat
 	for unit, threat in pairs(self.m_ThreadList) do
 		if unit:isPlayer() then
-
+			unit:getScript():minusThreatRef()
 		end
 	end
 	self.m_ThreadList = {}
@@ -121,10 +124,14 @@ function ScriptAI:setInCombatWith(who)
 	end
 end
 
+function ScriptAI:isInCombatWith(who)
+	return self.m_ThreadList[who] ~= nil
+end
+
 function ScriptAI:setInCombat(enabled)
-	if self.m_Combat == enabled then return end
-	self.m_Combat = enabled
-	if self.m_Combat == true then
+	if self.m_IsInCombat == enabled then return end
+	self.m_IsInCombat = enabled
+	if self.m_IsInCombat == true then
 		self:onStartCombat()
 	else
 		self:onExitCombat()
@@ -136,7 +143,7 @@ function ScriptAI:onStartCombat() end --override
 function ScriptAI:onExitCombat() end --override
 
 function ScriptAI:isInCombat()
-	return self.m_Combat
+	return self.m_IsInCombat
 end
 
 function ScriptAI:setVictim(victim)
@@ -175,7 +182,6 @@ function ScriptAI:setTraceOn(unit)
 end
 
 function ScriptAI:onExecuteCombat(diff)
-	if not self:getVictim() and self:getVictim():isAlive() then return end
 end
 --[[ End Combat Issus]]
 

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	std::string inputDir = argv[1];
 	std::string ouputDir = argv[2];
@@ -26,4 +26,5 @@ void main(int argc, char *argv[])
 		reader.ExecuteAll(ouputDir.c_str());
 	}
 	cout << "successed" << endl;
+	return 0;
 }

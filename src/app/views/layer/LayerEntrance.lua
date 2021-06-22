@@ -150,7 +150,7 @@ end
 
 function LayerEntrance:onExecuteTryDownloadUpdates(diff)
 	--正在进行下载任务
-	if self.CurrentTask then
+	if self:getCurrentTask() then
 		self:onDownloadProgress()
 		return 
 	end
@@ -164,12 +164,12 @@ function LayerEntrance:tryStartNewTask()
 	self.downloadIndex = self.downloadIndex or 1 --下载索引
 	local UpdateMgr = cc.UpdateMgr:getInstance()
 	if UpdateMgr:isStopped() then
-		if self.CurrentTask == nil and self.downloadIndex <= #self.DownloadResList then
-			self.CurrentTask = self.DownloadResList[self.downloadIndex]
-			local path = Utils.getDownloadCachePath()..self.CurrentTask.versionID..".FCZip"
+		if self:getCurrentTask() == nil and self.downloadIndex <= #self.DownloadResList then
+			self:setCurrentTask(self.DownloadResList[self.downloadIndex])
+			local path = Utils.getDownloadCachePath()..self:getCurrentTask().versionID..".FCZip"
 			release_print("添加新任务 : "..path)
 			self.downloadIndex = self.downloadIndex + 1
-			UpdateMgr:start(self.CurrentTask.DownloadUrl, path)
+			UpdateMgr:start(self:getCurrentTask().DownloadUrl, path)
 			return true
 		end
 		return false
@@ -194,18 +194,18 @@ function LayerEntrance:onDownloadProgress()
 	if UpdateMgr:isStopped() then
 		--验证/解压 等后续处理
 		self:handleUpdateFiles()
-		self.CurrentTask = nil
+		self:setCurrentTask(nil)
 	end
 end
 
 function LayerEntrance:handleUpdateFiles()
-	local zipFilePath = Utils.getDownloadCachePath()..self.CurrentTask.versionID..".FCZip"
+	local zipFilePath = Utils.getDownloadCachePath()..self:getCurrentTask().versionID..".FCZip"
 	local tempDir = Utils.getDownloadCachePath().."temp/"
 	cc.ZipReader.uncompress(zipFilePath, tempDir)
 	local needCheck = {}
 	local allPassed = true
 
-	for k, v in pairs(self.CurrentTask["updateInfo"]["FileList"]) do
+	for k, v in pairs(self:getCurrentTask()["updateInfo"]["FileList"]) do
 		if self:getMD5FromFile(tempDir..v.Dir) ~= v.MD5 then
 			allPassed = false
 			release_print(tempDir..v.Dir)
@@ -222,12 +222,19 @@ function LayerEntrance:handleUpdateFiles()
 	end
 	-- 文件全部检测通过
 	-- 把临时文件复制到正式目录
-	for k, v in pairs(self.CurrentTask["updateInfo"]["FileList"]) do 
+	for k, v in pairs(self:getCurrentTask()["updateInfo"]["FileList"]) do 
 		local oldDir = string.format("%s/%s", tempDir, v.Dir)
 		Utils.copyFile(oldDir, string.format("%s/%s", Utils.getCurrentResPath(), v.Dir ))
 		os.remove(oldDir)
 	end
+end
 
+function LayerEntrance:setCurrentTask(task)
+	self.m_task = task
+end
+
+function LayerEntrance:getCurrentTask()
+	return self.m_task
 end
 
 function LayerEntrance:onUpdate(diff)
