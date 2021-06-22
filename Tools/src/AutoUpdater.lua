@@ -17,12 +17,12 @@ function AutoUpdater.checkModified(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
 	release_print("==========================================================")
-	release_print("===========热更新自动打包工具已经启动..哔哔哔..===========")
+	release_print("=============热更新自动打包工具已经启动..哔哔哔..===============")
 	release_print("==========================================================")
 	release_print("")
 	release_print("")
 	release_print("======================================================================")
-	release_print(string.format("==正在自动检测提交[%s]到[%s]的差异文件(自动忽略删除的文件)==", firstCommit, lastCommit))
+	release_print(string.format("======正在自动检测提交[%s]到[%s]的差异文件(自动忽略删除的文件)=====", firstCommit, lastCommit))
 	release_print("======================================================================")
 	release_print("")
 	release_print("")
@@ -74,7 +74,10 @@ local function TableToString(table)
 end
 
 function AutoUpdater.run(firstCommit, lastCommit)
-	local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "")
+	-- local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "") -- For Win Only
+	local currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
+	currentDir = string.gsub(currentDir, "\n", "")
+	print(currentDir)
 	local modifiedFiles = AutoUpdater.checkModified(firstCommit, lastCommit)
 
 	-- Create Update Dir
@@ -108,10 +111,12 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
 	release_print("==========================================================")
-	release_print("============所有文件处理完毕...正在对比MD5值..============")
+	release_print("==============所有文件处理完毕...正在对比MD5值..===============")
 	release_print("==========================================================")
 	release_print("")
 	release_print("")
+
+	dump(tasks)
 	for k, v in pairs(tasks) do
 		v.FromMD5 	= AutoUpdater.getMD5(v.From)
 		v.ToMD5 	= AutoUpdater.getMD5(v.To)
@@ -129,7 +134,9 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	local path = updateDir.."/Update.FCZip"
 	local unZipDir = updateDir.."/testUnZip"
 	os.remove(path)
-	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper.exe"
+	-- local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper.exe"
+	-- local callBack = io.popen(string.format("%s %s %s", ZipperPath, updateDir, updateDir))
+	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper"
 	local callBack = io.popen(string.format("%s %s %s", ZipperPath, updateDir, updateDir))
 
 	local Successed = false
@@ -146,14 +153,14 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
 	release_print("============================================")
-	release_print("================尝试解压文件================")
+	release_print("=================尝试解压文件=================")
 	release_print("============================================")
 
 	LFS.createDir(unZipDir)
 	release_print("")
 	release_print("文件解压完毕! 正在写入更新数据....")
 	release_print("")
-	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper.exe"
+	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper"
 	local callBack = io.popen(string.format("%s %s %s unCompress", ZipperPath, path, updateDir.."/TestUnZip")):read("*all")
 	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"rb")
 	local originData = originFile and loadstring("return "..originFile:read("*a"))() or {}
@@ -192,7 +199,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 
 	release_print("正在更新本地[version]文件")
 	local Info = originData[#originData]
-	fileWrite = io.open(currentDir.."res/version","w")
+	fileWrite = io.open(currentDir.."/res/version","w")
 	fileWrite:write(Utils.TableToString({
 		Date 		= Info.Date,
 		firstCommit = Info.commitBase,
@@ -204,7 +211,6 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
 	release_print("===========全部操作完成!===========")
-	-- AutoUpdater.runLinuxCMD("cd /mnt/d/ && mkdir testttttttt")
 end
 
 return AutoUpdater
