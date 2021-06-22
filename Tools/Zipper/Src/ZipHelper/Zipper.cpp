@@ -446,7 +446,7 @@ void ZipReader::_executeFile(FCFile * file, std::string RootPath)
 		uLong origin = OriginLen;
 		if (uncompress((Bytef*)OriginFileData, &origin, (Bytef*)file->GetDataPointer(), file->GetCompressLen()) == Z_OK)
 		{
-			std::string CurrPath = RootPath + "//" + file->GetFileName();
+			std::string CurrPath = RootPath + "/" + file->GetFileName();
 
 			ofstream cppFile(CurrPath.c_str(), ios::binary);
 			if (!cppFile)

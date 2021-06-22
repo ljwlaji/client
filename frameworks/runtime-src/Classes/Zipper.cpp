@@ -136,29 +136,9 @@ void ZipReader::ExecuteAll(std::string Path)
 		_executeFile(i->second, Path);
 }
 
-void ZipReader::ExecuteFile(uint32 Index)
-{
-	FCFile* CurrFile = FindFile(Index);
-	if (!CurrFile)
-	{
-		printf("No Such Index => %d", Index);
-		return;
-	}
-
-	std::string Temp2 = RootPath;
-	std::string TempPath = GetLastStr(RootPath, "/");
-	TempPath = GetLastStr(TempPath, "\\");
-	uint32 pos = RootPath.find(TempPath);
-	while (Temp2.size() != pos)
-	{
-		Temp2.erase(Temp2.size() - 1);
-	}
-	_executeFile(CurrFile, Temp2);
-}
-
 void ZipReader::_executeFile(FCFile * file, std::string RootPath)
 {
-	std::string CurrDir = RootPath + "//";
+	std::string CurrDir = RootPath + "/";
 	if (file->IsDir())
 	{
 		CurrDir += file->GetFileName().c_str();
@@ -178,7 +158,7 @@ void ZipReader::_executeFile(FCFile * file, std::string RootPath)
 		uLong origin = OriginLen;
 		if (uncompress((Bytef*)OriginFileData, &origin, (Bytef*)file->GetDataPointer(), file->GetCompressLen()) == Z_OK)
 		{
-			std::string CurrPath = RootPath + "//" + file->GetFileName();
+			std::string CurrPath = RootPath + "/" + file->GetFileName();
 
 			ofstream cppFile(CurrPath.c_str(), ios::binary);
 			if (!cppFile)

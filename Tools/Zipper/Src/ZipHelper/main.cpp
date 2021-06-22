@@ -13,9 +13,9 @@ int main(int argc, char *argv[])
 		mode = argv[3];
 
 
-	cout << "From : " << inputDir.c_str() << endl;
-	cout << "To : " << ouputDir.c_str() << endl;
-	cout << "Mode : " << mode.c_str() << endl;
+	cout << "From : " 	<< inputDir.c_str() << endl;
+	cout << "To : " 	<< ouputDir.c_str() << endl;
+	cout << "Mode : " 	<< mode.c_str() << endl;
 
 	if (mode == "compress")
 		ZipHandler(inputDir.c_str()).ExecuteZip(ouputDir.c_str());
