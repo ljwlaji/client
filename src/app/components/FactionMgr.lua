@@ -50,6 +50,7 @@ function FactionMgr:loadFromDB()
 	end
 end
 
+-- 还需要考虑有声望的情况 需要重写
 function FactionMgr:isHostile(FactionA, FactionB)
 	local template = self.m_FactionTemplate[FactionA]
 	assert(template, "Cannot Find Faction Template By Faction Entry : ".. FactionA)

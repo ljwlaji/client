@@ -500,6 +500,8 @@ end
 function Unit:cleanUpBeforeDelete()
 	self.m_MovementMonitor:cleanUpBeforeDelete()
 	self.m_MovementMonitor = nil
+	self.m_AnimationMonitor:cleanUpBeforeDelete()
+	self.m_AnimationMonitor = nil
     Object.cleanUpBeforeDelete(self)
 end
 

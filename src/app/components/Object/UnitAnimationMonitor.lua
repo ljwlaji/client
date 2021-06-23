@@ -8,4 +8,8 @@ function UnitAnimationMonitor:update(diff)
 
 end
 
+function UnitAnimationMonitor:cleanUpBeforeDelete()
+	
+end
+
 return UnitAnimationMonitor

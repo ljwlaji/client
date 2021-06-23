@@ -42,6 +42,10 @@ function PlayerScript:onNativeExitCombat()
 	if self.onExitCombat then self:onExitCombat() end
 end --override
 
+function PlayerScript:onNativeLevelUp(oldLvl, newLvl)
+	if self.onLevelUp then self:onLevelUp(oldLvl, newLvl) end
+end
+
 function PlayerScript:isInCombat()
 	return self.m_Combat
 end

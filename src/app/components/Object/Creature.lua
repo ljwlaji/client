@@ -76,7 +76,7 @@ function Creature:onTouched(pPlayer)
 	-- 判断生死情况
 	if not self:isAlive() then return false end
 	-- 判断阵营
-	if FactionMgr:isHostile(pPlayer:getFaction(), self:getFaction()) or self:isAlive() then
+	if FactionMgr:isHostile(pPlayer:getFaction(), self:getFaction()) then
 		return false 
 	end
 	-- 判断声望

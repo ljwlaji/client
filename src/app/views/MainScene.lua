@@ -77,7 +77,10 @@ end
 
 
 
-
+function MainScene:testRichText()
+    local richtext = import("app.components.RichText.UIRichText")
+    
+end
 
 function MainScene:testGausBlurSprite(Scale)
     Scale = Scale or 0.2
