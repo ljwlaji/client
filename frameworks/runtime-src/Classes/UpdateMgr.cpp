@@ -31,6 +31,7 @@ void UpdateMgr::StartWithTask(std::string& Form, std::string& To)
 {
 	if (!m_Stopped || m_DownloadThread)
 		return;
+    m_Error = 0;
 	m_Stopped = false;
 	m_From = Form;
 	m_To = To;
@@ -41,6 +42,11 @@ void UpdateMgr::Run()
 {
 	while (1)
 	{
+        if (m_Paused)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            continue;
+        }
 		if (m_Stopped)
 		{
 			CleanUpAfterTerminated();
@@ -122,10 +128,15 @@ void UpdateMgr::OnProgress(uint32 Now, uint32 Total)
 	m_OutputDownLoadSize = Now;
 }
 
-UpdateMgr::UpdateMgr() : m_Stopped(true), m_DownloadThread(nullptr), m_Handler(nullptr)
+UpdateMgr::UpdateMgr() :
+    m_Stopped(true),
+    m_DownloadThread(nullptr),
+    m_Handler(nullptr),
+    m_Paused(false)
 {
 }
 
 UpdateMgr::~UpdateMgr()
 {
+    TerminateAllTasks();
 }

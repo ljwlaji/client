@@ -44,8 +44,15 @@ public:
 	void StartWithTask(std::string& Form, std::string& To);
 	void* GetDownloadHandler() const;
 	uint32 GetDownloadedSize() const { return m_Downloaded; }
-	void OnProgress(uint32 Now, uint32 Total);
+    uint32 getLastError() const { return m_Error; }
 	bool IsStopped() const { return m_Stopped; }
+    bool IsPaused() const { return m_Paused; }
+    void Stop() { m_Stopped = true; }
+    void Pauese() { m_Paused = true; }
+    void Resume() { m_Paused = false; }
+    void OnProgress(uint32 Now, uint32 Total);
+
+    void TerminateAllTasks();
 
 	uint32 GetDownloadedSizeDisplay() const { return m_OutputDownLoadSize; }
 	uint32 GetTotalSizeDisplay() const { return m_OutputTotalSize; }
@@ -55,7 +62,6 @@ private:
 	~UpdateMgr();
 	void Run();
 	// For Download Issus
-	void TerminateAllTasks();
 	void CleanUpAfterTerminated();
 	// End Of Download
 	uint32 GetDownloadTaskNum() const;
@@ -66,9 +72,11 @@ private:
 private:
 	std::string m_From;
 	std::string m_To;
+    uint32 m_Error;
 	uint32 m_Downloaded;
 	uint32 m_TotalToDownload;
 	std::atomic<bool> m_Stopped;
+    std::atomic<bool> m_Paused;
 	std::thread* m_DownloadThread;
 
 	void* m_Handler;

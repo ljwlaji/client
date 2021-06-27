@@ -4,6 +4,8 @@ local GridView      = import("app.components.GridView")
 local LayerEntrance = import("app.views.layer.LayerEntrance")
 local Map           = import("app.components.Map")
 local ShareDefine   = import("app.ShareDefine")
+-- managers
+local AssetsMgr     = import("app.components.AssetsMgr")
 
 local updateCount = 0
 local totalMS = 0

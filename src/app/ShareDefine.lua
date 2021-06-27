@@ -146,6 +146,14 @@ local QUEST_FINISH_STATE = {
 	FINISHED 		= 3,
 }
 
+-- 大于1为本地错误 小于1为远程错误
+local DOWNLOAD_ERRORS = {
+	NO_ERROR = 0,
+	MD5_CHECK_FAILED = 1,
+}
+
+function ShareDefine:getDownloadErrorCodes() return DOWNLOAD_ERRORS end
+
 local SIGHT_RANGE = 200
 
 local COMMON_HIT_CHANCE = 95
