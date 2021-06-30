@@ -150,13 +150,13 @@ function AssetsMgr:getMD5FromFile(path)
 end
 
 function AssetsMgr:checkDownloadFileVailed()
-	local zipFilePath = Utils.getDownloadCachePath()..self:getCurrentTask().versionID..".FCZip"
+	local taskInfo = self.m_CurrentTask
+	local zipFilePath = Utils.getDownloadCachePath()..taskInfo.versionID..".FCZip"
 	local tempDir = Utils.getDownloadCachePath().."temp/"
 	cc.ZipReader.uncompress(zipFilePath, tempDir)
-	local needCheck = {}
 	local allPassed = true
 
-	for k, v in pairs(self:getCurrentTask()["updateInfo"]["FileList"]) do
+	for k, v in pairs(taskInfo.updateInfo.FileList) do
 		if self:getMD5FromFile(tempDir..v.Dir) ~= v.MD5 then
 			allPassed = false
 			release_print(tempDir..v.Dir)
@@ -172,7 +172,7 @@ function AssetsMgr:checkDownloadFileVailed()
 	end
 	-- 文件全部检测通过
 	-- 把临时文件复制到正式目录
-	for k, v in pairs(self:getCurrentTask()["updateInfo"]["FileList"]) do 
+	for k, v in pairs(taskInfo.updateInfo.FileList) do 
 		local oldDir = string.format("%s/%s", tempDir, v.Dir)
 		Utils.copyFile(oldDir, string.format("%s/%s", Utils.getCurrentResPath(), v.Dir ))
 		os.remove(oldDir)

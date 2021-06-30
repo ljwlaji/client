@@ -4,6 +4,88 @@
 #include <algorithm>
 #include "cocos2d.h"
 
+FCFile* FCFile::CreateFromFile(std::string &path)
+{
+    FCFile* file = new (std::nothrow)FCFile();
+    
+    if (!file)
+        return nullptr;
+    
+    if (!cocos2d::FileUtils::getInstance()->isFileExist(path.c_str()))
+    {
+        /* Report Error */
+        return nullptr;
+    }
+    ifstream FileHolder(path.c_str(), ios::out | ios::binary);
+    if (!FileHolder)
+        return nullptr;
+    
+    FileHolder.seekg(0, std::ios::end);
+    uint32 totalFileLength = FileHolder.tellg();
+    
+    uint32 ReadPos = 0;
+    uint32 headerLen = 0;
+    uint32 bodyLen = 0;
+    
+    while (ReadPos < totalFileLength)
+    {
+        FCFile* file = new (std::nothrow) FCFile;
+        if (!file)
+            break;
+        
+        if (ReadPos + 5 * sizeof(uint32) > totalFileLength)
+            break;
+        
+        // read the header length of the single file buffer
+        FileHolder.seekg(ReadPos, std::ios::beg);
+        FileHolder.readsome((char*)&headerLen, sizeof(uint32));
+        
+        // length of the file body
+        FileHolder.seekg(ReadPos + 2, std::ios::beg);
+        FileHolder.readsome((char*)&bodyLen, sizeof(uint32));
+        
+        // now we got the start pos and the total size of the file,
+        file->BufferSize = headerLen + bodyLen;
+        file->StartPos = ReadPos;
+        
+    }
+    
+    return file;
+}
+
+
+bool FCFile::CreateFromData(ifstream fileHolder, uint32 ReadPos, uint32 length, FCFile* rootFile)
+{
+//    uint32 nameOffset = sizeof(uint32) * 5;
+//    if (ReadPos + sizeof(uint32) * 4 >= length)
+//        return false;
+//
+//    fileHolder.seekg(0, std::ios::end);
+////    fileHolder.seekg(0, std::ios::beg);
+//    // just read a headlen of next buffer
+//    uint32 headerLen = 0;
+//    fileHolder->readsome(&headerLen, sizeof(uint32));
+//    uint32 ParentIndex = ((uint32*)&buffer[ReadPos])[4];
+//    if (ParentIndex != rootFile->Index)
+//        return false;
+//
+//    FCFile* _FCFile = new FCFile();
+//    if (!_FCFile->FillData(buffer, ReadPos) || !_FCFile->IsDataVaild())
+//    {
+//        for (uint32 i = 0; i < ReadPos; i++)
+//            cout << _FCFile->FileData[i] << "|";
+//        delete _FCFile;
+//        return false;
+//    }
+//
+//    rootFile->DirInfo[_FCFile->GetIndex()] = _FCFile;
+//
+//    if (_FCFile->IsDir())
+//        while (CreateFromData(buffer, ReadPos, length, rootFile));
+//    return ReadPos < length;
+    return true;
+}
+
 std::string GetLastStr(std::string comp, std::string Compare)
 {
 	uint32 i = 0;

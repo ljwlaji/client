@@ -2,6 +2,7 @@
 #include <list>
 #include <string>
 #include <map>
+#include <fstream>
 #include "zlib.h"
 #include "ShareDefine.h"
 
@@ -9,17 +10,25 @@ using namespace std;
 
 struct FCFile
 {
-	FCFile(std::string fileName = "", char* FileData = nullptr) : FileName(fileName), FileData(FileData)
+	FCFile(std::string fileName = "", char* FileData = nullptr) :
+        FileName(fileName),
+        FileData(FileData),
+        StartPos(0),
+        BufferSize(0)
 	{
 		
 	}
 	~FCFile()
 	{
-		Desotry();
+        CleanUpBeforeDelete();
 	}
+    
+    FCFile* CreateFromFile(std::string& path);
+    bool CreateFromData(ifstream buffer, uint32 ReadPos, uint32 length, FCFile* rootFile);
 
 	bool FillData(char* buff, uint32& ReadPos)
 	{
+        
 		bool ret = false;
 		uint32* Buffer = (uint32*)&buff[ReadPos];
 		uint32 HeadLen = Buffer[0];
@@ -39,6 +48,7 @@ struct FCFile
 		}
 		return ret;
 	}
+    
 	void Serialize(char* buff, uint32& Pos)
 	{
 		if (FileData)
@@ -82,8 +92,7 @@ struct FCFile
 
 	char* GetDataPointer()
 	{
-		if (FileData)
-			return &FileData[GetHeadLen()];
+        return FileData ? &FileData[GetHeadLen()] : nullptr;
 	}
 
 	int GetIndex()
@@ -128,6 +137,40 @@ struct FCFile
 	{
 		return ((uint32*)FileData)[4];
 	}
+    
+    FCFile* getSubFileByIndex(uint32 index)
+    {
+        FCFile* file = nullptr;
+        if (DirInfo.find(index) != DirInfo.end())
+            file = DirInfo.find(index)->second;
+        return file;
+    }
+    
+    bool unCompress(std::string& pathTo)
+    {
+        uint32 OriginLen = GetOriginFileLen();
+
+        char* OriginFileData = new (std::nothrow)char[OriginLen]();
+        if (!OriginFileData)
+            return false;
+
+        uLong origin = OriginLen;
+        if (!GetDataPointer())
+            return false;
+        if (uncompress((Bytef*)OriginFileData, &origin, (Bytef*)GetDataPointer(), GetCompressLen()) == Z_OK)
+        {
+            std::string CurrPath = pathTo + "/" + GetFileName();
+            ofstream cppFile(CurrPath.c_str(), ios::binary);
+            if (!cppFile)
+                return false;
+
+            for (uint32 i = 0; i < OriginLen; i++)
+                cppFile << OriginFileData[i];
+            cppFile.close();
+        }
+        delete[] OriginFileData;
+        return true;
+    }
 
 	int IsDir()
 	{
@@ -135,8 +178,13 @@ struct FCFile
 			return true;
 		return GetCompressLen() == 0;
 	}
+    
+    bool IsRootFile()
+    {
+        return Index == 0;
+    }
 
-	void Desotry()
+	void CleanUpBeforeDelete()
 	{
 		if (FileData)
 		{
@@ -152,7 +200,9 @@ struct FCFile
 	std::string FileName = "";
 	int Index = 0;
 	int ParentIndex = 0;
-	char* FileData = nullptr;
+    uint32 StartPos;
+    uint32 BufferSize;
+	char* FileData;
 	std::map<uint32, FCFile*> DirInfo;
 };
 

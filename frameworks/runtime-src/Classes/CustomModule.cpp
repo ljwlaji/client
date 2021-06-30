@@ -10,7 +10,6 @@
 #include "Zipper.h"
 #include "GausBlurSprite/GausBlurSprite.h"
 
-
 int tolua_firecore_timmer_create(lua_State* L)
 {
 	int argc = 0;
@@ -834,7 +833,7 @@ int tolua_firecore_MD5_updateFromFile(lua_State* tolua_S)
     cobj = (MD5*)tolua_tousertype(tolua_S,1,0);
 
 #if COCOS2D_DEBUG >= 1
-    if (!cobj) 
+    if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_MD5_updateFromFile'", nullptr);
         return 0;
@@ -1103,6 +1102,79 @@ int regiest_fire_core_gausblur_sprite(lua_State* tolua_S)
     tolua_beginmodule(tolua_S,    "GausBlurSprite");
         tolua_function(tolua_S, "createWithImage",    lua_cocos2dx_GausBlurSprite_createWithImage);
         tolua_function(tolua_S, "override",            lua_cocos2dx_GausBlurSprite_override);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(GausBlurSprite).name();
+    g_luaType[typeName] = "cc.GausBlurSprite";
+    g_typeCast["GausBlurSprite"] = "cc.GausBlurSprite";
+    return 1;
+}
+
+int lua_cocos2dx_FCFile_unCompressTo(lua_State* tolua_S)
+{
+    bool ok = false;
+    int argc = 0;
+    FCFile* cobj = nullptr;
+    cobj = (FCFile*)tolua_tousertype(tolua_S,1,0);
+
+    argc = lua_gettop(tolua_S)-1;
+    std::string arg1 = "";
+    ok &= luaval_to_std_string(tolua_S, 2, &arg1, "cc.FCFile:unComressTo");
+    if(!ok)
+    {
+        tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_FCFile_unCompressTo'", nullptr);
+        return 0;
+    }
+    tolua_pushboolean(tolua_S,  cobj->unCompress(arg1));
+    return 1;
+}
+
+int lua_cocos2dx_FCFile_isDir(lua_State* tolua_S)
+{
+    FCFile* cobj = nullptr;
+    cobj = (FCFile*)tolua_tousertype(tolua_S,1,0);
+    tolua_pushboolean(tolua_S,  cobj->IsDir());
+    return 1;
+}
+
+int lua_cocos2dx_FCFile_getIndex(lua_State* tolua_S)
+{
+    FCFile* cobj = nullptr;
+    cobj = (FCFile*)tolua_tousertype(tolua_S,1,0);
+    tolua_pushnumber(tolua_S,  cobj->GetIndex());
+    return 1;
+}
+
+int lua_cocos2dx_FCFile_getChildByIndex(lua_State* tolua_S)
+{
+    bool ok = false;
+    int argc = 0;
+    FCFile* cobj = nullptr;
+    cobj = (FCFile*)tolua_tousertype(tolua_S,1,0);
+    argc = lua_gettop(tolua_S)-1;
+    int32 arg1 = -1;
+    ok &= luaval_to_int32(tolua_S, 2, &arg1, "cc.FCFile:unComressTo");
+    if(!ok)
+    {
+        tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_FCFile_unCompressTo'", nullptr);
+        return 0;
+    }
+    FCFile* pFile = cobj->getSubFileByIndex(arg1);
+    if (pFile)
+        object_to_luaval<FCFile>(tolua_S, "cc.FCFile", pFile);
+    else
+        lua_pushnil(tolua_S);
+    return 1;
+}
+
+int regiest_fire_core_file(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S, "cc.FCFile");
+    tolua_cclass(tolua_S,        "FCFile", "cc.FCFile", "", nullptr);
+    tolua_beginmodule(tolua_S,    "FCFile");
+    tolua_function(tolua_S, "unCompressTo",     lua_cocos2dx_FCFile_unCompressTo);
+    tolua_function(tolua_S, "isDir",            lua_cocos2dx_FCFile_isDir);
+    tolua_function(tolua_S, "getIndex",         lua_cocos2dx_FCFile_getIndex);
+    tolua_function(tolua_S, "getChildByIndex",  lua_cocos2dx_FCFile_getChildByIndex);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(GausBlurSprite).name();
     g_luaType[typeName] = "cc.GausBlurSprite";

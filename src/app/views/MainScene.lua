@@ -77,7 +77,10 @@ end
 
 
 
-
+function MainScene:testFCFile(filePath)
+    local fcFile = cc.FCFile:createFromFile(filePath)
+    if not fcFile then return end
+end
 
 function MainScene:testRichText()
     local richtext = import("app.components.RichText.UIRichText")
