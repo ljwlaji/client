@@ -26,7 +26,7 @@ function SQLiteCompare:fillSqlData(db)
 	-- 获取所有表名
 	local retDBTempalte = {}
 	local tables = {}
-	local results = self:query(db, "select tbl_name from sqlite_master where type == 'table';")
+	local results = self:query(db, "SELECT tbl_name FROM sqlite_master WHERE type == 'table';")
 	--获取所有表名
 	for _, v in pairs(results) do
 		local tbl_name = v.tbl_name
@@ -128,9 +128,9 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 	table.insert(sql_query_strs, "--Deleted Fields")
 	-- 删除的列
 	for tableName, fields in pairs(drpopedFields) do
-			local sql = string.format([[create table %s_temp_swap as select %s from %s;]], tableName, table.concat(fields, ","), tableName)
-			sql = sql..string.format([[drop table %s;]], tableName)
-			sql = sql..string.format([[alter table %s_temp_swap rename to %s;]], tableName, tableName)
+			local sql = string.format([[CREATE TABLE %s_temp_swap AS SELECT %s FROM %s;]], tableName, table.concat(fields, ","), tableName)
+			sql = sql..string.format([[DROP TABLE %s;]], tableName)
+			sql = sql..string.format([[ALTER TABLE %s_temp_swap RENAME TO %s;]], tableName, tableName)
 			table.insert(sql_query_strs, sql)
 	end
 
