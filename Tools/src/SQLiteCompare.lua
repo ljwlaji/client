@@ -1,6 +1,6 @@
 local SQLiteCompare = class("SQLiteCompare")
 
--- 可以新增和删除(列/表) 不允许修改列属性,
+-- 可以新增和删除(列/表) 不允许修改列属性, 不允许新增主键列
 -- 表操作是无法使用事务来做的 所以这边如果失败则直接回滚数据库(本地在做这个操作时会先做备份)
 
 
@@ -139,7 +139,7 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 	for tableName, fields in pairs(addedFields) do
 		for fieldName, fieldInfo in pairs(fields) do
 			local sql = string.format([[ALTER TABLE %s ADD COLUMN ]], tableName)
-			sql = sql..string.format([["%s" %s%s%s,]], fieldName, 
+			sql = sql..string.format([["%s" %s%s%s;]], fieldName, 
 													   fieldInfo.type, 
 													   fieldInfo.notnull and " NOT NULL" or "", 
 													   fieldInfo.dflt_value and (" DEFAULT "..tostring(fieldInfo.dflt_value)) or "")
