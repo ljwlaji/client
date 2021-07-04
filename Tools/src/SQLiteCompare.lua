@@ -96,7 +96,14 @@ local function clone(source)
 end
 
 function SQLiteCompare:isEqual(new, old)
-
+	local isEqual = true
+	for key, value in pairs(new) do
+		if value ~= old[key] then
+			isEqual = false
+			break
+		end
+	end
+	return isEqual
 end
 
 function SQLiteCompare:isSamePK(newRecord, oldRecord, pks)
@@ -108,6 +115,7 @@ function SQLiteCompare:isSamePK(newRecord, oldRecord, pks)
 			isSame = false
 			break
 		end
+		index = index + 1
 	until index > #pks
 	return isSame
 end
@@ -130,7 +138,6 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 
 	local pks = newTableRecords.pks
 	local len = #pks
-	print(table.concat(newTableRecords.pks, ","))
 	local function comp(a, b, index)
 		if a[pks[index]] < b[pks[index]] then
 			return true
@@ -139,28 +146,35 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 		end
 	end
 
+	if #newTableRecords.pks == 0 or #oldTableRecords.pks == 0 then
+		dump(newTableRecords)
+		assert(false, string.format("无主键的表 : [%s]", tableName))
+	end
 	table.sort(newTableRecords.records, function(a, b) return comp(a, b, 1) end)
 	table.sort(oldTableRecords.records, function(a, b) return comp(a, b, 1) end)
 	local adds = {}
 	local modifies = {}
 	local deletes = {}
-	local index = 1
-	repeat
-		local newRecord = table.remove(newTableRecords.records)
-		local oldRecord = oldTableRecords.records[k]
-		if self:isSamePK(newRecord, oldRecord, pks) then
-			 if not self:isEqual(v, oldRecord) then
-			 	-- 部分不同 更新条目
+	while #newTableRecords.records > 0 do
+		local newRecord = table.remove(newTableRecords.records, 1)
+		local oldRecord = oldTableRecords.records[1]
+		if oldRecord and self:isSamePK(newRecord, oldRecord, pks) then
+			 if not self:isEqual(newRecord, oldRecord) then
+		-- 	 	-- 部分不同 更新条目
 			 	table.insert(modifies, newRecord)
 			 end
 			 table.remove(oldTableRecords.records, 1)
 		else -- 新条目 插入
 			table.insert(adds, newRecord)
 		end
-		index = index + 1
-	until #newTableRecords.records == 0
+	end
 	deletes = oldTableRecords.records
-	
+	return {
+		pks = pks,
+		adds = adds,
+		deletes = deletes,
+		modifies = modifies
+	}
 end
 
 function SQLiteCompare:start(pathOrigin, pathNew)
@@ -242,9 +256,16 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		end
 	end
 	dump(sql_query_strs)
+
+	local tableModifys = {}
 	for name, info in pairs(newDB) do
 		if oldDB[name] then
-			self:compareSqlRecords(info, oldDB[name], name)
+			tableModifys[name] = self:compareSqlRecords(info, oldDB[name], name)
+		end
+	end
+	for tableName, modifies in pairs(tableModifys) do
+		if #modifies.adds > 0 or #modifies.modifies > 0 or #modifies.deletes > 0 then
+			dump(modifies, tableName)
 		end
 	end
 end
