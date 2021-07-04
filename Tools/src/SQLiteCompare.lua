@@ -40,7 +40,8 @@ function SQLiteCompare:fillSqlData(db)
 		results = self:query(db, string.format("PRAGMA table_info(%s)", tableName))
 		local template = {
 			names = {},
-			pks = {}
+			pks = {},
+			records = self:query(db, string.format("SELECT * FROM %s", tableName))
 		}
 		for _, info in ipairs(results) do
 			template.names[info.name] = {
@@ -52,6 +53,7 @@ function SQLiteCompare:fillSqlData(db)
 				template.pks[info.pk] = info.name
 			end
 		end
+
 		retDBTempalte[tableName] = template
 	end
 	db:close()
@@ -83,6 +85,82 @@ function SQLiteCompare:compareFields(newTempalte, oldTempalte)
 		end
 	end
 	return ret and modifies or nil
+end
+
+local function clone(source)
+	local ret = {}
+	for k, v in pairs(source) do
+		ret[k] = type(v) == "table" and clone(v) or v
+	end
+	return ret
+end
+
+function SQLiteCompare:isEqual(new, old)
+
+end
+
+function SQLiteCompare:isSamePK(newRecord, oldRecord, pks)
+	local isSame = true
+	local index = 1
+	repeat
+		local pk = pks[index]
+		if newRecord[pk] ~= oldRecord[pk] then
+			isSame = false
+			break
+		end
+	until index > #pks
+	return isSame
+end
+
+function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, tableName)
+	-- 如果存在已删除的列 这边不用管旧数据库 对比以新数据库的列为准
+	-- 首先进行字段属性差异检查 主要是检查已有的字段属性是否一致
+	for fieldName, fieldInfo in pairs(newTableRecords.names) do
+		local oldInfo = oldTableRecords.names[fieldName]
+		if oldInfo then
+			local compare = clone(oldInfo)
+			for k, v in pairs(fieldInfo) do
+				-- print(k, v, oldInfo[k])
+				assert(oldInfo[k] == v, string.format("检查到[%s]表内[%s]字段属性[%s]变更", tableName, fieldName, k))
+				string.format("检查到[%s]表内[%s]字段属性[%s]检查通过", tableName, fieldName, k)
+				oldInfo[k] = nil
+			end
+		end
+	end
+
+	local pks = newTableRecords.pks
+	local len = #pks
+	print(table.concat(newTableRecords.pks, ","))
+	local function comp(a, b, index)
+		if a[pks[index]] < b[pks[index]] then
+			return true
+		else
+			return index < len and comp(a, b, index + 1) or false
+		end
+	end
+
+	table.sort(newTableRecords.records, function(a, b) return comp(a, b, 1) end)
+	table.sort(oldTableRecords.records, function(a, b) return comp(a, b, 1) end)
+	local adds = {}
+	local modifies = {}
+	local deletes = {}
+	local index = 1
+	repeat
+		local newRecord = table.remove(newTableRecords.records)
+		local oldRecord = oldTableRecords.records[k]
+		if self:isSamePK(newRecord, oldRecord, pks) then
+			 if not self:isEqual(v, oldRecord) then
+			 	-- 部分不同 更新条目
+			 	table.insert(modifies, newRecord)
+			 end
+			 table.remove(oldTableRecords.records, 1)
+		else -- 新条目 插入
+			table.insert(adds, newRecord)
+		end
+		index = index + 1
+	until #newTableRecords.records == 0
+	deletes = oldTableRecords.records
+	
 end
 
 function SQLiteCompare:start(pathOrigin, pathNew)
@@ -164,6 +242,11 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		end
 	end
 	dump(sql_query_strs)
+	for name, info in pairs(newDB) do
+		if oldDB[name] then
+			self:compareSqlRecords(info, oldDB[name], name)
+		end
+	end
 end
 
 
