@@ -1,8 +1,10 @@
 local SQLiteCompare = class("SQLiteCompare")
+local LFS 		= import("app.components.Lfs")
+local Utils 		= import("app.components.Utils")
 
 -- 可以新增和删除(列/表) 不允许修改列属性, 不允许新增主键列
 -- 表操作是无法使用事务来做的 所以这边如果失败则直接回滚数据库(本地在做这个操作时会先做备份)
-
+-- 除instance后缀表外不允许有自增列
 
 function SQLiteCompare:ctor()
 
@@ -96,7 +98,14 @@ local function clone(source)
 end
 
 function SQLiteCompare:isEqual(new, old)
-
+	local isEqual = true
+	for key, value in pairs(new) do
+		if value ~= old[key] then
+			isEqual = false
+			break
+		end
+	end
+	return isEqual
 end
 
 function SQLiteCompare:isSamePK(newRecord, oldRecord, pks)
@@ -108,6 +117,7 @@ function SQLiteCompare:isSamePK(newRecord, oldRecord, pks)
 			isSame = false
 			break
 		end
+		index = index + 1
 	until index > #pks
 	return isSame
 end
@@ -130,7 +140,6 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 
 	local pks = newTableRecords.pks
 	local len = #pks
-	print(table.concat(newTableRecords.pks, ","))
 	local function comp(a, b, index)
 		if a[pks[index]] < b[pks[index]] then
 			return true
@@ -139,28 +148,35 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 		end
 	end
 
+	if #newTableRecords.pks == 0 or #oldTableRecords.pks == 0 then
+		dump(newTableRecords)
+		assert(false, string.format("无主键的表 : [%s]", tableName))
+	end
 	table.sort(newTableRecords.records, function(a, b) return comp(a, b, 1) end)
 	table.sort(oldTableRecords.records, function(a, b) return comp(a, b, 1) end)
 	local adds = {}
 	local modifies = {}
 	local deletes = {}
-	local index = 1
-	repeat
-		local newRecord = table.remove(newTableRecords.records)
-		local oldRecord = oldTableRecords.records[k]
-		if self:isSamePK(newRecord, oldRecord, pks) then
-			 if not self:isEqual(v, oldRecord) then
-			 	-- 部分不同 更新条目
+	while #newTableRecords.records > 0 do
+		local newRecord = table.remove(newTableRecords.records, 1)
+		local oldRecord = oldTableRecords.records[1]
+		if oldRecord and self:isSamePK(newRecord, oldRecord, pks) then
+			 if not self:isEqual(newRecord, oldRecord) then
+		-- 	 	-- 部分不同 更新条目
 			 	table.insert(modifies, newRecord)
 			 end
 			 table.remove(oldTableRecords.records, 1)
 		else -- 新条目 插入
 			table.insert(adds, newRecord)
 		end
-		index = index + 1
-	until #newTableRecords.records == 0
+	end
 	deletes = oldTableRecords.records
-	
+	return {
+		pks = pks,
+		adds = adds,
+		deletes = deletes,
+		modifies = modifies
+	}
 end
 
 function SQLiteCompare:start(pathOrigin, pathNew)
@@ -198,12 +214,10 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 	-- 开始处理差异
 	-- 顺序不能乱
 	-- 删除的表
-	table.insert(sql_query_strs, "--Deleted Tables")
 	for tableName, tableName in pairs(droppedTables) do
 		table.insert(sql_query_strs, string.format([[DROP TABLE "%s";]], tableName))
 	end
 
-	table.insert(sql_query_strs, "--Deleted Fields")
 	-- 删除的列
 	for tableName, fields in pairs(drpopedFields) do
 			local sql = string.format([[CREATE TABLE %s_temp_swap AS SELECT %s FROM %s;]], tableName, table.concat(fields, ","), tableName)
@@ -212,7 +226,6 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 			table.insert(sql_query_strs, sql)
 	end
 
-	table.insert(sql_query_strs, "--Added Fields")
 	-- 增加的列
 	for tableName, fields in pairs(addedFields) do
 		for fieldName, fieldInfo in pairs(fields) do
@@ -225,7 +238,6 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		end
 	end
 
-	table.insert(sql_query_strs, "--Added Tables")
 	-- 增加的表
 	for tableName, tableTempalte in pairs(addedTables) do
 		local sql = string.format([[CREATE TABLE "%s" (]], tableName)
@@ -241,10 +253,58 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 			table.insert(sql_query_strs, sql)
 		end
 	end
-	dump(sql_query_strs)
+
+	--导出sql文件
+
+	local date = os.time()
+
+	local currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
+	currentDir = string.gsub(currentDir, "\n", "")
+	LFS.createDir(currentDir.."/Update")
+	LFS.createDir(currentDir.."/Update/sql")
+	currentDir = currentDir.."/Update/sql/"
+
+	local fileWrite = io.open(currentDir.."tables.sql","w")
+	fileWrite:write(table.concat(sql_query_strs, "\n"))
+	fileWrite:close()
+
+
+	local tableModifys = {}
 	for name, info in pairs(newDB) do
 		if oldDB[name] then
-			self:compareSqlRecords(info, oldDB[name], name)
+			tableModifys[name] = self:compareSqlRecords(info, oldDB[name], name)
+		end
+	end
+	for tableName, modifies in pairs(tableModifys) do
+		local sqls = {}
+		for k, v in ipairs(modifies.adds) do
+			local sql = [[INSERT INTO ]]..tableName..[[(%s) VALUES(%s);]]
+			for fieldName, fieldValue in pairs(v) do
+				sql = string.format(sql, (fieldName..",%s"), (fieldValue..",%s"))
+			end
+			sql = string.gsub(sql, ",%%s", "")
+			table.insert(sqls, sql)
+		end
+		for k, v in ipairs(modifies.modifies) do
+			local sql = [[REPLACE INTO ]]..tableName..[[(%s) VALUES(%s);]] --这边语句要熟悉一下
+			for fieldName, fieldValue in pairs(v) do
+				sql = string.format(sql, (fieldName..",%s"), (fieldValue..",%s"))
+			end
+			sql = string.gsub(sql, ",%%s", "")
+			table.insert(sqls, sql)
+		end
+		for k, v in ipairs(modifies.deletes) do
+			local sql = [[DELETE FROM ]]..tableName..[[ WHERE %s;]]
+			for _, pkName in ipairs(modifies.pks) do
+				sql = string.format(sql, pkName.." = "..v[pkName].." AND %s")
+			end
+			sql = string.gsub(sql, "AND %%s", "")
+			table.insert(sqls, sql)
+		end
+		if #sqls > 0 then
+			local fileWrite = io.open(currentDir..tableName..".sql","w")
+			fileWrite:write(table.concat(sqls, "\n"))
+			fileWrite:close()
 		end
 	end
 end

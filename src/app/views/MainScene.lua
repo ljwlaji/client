@@ -13,6 +13,9 @@ function MainScene:onCreate()
 end
 
 function MainScene:onEnterTransitionFinish()
+    self:testSqliteGetAllTables()
+
+    do return end
     local chosedCharacterID = 1
     self:run()
     self:createView("layer.LayerEntrance", function()
@@ -75,6 +78,14 @@ end
 
 
 
+function MainScene:testSqliteGetAllTables()
+    local db = import("app.components.DataBase")
+    local originDB = {}
+    local results = db:query("select name from sqlite_master where type='table' order by name;")
+    for _, v in pairs(results) do
+        originDB[v.name] = db:query("SELECT * FROM ")
+    end
+end
 
 
 function MainScene:testRichText()
