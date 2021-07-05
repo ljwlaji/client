@@ -40,6 +40,7 @@ get_input_val()
 }
 
 read -p "自动打包即将开始, 请确认已经提交所有修改项, 输入任意键开始脚本! "
+echo "$(git pull)"
 firstCommit="$(get_input_val '请输入初始commit(7位以上) : ' )"
 lastCommit="$(get_input_val '请输入目标commit(7位以上) : ' )" 
 # echo "$firstCommit"
