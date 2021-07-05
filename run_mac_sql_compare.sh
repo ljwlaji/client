@@ -76,11 +76,9 @@ check_file_exist "${compareDir}/data_new.db"
 
 # 初始工作完成 执行对比脚本
 check_file_exist "${project_path}/Tools/src/main_sql_compare.lua"
-rm "${project_path}/Tools/src/main.lua"
-exit 0;
+if [ -f "${project_path}/Tools/src/main.lua" ]; then
+	rm "${project_path}/Tools/src/main.lua"
+fi
 cp "${project_path}/Tools/src/main_sql_compare.lua" "${project_path}/Tools/src/main.lua"
-
-
-
 
 $project_path/runtime/mac/framework-desktop.app/Contents/MacOS/framework-desktop -workdir $project_path/Tools

@@ -180,8 +180,13 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 end
 
 function SQLiteCompare:start(pathOrigin, pathNew)
-	local oldDB = self:fillSqlData(self:openDB(pathOrigin))
-	local newDB = self:fillSqlData(self:openDB(pathNew))
+	local path = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
+	path = string.gsub(path, "\n", "")
+	print(path)
+	path = string.gsub(path, "/runtime/mac/framework-desktop.app/Contents/Resources", "").."/sqlcompare/"
+	print(path)
+	local oldDB = self:fillSqlData(self:openDB(path.."data_new.db"))
+	local newDB = self:fillSqlData(self:openDB(path.."data_old.db"))
 	local droppedTables = {}
 	local drpopedFields = {}
 	-- 查询删除的表和列
@@ -307,6 +312,8 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 			fileWrite:close()
 		end
 	end
+
+	print("程序执行完成.")
 end
 
 
