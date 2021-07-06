@@ -23,10 +23,7 @@ local function isTouchInside(checkNode, checkPoint)
 end
 
 function UIRichTextElement:onCreate()
-	self:setDefaultValue("elementType",		"label"--[[font]])
 	UIViewBase.onCreate(self)
-
-
 	self.drawNode = nil
 	self.onTouchLayouter = nil
 end

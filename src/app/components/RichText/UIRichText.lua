@@ -1,9 +1,10 @@
-local UIViewBase = import("..UIViewBase")
-local UIRichText = class("UIRichText", UIViewBase)
-local UIRichTextElement = import(".UIRichTextElement")
-local UIRichTextElementFont = import(".UIRichTextElementFont")
-local UIRichTextElementSprite = import(".UIRichTextElementSprite")
-local XMLReader = import(".LuaXML")
+local UIViewBase 				= import("..UIViewBase")
+local UIRichText 				= class("UIRichText", UIViewBase)
+local utf8 						= import("app.components.utf8")
+local UIRichTextElement 		= import(".UIRichTextElement")
+local UIRichTextElementFont 	= import(".UIRichTextElementFont")
+local UIRichTextElementSprite 	= import(".UIRichTextElementSprite")
+local XMLReader 				= import(".LuaXML")
 
 
 --[[
@@ -143,7 +144,7 @@ local XMLReader = import(".LuaXML")
 	Sample:
 		String创建: --onTouch无法传入table参数
 
-			local text = "ip=res/Default/1.jpg @ func=??? @ param=??????? |t=你真是代码界的一股清流 @ s=30, c=FFFFFF @ ul = true @ ol = true @ ols = 2 @ olc=FF0000 |t=__用来测试的文本..... @ c=FF00FF|t=__用来测试的文本.....@ c=FF00FF | ip=res/Default/1.jpg"
+			local text = "ip=res/Default/1.jpg @ func=??? @ param=??????? |t=你真是代码界的一股清流 @ s=30 @ c=FFFFFF @ ul = true @ ol = true @ ols = 2 @ olc=FF0000 |t=__用来测试的文本..... @ c=FF00FF|t=__用来测试的文本.....@ c=FF00FF | ip=res/Default/1.jpg"
 			local rich = UIRichText:create({
 					maxLineHeight = 80,
 					maxLineWidth  = 700,
@@ -194,13 +195,9 @@ local XMLReader = import(".LuaXML")
 ]]
 
 function UIRichText:onCreate()
-	self:setDefaultValue("maxLineHeight", 	300)
-	self:setDefaultValue("maxLineWidth",	400)
-	self:setDefaultValue("VGAP",			10)
-	self:setDefaultValue("VALIGN",			"buttom")
 	self._lines = {}
+	self._standingPosX = 0
 	UIViewBase.onCreate(self)
-	self.spaceCount = 0
 end
 
 function UIRichText:generateFromLuaTable(contexts)
@@ -212,9 +209,9 @@ function UIRichText:generateFromLuaTable(contexts)
 		if v.fontColor and string.len(v.fontColor) == 6 then v.fontColor = self.stringToRGB(v.fontColor) end
 		if v.outLineColor and string.len(v.outLineColor) == 6 then v.outLineColor = self.stringToRGB(v.outLineColor) end
 	end
-	local createdElements = self:createElementsByContexts(contexts, true)
-	self:alignElements(nil, createdElements)
-	self:alignLines()
+	-- local createdElements = self:createElementsByContexts(contexts, true)
+	-- self:alignElements(nil, createdElements)
+	-- self:alignLines()
 	return self
 end
 
@@ -226,14 +223,10 @@ end
 
 function UIRichText:generateFromString(str)
 	local contexts = self:decodeContextsFromString(str)
-	local createdElements = self:createElementsByContexts(contexts, true)
-	self:alignElements(nil, createdElements)
-	self:alignLines()
-	local height = 0
-	for k, v in pairs(self._lines) do
-		height = height + v:getContentSize().height
-	end
-	self:setContentSize( self.context.maxLineWidth, height )
+	self:generateNodesFromContexts(contexts)
+	-- local createdElements = self:createElementsByContexts(contexts, true)
+	-- self:alignElements(nil, createdElements)
+	-- self:alignLines()
 	return self
 end
 
@@ -247,9 +240,9 @@ function UIRichText:generateFromXMLData(str)
 		return
 	end
 	local contexts = self:decodeContextsFromXMLData(children)
-	local elements = self:createElementsByContexts(contexts, true)
-	self:alignElements(nil, elements)
-	self:alignLines()
+	-- local elements = self:createElementsByContexts(contexts, true)
+	-- self:alignElements(nil, elements)
+	-- self:alignLines()
 end
 ---------Decoding--------
 
@@ -268,7 +261,7 @@ end
 
 function UIRichText.rgbToString(charcharchar)
 	local ret = ""
-	local ss = UIRichTextElementFont.spiltString(charcharchar, ",")
+	local ss = string.split(charcharchar, ",")
 	for k, v in pairs(ss) do
 		ret = ret..UIRichText._rgbToString(v)
 	end
@@ -304,13 +297,13 @@ function UIRichText:decodeContextsFromXMLData(children)
 end
 
 function UIRichText:decodeContextsFromString(str)
-	local spilted = UIRichTextElementFont.spiltString(str, "|")
+	local spilted = string.split(str, "|")
 	local elements = {}
 	for k, v in pairs(spilted) do
-		local attrs = UIRichTextElementFont.spiltString(v, "@")
+		local attrs = string.split(v, "@")
 		local elementAttrs = {}
 		for _, valueInfo in pairs(attrs) do
-			local singleValue = UIRichTextElementFont.spiltString(valueInfo, "=")
+			local singleValue = string.split(valueInfo, "=")
 			elementAttrs[string.gsub(singleValue[1], "^%s*(.-)%s*$", "%1")] = string.gsub(singleValue[2], "^%s*(.-)%s*$", "%1")
 		end
 		table.insert(elements, elementAttrs)
@@ -338,7 +331,7 @@ function UIRichText:createElementsByContexts(contexts, splitWords)
 	while #contexts > 0 do
 		local context = table.remove(contexts, 1)
 		if context.elementType == "label" then
-			local words = UIRichTextElementFont.spiltString(context.value, "\n")
+			local words = string.split(context.value, "\n")
 			if #words > 1 then
 				while #words > 0 do
 					local cpContext = self:copyContext(context)
@@ -369,7 +362,7 @@ function UIRichText:createElementsByContexts(contexts, splitWords)
 						local newContext = self:copyContext(context)
 						newContext.value = v
 						if newContext.t then newContext.t = newContext.value end
-						element 				= UIRichTextElementFont:create(newContext)
+						element = UIRichTextElementFont:create(newContext)
 						element:refresh()
 						table.insert(elementArray, element)
 					end
@@ -380,7 +373,7 @@ function UIRichText:createElementsByContexts(contexts, splitWords)
 				end
 			end
 		elseif context.elementType == "img" then
-			element 				= UIRichTextElementSprite:create(context)
+			element = UIRichTextElementSprite:create(context)
 			element:refresh()
 			element:fixSize(self.context.maxLineWidth, self.context.maxLineHeight) --以高度为上限 如果超过固定行最大高度 或者固定行宽度 则等比缩小
 			table.insert(elementArray, element)
@@ -426,55 +419,77 @@ function UIRichText:serializeToLuaData()
 end
 
 ----Sortting----
+-- 100 300
+local function moveStringToLeft(left, right)
+	left = left..utf8.sub(right, 1, 1)
+	right = utf8.sub(right, 2)
+	return left, right
+end
 
-function UIRichText:alignElements(startLine, elements)
+local function moveStringToRight(left, right)
+	local pos = utf8.len(left) - 1
+	right = utf8.sub(left, pos, 1)..right
+	left = utf8.sub(left, 1, pos)
+	return left, right
+end
+
+function UIRichText:createFontElement(contexts)
+	local addNewLine 		= false
+	local context 			= table.remove(contexts, 1)
+	local maxLineWidth 		= tonumber(self.context.maxLineWidth)
+	local GAP 				= tonumber(self.context.VGAP)
+	local fnt 				= UIRichTextElementFont:create(context)
+	local currWidth 		= fnt:getDrawSize().width
+	local percent 			= math.min((maxLineWidth - self._standingPosX - GAP) / currWidth, 1)
+	if percent < 1 then
+		local fontCount 		= math.ceil(percent * utf8.len(context.value))
+		local left 				= utf8.sub(context.value, 1, fontCount)
+		local right 			= utf8.sub(context.value, fontCount + 1)
+		while true do
+			if self._standingPosX + GAP + fnt:setString(left):getDrawSize().width <= maxLineWidth then
+				left, right = moveStringToLeft(left, right)
+			else
+				-- 超出边界
+				left, right = moveStringToRight(left, right)
+				addNewLine = true
+				break
+			end
+		end
+		while self._standingPosX + GAP + fnt:setString(left):getDrawSize().width > maxLineWidth do
+			left, right = moveStringToRight(left, right)
+			addNewLine = true
+		end
+		local newContext 		= table.clone(context)
+		context.value 			= left
+		newContext.value 		= right
+		table.insert(contexts, 1, newContext)
+	end
+	fnt:move(self._standingPosX + GAP, 0)
+	self._standingPosX = self._standingPosX + GAP + fnt:getDrawSize().width
+	return fnt, addNewLine
+end
+
+function UIRichText:createSpriteElement(contexts)
+	local context = table.remove(contexts, 1)
+end
+
+function UIRichText:generateNodesFromContexts(contexts)
 	--尝试排列
 	local maxLineHeight 	= tonumber(self.context.maxLineHeight)
-	local maxLineWidth		= tonumber(self.context.maxLineWidth)
 	local GAP 				= tonumber(self.context.VGAP)
 	local currLineHeight 	= maxLineHeight
-
-	local standingX = 0
-	local standingY = 0
-
-	local line = startLine and startLine or self:addNewLine()
-
 	local tempElements = {}
 	local element = nil
-	local elementSize = {}
-
-	while #elements > 0 do
-		element = table.remove(elements, 1)
-		table.insert(tempElements, element)
-
-		--判断是否需要新建一行
-		if element.context.elementType == "label" and string.byte(element.context.value) == 10 --[[换行符]]then
-			--悄悄地替换掉
-			--但是不能删除 因为序列化的时候还需要用到
-			element.drawNode:setString("")
-			line = self:addNewLine()
-			standingX = 0
-		else
-			elementSize = element:getDrawSize()
-			if standingX + elementSize.width > maxLineWidth then
-				line = self:addNewLine()
-				standingX = 0
-				if elementSize.width > maxLineWidth then
-				 	if element.context.elementType == "label" then
-						table.insert(elements, 1, element:createNewFontForOutOfRangeLetters(maxLineWidth))--这边是为了将超出的部分截断出来 再放进队列头部 下一次处理超出的部分
-					end
-				end
-			end
-			--把元素添加进来
-			element:addTo(line):setPosition(standingX, 0)
-			standingX = standingX + elementSize.width
-		end
-		table.insert(line._elements, element)
+	while #contexts > 0 do
+		local context = table.remove(contexts, 1)
+		local createFunc = context.elementType == "label" and self.createFontElement or self.createSpriteElement
+		local element, newLine = createFunc(self, contexts)
+		self:addNodeToLine( self._lines[#self._lines] )
 	end
-	return tempElements
 end
 
 function UIRichText:alignLines()
+	local GAP = self.context.HGAP
 	--垂直方向对齐
 	local lastLine = nil
 	for k, v in pairs(self._lines) do
@@ -508,21 +523,28 @@ function UIRichText:alignLines()
 
 	for k, v in pairs(self._lines) do
 		v:setPositionY(totalHeight)
-		totalHeight = totalHeight - v:getContentSize().height
+		totalHeight = totalHeight - v:getContentSize().height - GAP
 	end
+
+	self:setContentSize( self.context.maxLineWidth, totalHeight )
 end
 
 function UIRichText:addNewLine()
-	local currPosY = -(#self._lines * 100)
 	local lineLayouter = ccui.Layout:create()
-							:addTo(self)
-							:setAnchorPoint(0, 1)
-							:setContentSize(tonumber(self.context.maxLineWidth), 100)
-							:setPosition(0, currPosY)
+									:addTo(self)
+									:setAnchorPoint(0, 1)
+
 
 	lineLayouter._elements = {}
+	self._standingPosX = 0
 	table.insert(self._lines, lineLayouter)
+	self._currLine = lineLayouter
 	return lineLayouter
+end
+
+function UIRichText:addNodeToLine(node)
+	local currLine = self._currLine
+	table.insert(currLine._elements, node:addTo(currLine))
 end
 
 ----Events----
@@ -533,124 +555,124 @@ function UIRichText:onTouchedElement(func, param)
 	--!!!!!!!!!!!!!!!!!!!!!
 end
 
-function UIRichText:onDeleteFromEditBox()
-	if #self._lines <= 0 then return end
-	local lastLine = self._lines[#self._lines]
-	if #lastLine._elements <= 0 then return end
-	local lastElement = lastLine._elements[#lastLine._elements]
+-- function UIRichText:onDeleteFromEditBox()
+-- 	if #self._lines <= 0 then return end
+-- 	local lastLine = self._lines[#self._lines]
+-- 	if #lastLine._elements <= 0 then return end
+-- 	local lastElement = lastLine._elements[#lastLine._elements]
 
-	local needDeleteElement = false
-	if lastElement.context.elementType == "label" then
-		if string.len(lastElement.context.value) > 0 then
-			lastElement:deleteLastLetter()
-		end
+-- 	local needDeleteElement = false
+-- 	if lastElement.context.elementType == "label" then
+-- 		if string.len(lastElement.context.value) > 0 then
+-- 			lastElement:deleteLastLetter()
+-- 		end
 
-		if string.len(lastElement.context.value) == 0 then
-			needDeleteElement = true
-		end
-	else
-		needDeleteElement = true
-	end
-	if needDeleteElement then 
-		table.remove(lastLine._elements, #lastLine._elements):removeFromParent() 
-		--这边还需要检查line的情况
+-- 		if string.len(lastElement.context.value) == 0 then
+-- 			needDeleteElement = true
+-- 		end
+-- 	else
+-- 		needDeleteElement = true
+-- 	end
+-- 	if needDeleteElement then 
+-- 		table.remove(lastLine._elements, #lastLine._elements):removeFromParent() 
+-- 		--这边还需要检查line的情况
 
-		if #lastLine._elements == 0 then
-			release_print(#self._lines)
-			table.remove(self._lines, #self._lines):removeFromParent()
-		end
-	end
-end
+-- 		if #lastLine._elements == 0 then
+-- 			release_print(#self._lines)
+-- 			table.remove(self._lines, #self._lines):removeFromParent()
+-- 		end
+-- 	end
+-- end
 
-function UIRichText:onInputFromEditBox(line, filed, context, onUpdateFocusElement)
-	--判断是否需要另起一行
-	if context.elementType == "label" then
-		if string.len(context.value) == 1 and string.byte(context.value) == 32 then
-			self.spaceCount = self.spaceCount + 1
-			return
-		end
+-- function UIRichText:onInputFromEditBox(line, filed, context, onUpdateFocusElement)
+-- 	--判断是否需要另起一行
+-- 	if context.elementType == "label" then
+-- 		if string.len(context.value) == 1 and string.byte(context.value) == 32 then
+-- 			self.spaceCount = self.spaceCount + 1
+-- 			return
+-- 		end
 
-		while self.spaceCount ~= 0 do
-			self.spaceCount = self.spaceCount - 1
-			context.value = " "..context.value
-		end
-	end
+-- 		while self.spaceCount ~= 0 do
+-- 			self.spaceCount = self.spaceCount - 1
+-- 			context.value = " "..context.value
+-- 		end
+-- 	end
 
-	local starttingRefresh = false
-	local recoveryElements = {}
-	local element = nil
+-- 	local starttingRefresh = false
+-- 	local recoveryElements = {}
+-- 	local element = nil
 
-	for k, v in pairs(self._lines) do
-		if v == line then
-			starttingRefresh = true
-		end
+-- 	for k, v in pairs(self._lines) do
+-- 		if v == line then
+-- 			starttingRefresh = true
+-- 		end
 
-		if starttingRefresh then
-			while #v._elements ~= 0 do
-				local childElement = v._elements[#v._elements]
-				childElement:retain()
-				childElement:removeFromParent()
-				table.insert(recoveryElements, table.remove(v._elements, #v._elements))
-			end
-		end
-	end
+-- 		if starttingRefresh then
+-- 			while #v._elements ~= 0 do
+-- 				local childElement = v._elements[#v._elements]
+-- 				childElement:retain()
+-- 				childElement:removeFromParent()
+-- 				table.insert(recoveryElements, table.remove(v._elements, #v._elements))
+-- 			end
+-- 		end
+-- 	end
 
-	local focusedElement = nil
-	--找到filed的index 插入到后面
-	local insertPos = 0
-	for k, v in pairs(recoveryElements) do
-		if v == filed then
-			insertPos = k
-			break
-		end
-	end
+-- 	local focusedElement = nil
+-- 	--找到filed的index 插入到后面
+-- 	local insertPos = 0
+-- 	for k, v in pairs(recoveryElements) do
+-- 		if v == filed then
+-- 			insertPos = k
+-- 			break
+-- 		end
+-- 	end
 
-	--还需要判断是否需要新建一个Label
-	if context.elementType == "label" then
-		local needAddNewElement = true
+-- 	--还需要判断是否需要新建一个Label
+-- 	if context.elementType == "label" then
+-- 		local needAddNewElement = true
 
-		if filed and filed.context.elementType == "label" and filed:isSameContext(context) then
-			--在尾部添加的情况
-			local pos = filed:addNewLetter(context.value)
-			--这边要判断是否该元素的尾部超出了范围
-			--如果超出了范围 则退回 并且新建一个element
-			if pos <= self.context.maxLineWidth then
-				needAddNewElement = false
-			end
-			focusedElement = filed
-		end
-		if needAddNewElement == true then 
-			--添加新的Element逻辑
-			local splited = UIRichTextElementFont.trySplitWords(context.value)
-			for k, v in pairs(splited) do
-				local newContext = self:copyContext(context)
-				newContext.value = v
-				element = UIRichTextElementFont:create(newContext)
-				element:refresh()
-				--找到filed的index 插入到后面
-				table.insert(recoveryElements, insertPos + k, element)
-				focusedElement = element
-			end
-		end
-	elseif context.elementType == "img" then
-		element 				= UIRichTextElementSprite:create(context)
-		element:refresh()
-		element:fixSize(self.context.maxLineWidth, self.context.maxLineHeight)
-		table.insert(recoveryElements, insertPos + 1, element)
-		focusedElement = element
-	end
-		--移除当前编辑line之后的line  包括当前编辑的line
-		while self._lines[#self._lines] ~= line do
-			table.remove(self._lines, #self._lines):removeFromParent()
-		end
-	if #recoveryElements > 0 then
-		recoveryElements = self:alignElements(line, recoveryElements)
-	end
-	self:alignLines()
-	for k, v in pairs(recoveryElements) do
-		if v.__needRelease then v:release() v.__needRelease = false end
-	end
-	onUpdateFocusElement(focusedElement)
-end
+-- 		if filed and filed.context.elementType == "label" and filed:isSameContext(context) then
+-- 			--在尾部添加的情况
+-- 			local pos = filed:addNewLetter(context.value)
+-- 			--这边要判断是否该元素的尾部超出了范围
+-- 			--如果超出了范围 则退回 并且新建一个element
+-- 			if pos <= self.context.maxLineWidth then
+-- 				needAddNewElement = false
+-- 			end
+-- 			focusedElement = filed
+-- 		end
+-- 		if needAddNewElement == true then 
+-- 			--添加新的Element逻辑
+-- 			local splited = UIRichTextElementFont.trySplitWords(context.value)
+-- 			for k, v in pairs(splited) do
+-- 				local newContext = self:copyContext(context)
+-- 				newContext.value = v
+-- 				element = UIRichTextElementFont:create(newContext)
+-- 				element:refresh()
+-- 				--找到filed的index 插入到后面
+-- 				table.insert(recoveryElements, insertPos + k, element)
+-- 				focusedElement = element
+-- 			end
+-- 		end
+-- 	elseif context.elementType == "img" then
+-- 		element 				= UIRichTextElementSprite:create(context)
+-- 		element:refresh()
+-- 		element:fixSize(self.context.maxLineWidth, self.context.maxLineHeight)
+-- 		table.insert(recoveryElements, insertPos + 1, element)
+-- 		focusedElement = element
+-- 	end
+-- 		--移除当前编辑line之后的line  包括当前编辑的line
+-- 		while self._lines[#self._lines] ~= line do
+-- 			table.remove(self._lines, #self._lines):removeFromParent()
+-- 		end
+-- 	if #recoveryElements > 0 then
+-- 		recoveryElements = self:alignElements(line, recoveryElements)
+-- 	end
+-- 	self:alignLines()
+-- 	for k, v in pairs(recoveryElements) do
+-- 		if v.__needRelease then v:release() v.__needRelease = false end
+-- 	end
+-- 	onUpdateFocusElement(focusedElement)
+-- end
 
 return UIRichText

@@ -13,8 +13,7 @@ function MainScene:onCreate()
 end
 
 function MainScene:onEnterTransitionFinish()
-    self:testSqliteGetAllTables()
-
+    self:testRichText()    
     do return end
     local chosedCharacterID = 1
     self:run()
@@ -89,8 +88,19 @@ end
 
 
 function MainScene:testRichText()
-    local richtext = import("app.components.RichText.UIRichText")
-    
+    local UIRichText = import("app.components.RichText.UIRichText")
+    local text = "t=你真是代码界的一股清流 @ s=30 @ c=FFFFFF @ ul = true @ ol = true @ ols = 2 @ olc=FF0000 |t=__用来测试的文本..... @ c=FF00FF|t=__用来测试的文本.....@ c=FF00FF | ip=res/Default/1.png"
+    local rich = UIRichText:create({
+            maxLineHeight = 80,
+            maxLineWidth  = 500,
+            VGAP = 0,
+            HGAP = 0,
+            VALIGN = "center",
+        })
+    rich:setAnchorPoint(0.5, 0.5)
+    rich["???"] = handler(self, self.testFunction)
+    rich:generateFromString(text):addTo(self):move(display.cx, display.cy)
+    rich:debugDraw(rich, cc.c4f(1,1,0,0.3))
 end
 
 function MainScene:testGausBlurSprite(Scale)

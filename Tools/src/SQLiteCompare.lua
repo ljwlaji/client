@@ -122,6 +122,7 @@ function SQLiteCompare:isSamePK(newRecord, oldRecord, pks)
 	return isSame
 end
 
+
 function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, tableName)
 	-- 如果存在已删除的列 这边不用管旧数据库 对比以新数据库的列为准
 	-- 首先进行字段属性差异检查 主要是检查已有的字段属性是否一致
@@ -182,9 +183,7 @@ end
 function SQLiteCompare:start(pathOrigin, pathNew)
 	local path = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	path = string.gsub(path, "\n", "")
-	print(path)
 	path = string.gsub(path, "/runtime/mac/framework-desktop.app/Contents/Resources", "").."/sqlcompare/"
-	print(path)
 	local oldDB = self:fillSqlData(self:openDB(path.."data_new.db"))
 	local newDB = self:fillSqlData(self:openDB(path.."data_old.db"))
 	local droppedTables = {}
@@ -314,7 +313,13 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 	end
 
 	print("程序执行完成.")
+
+	self:verifySQLChanges(path)
 end
 
+function SQLiteCompare:verifySQLChanges(path)
+	local sqlOld = self:openDB(path.."data_new.db")
+	
+end
 
 return SQLiteCompare:create()
