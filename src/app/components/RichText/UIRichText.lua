@@ -427,18 +427,17 @@ local function moveStringToLeft(left, right)
 end
 
 local function moveStringToRight(left, right)
-	local pos = utf8.len(left) - 1
-	right = utf8.sub(left, pos, 1)..right
-	left = utf8.sub(left, 1, pos)
+	local pos = utf8.len(left)
+	right = utf8.sub(left, pos, pos)..right
+	left = utf8.sub(left, 1, pos - 1)
 	return left, right
 end
 
-function UIRichText:createFontElement(contexts)
-	local addNewLine 		= false
-	local context 			= table.remove(contexts, 1)
+function UIRichText:trySplitFontElement(fnt, context)
+	local newContext 		= table.clone(context)
 	local maxLineWidth 		= tonumber(self.context.maxLineWidth)
 	local GAP 				= tonumber(self.context.VGAP)
-	local fnt 				= UIRichTextElementFont:create(context)
+	GAP = (self._standingPosX == 0 and GAP or 0)
 	local currWidth 		= fnt:getDrawSize().width
 	local percent 			= math.min((maxLineWidth - self._standingPosX - GAP) / currWidth, 1)
 	if percent < 1 then
@@ -451,41 +450,35 @@ function UIRichText:createFontElement(contexts)
 			else
 				-- 超出边界
 				left, right = moveStringToRight(left, right)
-				addNewLine = true
 				break
 			end
 		end
 		while self._standingPosX + GAP + fnt:setString(left):getDrawSize().width > maxLineWidth do
 			left, right = moveStringToRight(left, right)
-			addNewLine = true
 		end
-		local newContext 		= table.clone(context)
-		context.value 			= left
-		newContext.value 		= right
-		table.insert(contexts, 1, newContext)
+		context.value 		= left
+		newContext.value 	= right
+		context.t 			= left
+		newContext.t 		= right
 	end
-	fnt:move(self._standingPosX + GAP, 0)
-	self._standingPosX = self._standingPosX + GAP + fnt:getDrawSize().width
-	return fnt, addNewLine
-end
-
-function UIRichText:createSpriteElement(contexts)
-	local context = table.remove(contexts, 1)
+	return newContext
 end
 
 function UIRichText:generateNodesFromContexts(contexts)
-	--尝试排列
+	if #contexts == 0 then return end
+	self:addNewLine()
 	local maxLineHeight 	= tonumber(self.context.maxLineHeight)
 	local GAP 				= tonumber(self.context.VGAP)
 	local currLineHeight 	= maxLineHeight
-	local tempElements = {}
-	local element = nil
+	local ind = 0
 	while #contexts > 0 do
+		ind = ind + 1
+		if ind > 10 then break end
 		local context = table.remove(contexts, 1)
-		local createFunc = context.elementType == "label" and self.createFontElement or self.createSpriteElement
-		local element, newLine = createFunc(self, contexts)
-		self:addNodeToLine( self._lines[#self._lines] )
+		local newContext = self:createNodeToLine(context)
+		if newContext then table.insert(contexts, 1, newContext) end
 	end
+	self:alignLines()
 end
 
 function UIRichText:alignLines()
@@ -494,6 +487,7 @@ function UIRichText:alignLines()
 	local lastLine = nil
 	for k, v in pairs(self._lines) do
 		local maxHeight = 0
+		dump(v._elements)
 		for _, ele in pairs(v._elements) do
 			maxHeight = ele:getDrawSize().height > maxHeight and ele:getDrawSize().height or maxHeight
 		end
@@ -501,6 +495,8 @@ function UIRichText:alignLines()
 		if lastLine then
 			v:setPositionY(lastLine:getPositionY() - lastLine:getContentSize().height - tonumber(self.context.VGAP))
 		end
+		-- self:debugDraw(v, cc.c4f(k % 2 == 0 and 1 or 0, k % 2 == 0 and 1 or 0, 1, 0.2))
+
 		--重新排列文本
 		for _, c in pairs(v._elements) do
 			if c.context.elementType == "label" then
@@ -520,7 +516,6 @@ function UIRichText:alignLines()
 	for k, v in pairs(self._lines) do
 		totalHeight = totalHeight + v:getContentSize().height
 	end
-
 	for k, v in pairs(self._lines) do
 		v:setPositionY(totalHeight)
 		totalHeight = totalHeight - v:getContentSize().height - GAP
@@ -529,22 +524,60 @@ function UIRichText:alignLines()
 	self:setContentSize( self.context.maxLineWidth, totalHeight )
 end
 
+function UIRichText:getCurrentLine()
+	return self._lines[#self._lines]
+end
+
+function UIRichText:getPreLine()
+	return self._lines[#self._lines - 1]
+end
+
 function UIRichText:addNewLine()
 	local lineLayouter = ccui.Layout:create()
 									:addTo(self)
 									:setAnchorPoint(0, 1)
-
+									:setContentSize(self.context.maxLineWidth, 0)
 
 	lineLayouter._elements = {}
 	self._standingPosX = 0
 	table.insert(self._lines, lineLayouter)
-	self._currLine = lineLayouter
-	return lineLayouter
 end
 
-function UIRichText:addNodeToLine(node)
-	local currLine = self._currLine
-	table.insert(currLine._elements, node:addTo(currLine))
+function UIRichText:hasEnoughSpaceFor(node)
+	local currWidth = node:getDrawSize().width
+	local GAP = (self._standingPosX == 0 and self.context.VGAP or 0)
+	return self._standingPosX + currWidth + GAP <= self.context.maxLineWidth
+end
+
+function UIRichText:createNodeToLine(context)
+	local element = nil
+	local GAP = self._standingPosX == 0 and self.context.VGAP or 0
+	if context.elementType == "label" then
+		element = UIRichTextElementFont:create(context)
+	elseif context.elementType == "img" then
+		element = UIRichTextElementSprite:create(context)
+	else
+		assert(false, "Unknow context type for richtext element : "..tostring(context.elementType))
+	end
+
+	local spaceEnough = self:hasEnoughSpaceFor(element)
+
+	if not spaceEnough then
+		if context.elementType == "label" then
+			local newContext = self:trySplitFontElement(element, context)
+			element:addTo(self:getCurrentLine())
+				   :move(self._standingPosX + GAP, 0)
+			table.insert(self:getCurrentLine()._elements, element)
+			self:addNewLine()
+			return newContext
+		end
+		self:addNewLine()
+	end
+	element:addTo(self:getCurrentLine())
+		   :move(self._standingPosX + GAP, 0)
+	self._standingPosX = self._standingPosX + element:getDrawSize().width + GAP
+	table.insert(self:getCurrentLine()._elements, element)
+	return nil
 end
 
 ----Events----

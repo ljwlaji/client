@@ -3,8 +3,8 @@ local UIRichTextElementSprite = class("UIRichTextElementSprite", UIRichTextEleme
 
 
 function UIRichTextElementSprite:onCreate()
-	self:setDefaultValue("imgPath")
 	UIRichTextElement.onCreate(self)
+	self:refresh()
 end
 
 function UIRichTextElementSprite:refresh()

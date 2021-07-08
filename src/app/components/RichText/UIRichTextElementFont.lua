@@ -17,7 +17,6 @@ function UIRichTextElementFont:refresh()
 	if self.context.value == "nullSet" then
 		error("Execption Catched In function UIRichTextElement:initWithFont()! elementType Is font But NO string context !")
 	end
-	dump(self.context)
 	if not self.drawNode then 
 		self.drawNode = cc.LabelTTF:create()--(self.context.value, self.context.fontPath)
 		self.drawNode:setString(self.context.value)

@@ -89,9 +89,9 @@ end
 
 function MainScene:testRichText()
     local UIRichText = import("app.components.RichText.UIRichText")
-    local text = "t=你真是代码界的一股清流 @ s=30 @ c=FFFFFF @ ul = true @ ol = true @ ols = 2 @ olc=FF0000 |t=__用来测试的文本..... @ c=FF00FF|t=__用来测试的文本.....@ c=FF00FF | ip=res/Default/1.png"
+    local text = "| t=你真是代码界的一股清流123456789123456789123456789 @ s=30 @ c=FFFFFF @ ul = true @ ol = true @ ols = 2 @ olc=FF0000 |t=__用来测试的文本12345678 @ c=FF00FF|t=__用来测试的文本12345678 @ c=FF00FF | ip=res/Default/1.png"
     local rich = UIRichText:create({
-            maxLineHeight = 80,
+            maxLineHeight = 30,
             maxLineWidth  = 500,
             VGAP = 0,
             HGAP = 0,
