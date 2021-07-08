@@ -38,3 +38,4 @@ frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcshareddata/xcschemes/f
 frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcuserdata/ljw.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
 frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcuserdata/ljw.xcuserdatad/xcschemes/xcschememanagement.plist
 sqlcompare/*
+Tools/Zipper/lib
