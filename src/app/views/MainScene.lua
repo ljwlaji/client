@@ -13,7 +13,8 @@ function MainScene:onCreate()
 end
 
 function MainScene:onEnterTransitionFinish()
-    self:testRichText()    
+    self:testRichText()
+    cc.Director:getInstance():endToLua()
     do return end
     local chosedCharacterID = 1
     self:run()

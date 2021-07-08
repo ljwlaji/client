@@ -10,8 +10,100 @@ local MD5 = cc.MD5:create()
 则选择所有路径；如果没有匹配其他条件的文件，则不会选择任何路径。 此外，这些大写字母也可以降大写以排除.。例如---diff-filter=广告排除了添加和删除的路径。
 
 ]]
+local logs = {}
+
+local updateDir = nil
+
+function string.split(input, delimiter)
+    input = tostring(input)
+    delimiter = tostring(delimiter)
+    if (delimiter=='') then return false end
+    local pos,arr = 0, {}
+    -- for each divider found
+    for st,sp in function() return string.find(input, delimiter, pos, true) end do
+        table.insert(arr, string.sub(input, pos, st - 1))
+        pos = sp + 1
+    end
+    table.insert(arr, string.sub(input, pos))
+    return arr
+end
+
+local function dump_value_(v)
+    if type(v) == "string" then
+        v = "\"" .. v .. "\""
+    end
+    return tostring(v)
+end
+
+local function release_print(...)
+	table.insert(logs, table.concat({...}, "\t"))
+end
+
+
+local function dump(value, description, nesting)
+    if type(nesting) ~= "number" then nesting = 3 end
+
+    local lookupTable = {}
+    local result = {}
+
+    local traceback = string.split(debug.traceback("", 2), "\n")
+    print("dump from: " .. string.trim(traceback[3]))
+
+    local function dump_(value, description, indent, nest, keylen)
+        description = description or "<var>"
+        local spc = ""
+        if type(keylen) == "number" then
+            spc = string.rep(" ", keylen - string.len(dump_value_(description)))
+        end
+        if type(value) ~= "table" then
+            result[#result +1 ] = string.format("%s%s%s = %s", indent, dump_value_(description), spc, dump_value_(value))
+        elseif lookupTable[tostring(value)] then
+            result[#result +1 ] = string.format("%s%s%s = *REF*", indent, dump_value_(description), spc)
+        else
+            lookupTable[tostring(value)] = true
+            if nest > nesting then
+                result[#result +1 ] = string.format("%s%s = *MAX NESTING*", indent, dump_value_(description))
+            else
+                result[#result +1 ] = string.format("%s%s = {", indent, dump_value_(description))
+                local indent2 = indent.."    "
+                local keys = {}
+                local keylen = 0
+                local values = {}
+                for k, v in pairs(value) do
+                    keys[#keys + 1] = k
+                    local vk = dump_value_(k)
+                    local vkl = string.len(vk)
+                    if vkl > keylen then keylen = vkl end
+                    values[k] = v
+                end
+                table.sort(keys, function(a, b)
+                    if type(a) == "number" and type(b) == "number" then
+                        return a < b
+                    else
+                        return tostring(a) < tostring(b)
+                    end
+                end)
+                for i, k in ipairs(keys) do
+                    dump_(values[k], k, indent2, nest + 1, keylen)
+                end
+                result[#result +1] = string.format("%s}", indent)
+            end
+        end
+    end
+    dump_(value, description, "- ", 1)
+
+    for i, line in ipairs(result) do
+        release_print(line)
+    end
+end
 
 local WLSPath = "ubuntu1604.exe"
+
+local function outLog(path)
+	local fileWrite = io.open(path,"w")
+	fileWrite:write(table.concat(logs, "\n"))
+	fileWrite:close()
+end
 
 function AutoUpdater.checkModified(firstCommit, lastCommit)
 	release_print("")
@@ -73,6 +165,13 @@ local function TableToString(table)
 	return data
 end
 
+local function exit(msg)
+	if msg then release_print(msg) end
+	LFS.createDir(updateDir.."/Log")
+	outLog(updateDir.."/Log/log.txt")
+    cc.Director:getInstance():endToLua()
+end
+
 function AutoUpdater.run(firstCommit, lastCommit)
 	-- local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "") -- For Win Only
 	local currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
@@ -83,7 +182,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	-- Create Update Dir
 	-- dump(modifiedFiles)
 
-	local updateDir = currentDir.."/Update"
+	updateDir = currentDir.."/Update"
 	LFS.createDir(updateDir)
 
 	local tasks = {}
@@ -116,6 +215,9 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
 
+	if #tasks == 0 then
+		exit("没有找到需要打包的文件...")
+	end
 	dump(tasks)
 	for k, v in pairs(tasks) do
 		v.FromMD5 	= AutoUpdater.getMD5(v.From)
@@ -125,7 +227,9 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	for k, v in pairs(tasks) do
 		local successed = v.FromMD5 == v.ToMD5
         release_print(string.format("文件MD5检测 [%s] : [%s] !", successed and "通过" or "错误", v.ShortDir ))
-		assert(successed, "检测到错误...停止程序....")
+		if not successed then
+			exit("检测到错误...停止程序....")
+		end
 	end
 
 	-- dump(tasks)
@@ -146,7 +250,9 @@ function AutoUpdater.run(firstCommit, lastCommit)
 			break
 		end
 	end
-	assert(Successed, "检测到错误...停止程序....")
+	if not Successed then
+		exit("检测到错误...停止程序....")
+	end
 	release_print("打包文件成功 !")
 	release_print(string.format("更新包路径 : [%s]", path))
 
@@ -163,6 +269,14 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper"
 	local callBack = io.popen(string.format("%s %s %s unCompress", ZipperPath, path, updateDir.."/TestUnZip")):read("*all")
 	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"rb")
+	if not originFile then
+		exit("无法打开文件: "..currentDir.."/AllUpdates 请检查")
+	end
+	local originData = {}
+	local func = loadstring("return "..originFile:read("*a"))
+	if not func then
+		exit("读取文件失败: "..currentDir.."/AllUpdates 请检查")
+	end
 	local originData = originFile and loadstring("return "..originFile:read("*a"))() or {}
 	if originFile then
 		originFile:close()
@@ -211,6 +325,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
 	release_print("===========全部操作完成!===========")
+	exit()
 end
 
 return AutoUpdater

@@ -110,6 +110,17 @@ run_source_packer()
 		rm -r "${project_path}/Update"
 	fi
 	$project_path/runtime/mac/framework-desktop.app/Contents/MacOS/framework-desktop -workdir $project_path/Tools
+
+	echo "${project_path}/Update/Log/log.txt"
+
+	if [ -f "${project_path}/Update/Log/log.txt" ]; then
+		cat "${project_path}/Update/Log/log.txt"
+	else
+		echo "打包脚本出现了未知问题...."
+	fi
+	echo ""
+	echo '打包脚本运行完成, 打包日志查询: ${project_path}/Update/Logs'
+	read -p "按任意键返回 :"
 }
 
 start()
