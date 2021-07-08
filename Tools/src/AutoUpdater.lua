@@ -10,6 +10,7 @@ local MD5 = cc.MD5:create()
 则选择所有路径；如果没有匹配其他条件的文件，则不会选择任何路径。 此外，这些大写字母也可以降大写以排除.。例如---diff-filter=广告排除了添加和删除的路径。
 
 ]]
+
 local logs = {}
 
 local updateDir = nil
@@ -37,6 +38,7 @@ end
 
 local function release_print(...)
 	table.insert(logs, table.concat({...}, "\t"))
+	print(...)
 end
 
 
@@ -97,13 +99,21 @@ local function dump(value, description, nesting)
     end
 end
 
-local WLSPath = "ubuntu1604.exe"
-
 local function outLog(path)
 	local fileWrite = io.open(path,"w")
 	fileWrite:write(table.concat(logs, "\n"))
 	fileWrite:close()
 end
+
+local function exit(msg)
+	if msg then release_print(msg) end
+	LFS.createDir(updateDir.."/Log")
+	outLog(updateDir.."/Log/log.txt")
+    cc.Director:getInstance():endToLua()
+end
+
+
+local WLSPath = "ubuntu1604.exe"
 
 function AutoUpdater.checkModified(firstCommit, lastCommit)
 	release_print("")
@@ -165,13 +175,6 @@ local function TableToString(table)
 	return data
 end
 
-local function exit(msg)
-	if msg then release_print(msg) end
-	LFS.createDir(updateDir.."/Log")
-	outLog(updateDir.."/Log/log.txt")
-    cc.Director:getInstance():endToLua()
-end
-
 function AutoUpdater.run(firstCommit, lastCommit)
 	-- local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "") -- For Win Only
 	local currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
@@ -214,11 +217,11 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("==========================================================")
 	release_print("")
 	release_print("")
-
 	if #tasks == 0 then
 		exit("没有找到需要打包的文件...")
 	end
 	dump(tasks)
+
 	for k, v in pairs(tasks) do
 		v.FromMD5 	= AutoUpdater.getMD5(v.From)
 		v.ToMD5 	= AutoUpdater.getMD5(v.To)
@@ -269,14 +272,6 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper"
 	local callBack = io.popen(string.format("%s %s %s unCompress", ZipperPath, path, updateDir.."/TestUnZip")):read("*all")
 	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"rb")
-	if not originFile then
-		exit("无法打开文件: "..currentDir.."/AllUpdates 请检查")
-	end
-	local originData = {}
-	local func = loadstring("return "..originFile:read("*a"))
-	if not func then
-		exit("读取文件失败: "..currentDir.."/AllUpdates 请检查")
-	end
 	local originData = originFile and loadstring("return "..originFile:read("*a"))() or {}
 	if originFile then
 		originFile:close()
@@ -325,7 +320,7 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
 	release_print("===========全部操作完成!===========")
-	exit()
+	exit("lua打包脚本正常退出!")
 end
 
 return AutoUpdater

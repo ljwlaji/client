@@ -6,6 +6,109 @@ local Utils 		= import("app.components.Utils")
 -- 表操作是无法使用事务来做的 所以这边如果失败则直接回滚数据库(本地在做这个操作时会先做备份)
 -- 除instance后缀表外不允许有自增列
 
+
+local logs = {}
+
+local currentDir = nil
+
+function string.split(input, delimiter)
+    input = tostring(input)
+    delimiter = tostring(delimiter)
+    if (delimiter=='') then return false end
+    local pos,arr = 0, {}
+    -- for each divider found
+    for st,sp in function() return string.find(input, delimiter, pos, true) end do
+        table.insert(arr, string.sub(input, pos, st - 1))
+        pos = sp + 1
+    end
+    table.insert(arr, string.sub(input, pos))
+    return arr
+end
+
+local function dump_value_(v)
+    if type(v) == "string" then
+        v = "\"" .. v .. "\""
+    end
+    return tostring(v)
+end
+
+local function release_print(...)
+	table.insert(logs, table.concat({...}, "\t"))
+	print(...)
+end
+
+
+local function dump(value, description, nesting)
+    if type(nesting) ~= "number" then nesting = 3 end
+
+    local lookupTable = {}
+    local result = {}
+
+    local traceback = string.split(debug.traceback("", 2), "\n")
+    print("dump from: " .. string.trim(traceback[3]))
+
+    local function dump_(value, description, indent, nest, keylen)
+        description = description or "<var>"
+        local spc = ""
+        if type(keylen) == "number" then
+            spc = string.rep(" ", keylen - string.len(dump_value_(description)))
+        end
+        if type(value) ~= "table" then
+            result[#result +1 ] = string.format("%s%s%s = %s", indent, dump_value_(description), spc, dump_value_(value))
+        elseif lookupTable[tostring(value)] then
+            result[#result +1 ] = string.format("%s%s%s = *REF*", indent, dump_value_(description), spc)
+        else
+            lookupTable[tostring(value)] = true
+            if nest > nesting then
+                result[#result +1 ] = string.format("%s%s = *MAX NESTING*", indent, dump_value_(description))
+            else
+                result[#result +1 ] = string.format("%s%s = {", indent, dump_value_(description))
+                local indent2 = indent.."    "
+                local keys = {}
+                local keylen = 0
+                local values = {}
+                for k, v in pairs(value) do
+                    keys[#keys + 1] = k
+                    local vk = dump_value_(k)
+                    local vkl = string.len(vk)
+                    if vkl > keylen then keylen = vkl end
+                    values[k] = v
+                end
+                table.sort(keys, function(a, b)
+                    if type(a) == "number" and type(b) == "number" then
+                        return a < b
+                    else
+                        return tostring(a) < tostring(b)
+                    end
+                end)
+                for i, k in ipairs(keys) do
+                    dump_(values[k], k, indent2, nest + 1, keylen)
+                end
+                result[#result +1] = string.format("%s}", indent)
+            end
+        end
+    end
+    dump_(value, description, "- ", 1)
+
+    for i, line in ipairs(result) do
+        release_print(line)
+    end
+end
+
+local function outLog(path)
+	local fileWrite = io.open(path,"w")
+	fileWrite:write(table.concat(logs, "\n"))
+	fileWrite:close()
+end
+
+local function exit(msg)
+	if msg then release_print(msg) end
+	LFS.createDir(currentDir.."/../Log")
+	outLog(currentDir.."/../Log/log.txt")
+    cc.Director:getInstance():endToLua()
+end
+
+
 function SQLiteCompare:ctor()
 
 end
@@ -20,11 +123,12 @@ end
 
 
 function SQLiteCompare:openDB(path)
-	-- assert(FileUtils:isFileExist(path), "No Such File : "..path)
-	return assert(sqlite3.open(path), "Load DB Error : "..path)
+	local db = sqlite3.open(path)
+	if not db then exit("打开数据库出错 : "..path) end
+	return db
 end
 
-function SQLiteCompare:fillSqlData(db)
+function SQLiteCompare:fillSqlData(db, keepAlive)
 	-- 获取所有表名
 	local retDBTempalte = {}
 	local tables = {}
@@ -58,7 +162,9 @@ function SQLiteCompare:fillSqlData(db)
 
 		retDBTempalte[tableName] = template
 	end
-	db:close()
+	if not keepAlive then
+		db:close()
+	end
 	return retDBTempalte
 end
 
@@ -184,8 +290,8 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 	local path = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	path = string.gsub(path, "\n", "")
 	path = string.gsub(path, "/runtime/mac/framework-desktop.app/Contents/Resources", "").."/sqlcompare/"
-	local oldDB = self:fillSqlData(self:openDB(path.."data_new.db"))
-	local newDB = self:fillSqlData(self:openDB(path.."data_old.db"))
+	local oldDB = self:fillSqlData(self:openDB(path.."data_old.db"))
+	local newDB = self:fillSqlData(self:openDB(path.."data_new.db"))
 	local droppedTables = {}
 	local drpopedFields = {}
 	-- 查询删除的表和列
@@ -262,7 +368,7 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 
 	local date = os.time()
 
-	local currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
+	currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	currentDir = string.gsub(currentDir, "\n", "")
 	LFS.createDir(currentDir.."/Update")
 	LFS.createDir(currentDir.."/Update/sql")
@@ -312,14 +418,48 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		end
 	end
 
-	print("程序执行完成.")
 
-	self:verifySQLChanges(path)
+	self:verifySQLChanges()
+	exit("执行完成. 正常退出!")
 end
 
-function SQLiteCompare:verifySQLChanges(path)
-	local sqlOld = self:openDB(path.."data_new.db")
-	
+function SQLiteCompare:readFileLineByLine(path, cb)
+	local f = io.open(path, "rb")
+	if not f then exit("读取文件失败 : "..path) end
+	for line in f:lines() do
+		cb(line)
+	end
+end
+
+function SQLiteCompare:verifySQLChanges()
+	--select <column_one>, <column_two> from <table_name> order by <column_one>, <column_two>; --[[ASC, DESC]]
+	local tbs = {}
+	local sqls = {}
+	for file in lfs.dir(currentDir) do
+		if string.sub(file, 1, 1) ~= "." then
+			local tb = file == "tables.sql" and tbs or sqls
+			self:readFileLineByLine(currentDir..file, function(l)
+				table.insert(tb, l)
+			end)
+		end
+	end
+
+	local originFile = io.open(string.gsub(currentDir.."tables.sql", "\\", "/"),"rb")
+	local path = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
+	path = string.gsub(path, "\n", "")
+	path = string.gsub(path, "/runtime/mac/framework-desktop.app/Contents/Resources", "").."/sqlcompare/"
+	local oldDB = self:openDB(path.."data_old.db")
+
+	for _, sql in ipairs(tbs) do
+		release_print("Running SQL : ["..tostring(sql).."]")
+		release_print("Result :")
+		dump(self:query(oldDB, sql))
+	end
+	for _, sql in ipairs(sqls) do
+		release_print("Running SQL : ["..tostring(sql).."]")
+		release_print("Result :")
+		dump(self:query(oldDB, sql))
+	end
 end
 
 return SQLiteCompare:create()
