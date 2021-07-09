@@ -13,9 +13,6 @@ function MainScene:onCreate()
 end
 
 function MainScene:onEnterTransitionFinish()
-    self:testRichText()
-    cc.Director:getInstance():endToLua()
-    do return end
     local chosedCharacterID = 1
     self:run()
     self:createView("layer.LayerEntrance", function()

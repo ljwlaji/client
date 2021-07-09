@@ -19,7 +19,7 @@ function vNodeVendorMenuCell:onReset(context)
 	local gold 		= math.floor(template.buy_price * 0.0001)
 	local silver 	= math.floor(template.buy_price % 10000 * 0.01)
 	local copper 	= template.buy_price % 100
-	self.m_Children["Text_Name"]:setColor(ShareDefine.getQualityColor(template.quailty))
+	self.m_Children["Text_Name"]:setColor(ShareDefine.getQualityColor(template.quality))
 	self.m_Children["Text_Name"]:setString(DataBase:getStringByID(template.name_string))
 	self.m_Children["Text_Gold"]:setString(gold):setVisible(gold > 0)
 	self.m_Children["Text_Silver"]:setString(silver):setVisible(silver > 0)

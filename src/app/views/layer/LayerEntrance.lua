@@ -8,8 +8,8 @@ LayerEntrance.RESOURCE_FILENAME = "res/csb/layer/CSB_Layer_Entrance.csb"
 LayerEntrance.RESOURCE_BINDING = {}
 
 local DevMode 								= import("app.ShareDefine"):isDevMode()
-local RemoteVersionFile 					= "http://120.78.223.173/AllUpdates"
-local RemoteUpdatePath 						= "http://120.78.223.173/downloads/"
+local RemoteVersionFile 					= "http://vv2.azerothcn.com/AllUpdates"
+local RemoteUpdatePath 						= "http://vv2.azerothcn.com/downloads/"
 local STATE_CHECK_VERSION 					= 1
 local STATE_FIRST_INIT 						= 2
 local STATE_REQUEST_NEW_VERSION 			= 3

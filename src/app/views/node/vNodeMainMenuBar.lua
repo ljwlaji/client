@@ -16,10 +16,12 @@ vNodeMainMenuBar.RESOURCE_BINDING = {
 function vNodeMainMenuBar:onCreate()
 	self:setStr(self.m_Children["Text_Character"], 	10008)
 	self:setStr(self.m_Children["Text_Spell"], 		10009)
+	self:setStr(self.m_Children["Text_Inventory"], 	100001)
 	self:setStr(self.m_Children["Text_Talent"], 	10010)
 	self:setStr(self.m_Children["Text_Quest"], 		10011)
 	self:setStr(self.m_Children["Text_Quest"], 		10011)
-	self:setStr(self.m_Children["Text_Inventory"], 	100001)
+	self:setStr(self.m_Children["Text_Settings"], 	10012)
+	-- self:setStr(self.m_Children["Text_Quest"], 		10011)
 end
 
 function vNodeMainMenuBar:setStr(obj, id)
@@ -58,19 +60,19 @@ end
 function vNodeMainMenuBar:onTouchButtonSettings(e)
 	if e.name ~= "ended" then return end
 	-- import("app.components.Object.Player"):getInstance():getMap():removeFromParent()
-	-- import("app.components.Object.Player"):getInstance():addItem(1, 111)
+	-- -- import("app.components.Object.Player"):getInstance():addItem(1, 111)
 
-	local entry = 3
-	local amount = 81
-	-- if import("app.components.Object.Player"):getInstance():hasSpaceFor(entry, amount) then
-	-- 	import("app.components.Object.Player"):getInstance():addItem(entry, amount)
+	-- local entry = 3
+	-- local amount = 81
+	-- -- if import("app.components.Object.Player"):getInstance():hasSpaceFor(entry, amount) then
+	-- -- 	import("app.components.Object.Player"):getInstance():addItem(entry, amount)
+	-- -- end
+	-- dump(import("app.components.Object.Player"):getInstance():getItemCount(entry))
+	-- if import("app.components.Object.Player"):getInstance():getItemCount(entry) > 55 then
+	-- 	import("app.components.Object.Player"):getInstance():destoryItem(entry, 55)
+	-- else
+	-- 	release_print("Item Count Less Than 55!")
 	-- end
-	dump(import("app.components.Object.Player"):getInstance():getItemCount(entry))
-	if import("app.components.Object.Player"):getInstance():getItemCount(entry) > 55 then
-		import("app.components.Object.Player"):getInstance():destoryItem(entry, 55)
-	else
-		release_print("Item Count Less Than 55!")
-	end
 end
 
 
