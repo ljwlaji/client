@@ -69,7 +69,7 @@ function WindowMgr:createWindow(path, ...)
         self:sortZOrder()
         return
     end
-	local window = template:create(display.getWorld():getApp(), template.__cname, ...):addTo(display.getWorld())
+	local window = template:create(...):addTo(display.getRunningScene())
 	rawset(template, "inDisplay", true)
     window:setAnchorPoint(0.5, 0.5):move(display.center)
 	table.insert(self.m_Windows, window)

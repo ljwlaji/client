@@ -1,9 +1,9 @@
 local MainScene     = class("MainScene", cc.load("mvc").ViewBase)
-local Camera        = import("app.components.Camera")
-local GridView      = import("app.components.GridView")
-local LayerEntrance = import("app.views.layer.LayerEntrance")
-local Map           = import("app.components.Map")
-local ShareDefine   = import("app.ShareDefine")
+local Camera        = require("app.components.Camera")
+local GridView      = require("app.components.GridView")
+local Map           = require("app.components.Map")
+local ShareDefine   = require("app.ShareDefine")
+local LayerEntrance = require("app.views.layer.LayerEntrance")
 
 local updateCount = 0
 local totalMS = 0
@@ -13,28 +13,19 @@ function MainScene:onCreate()
 end
 
 function MainScene:onEnterTransitionFinish()
-    local chosedCharacterID = 1
-    self:run()
-    self:createView("layer.LayerEntrance", function()
-        self.m_HUDLayer = import("app.views.layer.vLayerHUD"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
-        self:startGame(chosedCharacterID)
-        self.m_HUDLayer:onReset()
-    end):addTo(self)
 end
 
 function MainScene:run()
-    -- local sp = cc.Sprite:create("test_character.png")
-    --                     :addTo(self)
-    --                     :move(display.cx, display.cy)
-    --                     :setScale(0.3)
-
-
-    -- self:testShader(sp)
-    -- do return end
+    local chosedCharacterID = 1
     if not self.Timmer then
         self.Timmer = cc.Timmer:create():addTo(self)
         self:onUpdate(handler(self, self.onNativeUpdate))
     end
+    LayerEntrance:create( function() 
+        self.m_HUDLayer = import("app.views.layer.vLayerHUD"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
+        self:startGame(chosedCharacterID)
+        self.m_HUDLayer:onReset()
+    end):addTo(self)
 end
 
 function MainScene:onNativeUpdate()

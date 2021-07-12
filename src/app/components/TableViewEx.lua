@@ -30,7 +30,7 @@ end
 
 function TableViewEx:onNativeCellAtIndex(table, index)
     local cell = self.tableView:dequeueCell() or cc.TableViewCell:new()
-    xpcall(function() self.__onCellAtIndex(cell, index) end, function(...) release_print(...) end)
+    xpcall(function() self.__onCellAtIndex(cell, index) end, function(msg) __G__TRACKBACK__(msg) end)
 	return cell
 end
 

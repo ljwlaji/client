@@ -12,23 +12,19 @@ local FactionMgr		= import("app.components.FactionMgr")
 -- 需要实现的功能
 -- 无缝地图
 --[[ 
-	开发头脑风暴
-	
 	加载模式:
 		首先进入的时候是一张特别大的地图 这个大地图由很多小区域块组成
-		玩家进入地图时优先加载视野内可以看到的地图区域
+		玩家进入地图后会加载一定区域内的 Area 实例, 这个实例将一直存在(或很长距离后销毁?)
 		每个区域在加载时会自动加载相关区域内的GameObject信息 并将这些GameObject构造并加入到 Map 由 Map 统一调度
-		GameObject指针由区域持有 Map 也有一份
-		在玩家离开区域一段距离之后 将自动销毁( 需要判断区域内的 GameObject 是否还与世界有关联 ) GameObject为Map的子节点 区域仅作为加载和卸载的触发器
+		GameObject指针由Area 和 Map 共同持有
+		在玩家离开区域一段距离之后 将创建一个计时器, 在计时器到期后将销毁这个 Area 内所有GameObject(SaveToDB) -- 或直接销毁Area?
+		期间玩家靠近这个Area计时器将被删除
 		
 		
 		流程图:
 			加载:
 				触发地图加载事件->读取需要加载的GameObject
-
-
 		-- 再议项 可以实现地图多精度
-
 ]]
 
 local DISTANCE_FOR_SHOWN 				= 1000
@@ -50,10 +46,6 @@ function Map:ctor(Entry, chosedCharacterID)
 	self:onCreate(chosedCharacterID)
 
 	--For Testting
-	self.m_BG = cc.Sprite:create("cloud.png"):addTo(display.getWorld()):setAnchorPoint(0, 0):setLocalZOrder(-99999999)
-	self.m_Sky = cc.Sprite:create("sky.jpg"):addTo(display.getWorld()):setAnchorPoint(0, 0):setLocalZOrder(-99999999 - 1):setScale(0.7)
-	self.m_Sky = cc.Sprite:create("Sun.png"):addTo(display.getWorld()):setAnchorPoint(0, 1):setLocalZOrder(-99999998):move(0, display.height)
-	-- self.m_Sky = cc.Sprite:create("skyring.png"):addTo(display.getWorld()):setAnchorPoint(0, 0):setLocalZOrder(-99999998):setScale(2.9)
 	self:onNodeEvent("cleanup", handler(self, self.cleanUpBeforeDelete))
 end
 

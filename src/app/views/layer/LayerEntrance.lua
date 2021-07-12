@@ -28,7 +28,6 @@ end
 function LayerEntrance:onEnterTransitionFinish()
 	release_print("onEnterTransitionFinish")
 	self:initStateMachine()
-	self:enableUpdate(handler(self, self.onUpdate))
 end
 
 function LayerEntrance:initStateMachine()
@@ -41,6 +40,7 @@ function LayerEntrance:initStateMachine()
 							:addState(STATE_REQUEST_NEW_VERSION_TIME_OUT, 	nil, nil, nil, nil)
 							:setState(STATE_CHECK_VERSION)
 							:run()
+	cc.Node.onUpdate(self, handler(self, self.onUpdate))
 end
 
 function LayerEntrance:onEnterCheckVersion()

@@ -33,13 +33,13 @@ end
 
 function AppBase:run(initSceneName)
     initSceneName = initSceneName or self.configs_.defaultSceneName
-    self:enterScene(initSceneName)
+    local scene = self:enterScene(initSceneName)
+    scene:run()
 end
 
 function AppBase:enterScene(sceneName, transition, time, more)
     local view = self:createView(sceneName)
     view:showWithScene(transition, time, more)
-    display.getWorld = function() return view end
     return view
 end
 

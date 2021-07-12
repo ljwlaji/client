@@ -19,7 +19,6 @@ function vNodeMainMenuBar:onCreate()
 	self:setStr(self.m_Children["Text_Inventory"], 	100001)
 	self:setStr(self.m_Children["Text_Talent"], 	10010)
 	self:setStr(self.m_Children["Text_Quest"], 		10011)
-	self:setStr(self.m_Children["Text_Quest"], 		10011)
 	self:setStr(self.m_Children["Text_Settings"], 	10012)
 	-- self:setStr(self.m_Children["Text_Quest"], 		10011)
 end

@@ -15,10 +15,6 @@ function ViewBaseEx:autoAlgin()
 	if self.m_Children["node_Right_Up"] 		then self.m_Children["node_Right_Up"]:move(display.width, display.height):setAnchorPoint(1, 1) end
 	if self.m_Children["node_Right"] 			then self.m_Children["node_Right"]:move(display.width, display.cy):setAnchorPoint(1, 0.5) end
 	if self.m_Children["node_Right_Buttom"] 	then self.m_Children["node_Right_Buttom"]:move(display.width, 0):setAnchorPoint(1, 0) end
-
-	self:onNodeEvent("cleanup", function()
-		if self._isNodeSyncUpdateEnabled == true then display.getWorld():removeNodeFromSyncUpdateList(self) end
-	end)
 end
 
 function ViewBaseEx:debugDraw(parent, color, size)
@@ -30,11 +26,6 @@ function ViewBaseEx:debugDraw(parent, color, size)
     myDrawNode:drawSolidRect(cc.p(0, 0), size, color or cc.c4f(1,1,1,1))
     myDrawNode:setLocalZOrder(-10)
     parent.__drawNode = myDrawNode
-end
-
-function ViewBaseEx:enableUpdate(func)
-	display.getWorld():addNodeSyncUpdate(self, func)
-	self._isNodeSyncUpdateEnabled = true
 end
 
 function ViewBaseEx:runSequence(...)

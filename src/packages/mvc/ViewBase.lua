@@ -1,10 +1,8 @@
 
 local ViewBase = class("ViewBase", cc.Node)
 
-function ViewBase:ctor(app, name, ...)
+function ViewBase:ctor(...)
     self:enableNodeEvents()
-    self.app_ = app
-    self.name_ = name
     self.m_Children = {}
     -- check CSB resource file
     local res = rawget(self.class, "RESOURCE_FILENAME")
@@ -17,14 +15,6 @@ function ViewBase:ctor(app, name, ...)
         self:createResourceBinding(binding)
     end
     if self.onCreate then self:onCreate(...) end
-end
-
-function ViewBase:getApp()
-    return self.app_
-end
-
-function ViewBase:getName()
-    return self.name_
 end
 
 function ViewBase:getResourceNode()

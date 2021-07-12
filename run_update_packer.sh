@@ -39,6 +39,16 @@ get_input_val()
 	echo "${value}";
 }
 
+run_map_extractor()
+{
+	check_file_exist "${project_path}/Tools/src/main_map_exec.lua"
+	if [ -f "${project_path}/Tools/src/main.lua" ]; then
+		rm "${project_path}/Tools/src/main.lua"
+	fi
+	cp "${project_path}/Tools/src/main_map_exec.lua" "${project_path}/Tools/src/main.lua"
+	$project_path/runtime/mac/framework-desktop.app/Contents/MacOS/framework-desktop -workdir $project_path/Tools
+}
+
 run_sql_compare()
 {
 	read -p "自动打包即将开始, 请确认已经提交所有修改项, 输入任意键开始脚本! "
@@ -134,6 +144,7 @@ start()
 	echo ""
 	echo ""
 	echo ""
+	echo "9. 导出地图数据."
 	echo ""
 	echo ""
 	echo ""
@@ -150,6 +161,9 @@ start()
 	echo ""
 	echo ""
 	read -p "请输入你的选择 :" value;
+	if [ "${value}" == "9" ]; then
+		run_map_extractor
+	fi
 	if [ "${value}" == "1" ]; then
 		run_sql_compare
 	fi

@@ -5,16 +5,15 @@ require "cocos.init"
 require "app.components.UITextEx"
 
 __G__TRACKBACK__ = function(msg)
-    -- record the message
-    local message = msg;
-
-    -- auto genretated
-    local msg = debug.traceback(msg, 3)
-    release_print(msg)
+    local tbStr=debug.traceback("", 2)
+    release_print("----------------------------------------")
+    release_print("LUA ERROR: " .. tostring(msg) .. "\n")
+    release_print(tbStr)
+    release_print("----------------------------------------")
 
     -- report lua exception
     if device.platform == "ios" then
-        buglyReportLuaException(tostring(message), debug.traceback())
+        buglyReportLuaException(tostring(tbStr), debug.traceback())
     end
 
     return msg
@@ -104,6 +103,7 @@ local function main()
     -- release_print("Decode = "..dec)
     -- do return end
     require("app.MyApp"):create():run()
+    dump(display.getRunningScene())
 end
 
 local status, msg = xpcall(main, __G__TRACKBACK__)
