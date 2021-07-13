@@ -27,6 +27,9 @@ THE SOFTWARE.
 package org.cocos2dx.lua;
 
 import android.os.Bundle;
+
+import com.tencent.bugly.crashreport.CrashReport;
+
 import org.cocos2dx.lib.Cocos2dxActivity;
 
 public class AppActivity extends Cocos2dxActivity{
@@ -34,6 +37,8 @@ public class AppActivity extends Cocos2dxActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.setEnableVirtualButton(false);
         super.onCreate(savedInstanceState);
+        CrashReport.initCrashReport(getApplicationContext(), "832cdc1e32", true);
+//        CrashReport.testJavaCrash();
         // Workaround in https://stackoverflow.com/questions/16283079/re-launch-of-activity-on-home-button-but-only-the-first-time/16447508
         if (!isTaskRoot()) {
             // Android launched another instance of the root activity into an existing task
