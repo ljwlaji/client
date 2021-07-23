@@ -16,6 +16,8 @@ function MainScene:onEnterTransitionFinish()
 end
 
 function MainScene:run()
+    self:testLineOfSight()
+    do return end
     local chosedCharacterID = 1
     if not self.Timmer then
         self.Timmer = cc.Timmer:create():addTo(self)
@@ -120,6 +122,9 @@ function MainScene:ScreenImage(scale)
     return img
 end
 
+function MainScene:testLineOfSight()
+    require("app.dev.UnitTestLineOfSight")(self)
+end
 
 function MainScene:testGridView()
     local datas = {}

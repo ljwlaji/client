@@ -12,7 +12,7 @@ __G__TRACKBACK__ = function(msg)
     release_print("----------------------------------------")
 
     -- report lua exception
-    if device.platform == "ios" then
+    if device.platform == "ios" or device.platform == "android" then
         buglyReportLuaException(tostring(tbStr), debug.traceback())
     end
 
