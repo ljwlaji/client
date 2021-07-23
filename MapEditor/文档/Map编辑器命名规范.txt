@@ -1,5 +1,0 @@
-游戏物体 	Gobject_ 		+ Entry
-生物			Creature_ 		+ Entry
-地形物体		Ground_ 		+ 图片资源名
-背景			Back_Ground_ 	+ 图片资源名
-前景 		Front_Ground_ 	+ 图片资源名
