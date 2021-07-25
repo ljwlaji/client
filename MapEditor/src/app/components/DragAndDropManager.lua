@@ -11,28 +11,45 @@ end
 
 function DragAndDropManager:ctor()
 	self._DragNodes = {}
+	self:regiestMouseListener()
 end
 
 function DragAndDropManager:isDragInside(node, touch)
 	if not node:getParent() then return false end
     local TouchPosition = node:getParent():convertToNodeSpace(touch:getLocation())
     local box = node:getBoundingBox()
-    box.x = box.x - node:getContentSize().width * node:getAnchorPoint().x
-    box.y = box.y - node:getContentSize().height * node:getAnchorPoint().y
     return cc.rectContainsPoint(box, TouchPosition)
 end
 
 function DragAndDropManager:onDragBegan(this, touch, event)
-	return this:isVisible() and self:isDragInside(this, touch)
+	if self.__isTouchDown then return false end
+	self.__isTouchDown = this:isVisible() and self:isDragInside(this, touch)
+	return self.__isTouchDown
 end
 
 function DragAndDropManager:onDragMoved(this, touch, event)
+	for _, node in pairs(self._DragNodes) do
+    	if node ~= this and self:isDragInside(node, touch) then
+    		if not node.__drawNode.drawing then
+    			local size = node:getContentSize()
+			    node.__drawNode:drawPolygon({cc.p(0, 0), cc.p(size.width, 0), cc.p(size.width, size.height), cc.p(0, size.height)}, 4, cc.c4f(0,0,0,0), 1, cc.c4f(1,1,1,1))
+			    node.__drawNode.drawing = true
+			end
+    	else
+    		if node.__drawNode.drawing then
+    			node.__drawNode:clear()
+    			node.__drawNode.drawing = false
+    		end
+    	end
+    end
     this:move(cc.pAdd(cc.p(this:getPosition()), touch:getDelta()))
 end
 
 function DragAndDropManager:onDragEnded(this, touch, event)
+	self.__isTouchDown = false
 	local otherNode = nil
-	for node, _ in pairs(self._DragNodes) do
+	for _, node in pairs(self._DragNodes) do
+		node.__drawNode:clear()
 		if node ~= this then
 		    local TouchPosition = node:getParent():convertToNodeSpace(touch:getLocation())
 		    local box = node:getBoundingBox()
@@ -72,16 +89,65 @@ function DragAndDropManager:enableDragAndDrop(node)
 end
 
 function DragAndDropManager:insertDragAndDropNode(node)
-	if self._DragNodes[node] then return end
-	self._DragNodes[node] = true
+	table.insert(self._DragNodes, 1, node)
+	node.__drawNode = node.__drawNode or cc.DrawNode:create():addTo(node)
 end
 
 function DragAndDropManager:removeDrageAndDropNode(node)
-	if not self._DragNodes[node] then return end
-	self._DragNodes[node] = nil
+	for k, v in ipairs(self._DragNodes) do
+		if v == node then
+			table.remove(self._DragNodes, k)
+			break
+		end
+	end
 end
 
+function DragAndDropManager:isMoveInside(node, touch)
+	if not node:getParent() then return false end
+    local TouchPosition = node:getParent():convertToNodeSpace(touch:getLocationInView())
+    local box = node:getBoundingBox()
+    return cc.rectContainsPoint(box, TouchPosition)
+end
 
+function DragAndDropManager:onMouseDown(event)
+	dump(event:getMouseButton())
+end
+
+function DragAndDropManager:onMouseUp(event)
+	-- dump(event:getMouseButton())
+end
+
+function DragAndDropManager:onMouseMove(event)
+	if self.__isTouchDown then return end
+	for _, node in pairs(self._DragNodes) do
+    	if self:isMoveInside(node, event) then
+    		if not node.__drawNode.drawing then
+    			local size = node:getContentSize()
+			    node.__drawNode:drawPolygon({cc.p(0, 0), cc.p(size.width, 0), cc.p(size.width, size.height), cc.p(0, size.height)}, 4, cc.c4f(0,0,0,0), 1, cc.c4f(1,1,1,1))
+			    node.__drawNode.drawing = true
+			end
+    	else
+    		if node.__drawNode.drawing then
+    			node.__drawNode:clear()
+    			node.__drawNode.drawing = false
+    		end
+    	end
+    end
+end
+
+function DragAndDropManager:onMouseScroll(event)
+	-- print(event:getScrollX(), event:getScrollY())
+end
+
+function DragAndDropManager:regiestMouseListener()
+    local listener = cc.EventListenerMouse:create()
+    listener:registerScriptHandler(handler(self, self.onMouseDown), cc.Handler.EVENT_MOUSE_DOWN)
+    listener:registerScriptHandler(handler(self, self.onMouseUp), cc.Handler.EVENT_MOUSE_UP)
+    listener:registerScriptHandler(handler(self, self.onMouseMove), cc.Handler.EVENT_MOUSE_MOVE)
+    listener:registerScriptHandler(handler(self, self.onMouseScroll), cc.Handler.EVENT_MOUSE_SCROLL)
+    local eventDispatcher = display.getRunningScene():getEventDispatcher()
+    eventDispatcher:addEventListenerWithSceneGraphPriority(listener, display.getRunningScene())
+end
 
 
 

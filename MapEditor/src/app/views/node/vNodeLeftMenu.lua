@@ -35,7 +35,7 @@ function vNodeLeftMenu:onCreate()
 		op = 30,
 		fs = 16,
 		str = "可添加物体",
-		cb = handler(self, self.onTouchMapInfo),
+		-- cb = handler(self, self.onTouchMapInfo),
 	}):addTo(self):move(BG_WIDTH * 0.5, self:getContentSize().height - 2)
 
 	self:addBtn(self:createLayout({
@@ -43,50 +43,86 @@ function vNodeLeftMenu:onCreate()
 		ap = cc.p(0, 1),
 		fs = 16,
 		str = "生物",
-		cb = handler(self, self.onTouchMapInfo),
+		dad = true,
+		cb = handler(self, self.onTouchBtnAddCreature),
 	}))
+	
 	self:addBtn(self:createLayout({
 		size = cc.size(SINGLE_BTN_WIDTH, SINGLE_BTN_HEIGHT),
 		ap = cc.p(0, 1),
 		fs = 16,
 		str = "传送门",
-		cb = handler(self, self.onTouchMapInfo),
+		dad = true,
+		cb = handler(self, self.onTouchBtnAddPortal),
 	}))
 	self:addBtn(self:createLayout({
 		size = cc.size(SINGLE_BTN_WIDTH, SINGLE_BTN_HEIGHT),
 		ap = cc.p(0, 1),
 		fs = 16,
 		str = "采集物",
-		cb = handler(self, self.onTouchMapInfo),
+		dad = true,
+		cb = handler(self, self.onTouchBtnAddPickable),
 	}))
 	self:addBtn(self:createLayout({
 		size = cc.size(SINGLE_BTN_WIDTH, SINGLE_BTN_HEIGHT),
 		ap = cc.p(0, 1),
 		fs = 16,
 		str = "建筑",
-		cb = handler(self, self.onTouchMapInfo),
+		dad = true,
+		cb = handler(self, self.onTouchBtnAddBuilding),
 	}))
 	self:addBtn(self:createLayout({
 		size = cc.size(SINGLE_BTN_WIDTH, SINGLE_BTN_HEIGHT),
 		ap = cc.p(0, 1),
 		fs = 16,
 		str = "游戏物体",
-		cb = handler(self, self.onTouchMapInfo),
+		dad = true,
+		cb = handler(self, self.onTouchBtnAddGobject),
 	}))
 	self:addBtn(self:createLayout({
 		size = cc.size(SINGLE_BTN_WIDTH, SINGLE_BTN_HEIGHT),
 		ap = cc.p(0, 1),
 		fs = 16,
 		str = "区域框",
-		cb = handler(self, self.onTouchMapInfo),
+		dad = true,
+		cb = handler(self, self.onTouchBtnAreaBrush),
 	}))
 	self:addBtn(self:createLayout({
 		size = cc.size(SINGLE_BTN_WIDTH, SINGLE_BTN_HEIGHT),
 		ap = cc.p(0, 1),
 		fs = 16,
 		str = "地形刷",
-		cb = handler(self, self.onTouchMapInfo),
+		dad = true,
+		cb = handler(self, self.onTouchBtnGroundBrush),
 	}))
+end
+
+function vNodeLeftMenu:onTouchBtnAddCreature(e)
+
+end
+
+function vNodeLeftMenu:onTouchBtnAddPortal(e)
+
+end
+
+function vNodeLeftMenu:onTouchBtnAddPickable(e)
+
+end
+
+function vNodeLeftMenu:onTouchBtnAddBuilding(e)
+
+end
+
+function vNodeLeftMenu:onTouchBtnAddGobject(e)
+
+end
+
+function vNodeLeftMenu:onTouchBtnAreaBrush(e)
+
+end
+
+function vNodeLeftMenu:onTouchBtnGroundBrush(e)
+
 end
 
 

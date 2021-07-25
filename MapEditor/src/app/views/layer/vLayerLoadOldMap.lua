@@ -17,7 +17,7 @@ function vLayerCreateNewMap:onCreate( ... )
 		size = cc.size(300, 40),
 		color = cc.c3b(255, 255, 255),
 		op = 30,
-		str = "创建新的地图"
+		str = "选取地图"
 	}):addTo(bg):move(display.cx, display.height - 50)
 
 	self:createLayout({
