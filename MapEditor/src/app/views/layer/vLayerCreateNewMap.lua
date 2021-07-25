@@ -118,7 +118,12 @@ function vLayerCreateNewMap:onTouchBtnConfirm(e)
     		end
     	end
     end
-	MapLoader.saveToFile(mapStruct)
+    local path = MapLoader.saveToFile(mapStruct)
+	if path then
+		WindowMgr:createWindow("app.views.layer.vLayerEditor", path)
+		WindowMgr:removeWindow(self)
+	end
+
 end
 
 return vLayerCreateNewMap

@@ -3,6 +3,7 @@ local ViewBaseEx = require("app.views.ViewBaseEx")
 local TableViewEx = require("app.components.TableViewEx")
 local vLayerCreateNewMap = class("vLayerCreateNewMap", ViewBaseEx)
 
+local rootPath = lfs.currentdir().."/../../../../../maps/"
 function vLayerCreateNewMap:onCreate( ... )
     self:autoAlgin()
 	local bg = self:createLayout({
@@ -82,6 +83,8 @@ end
 
 function vLayerCreateNewMap:onTouchedCell(e)
 	if e.name ~= "ended" then return end
+	WindowMgr:createWindow("app.views.layer.vLayerEditor", rootPath..e.target:getTitleStr())
+	WindowMgr:removeWindow(self)
 end
 
 
@@ -89,7 +92,7 @@ end
 function vLayerCreateNewMap:searchDirFor(str)
 	if not str or str == "" then str = ".*" end
 	local ret = {}
-    for dir in lfs.dir(lfs.currentdir().."/../../../../../maps/") do
+    for dir in lfs.dir(rootPath) do
     	if string.sub(dir, 1, 1) ~= "." then
     		if string.find(dir, str) then table.insert(ret, dir) end
     	end

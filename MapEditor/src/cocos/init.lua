@@ -49,12 +49,6 @@ end
 
 -- extensions
 require "cocos.extension.ExtensionConstants"
--- network
-require "cocos.network.NetworkConstants"
--- Spine
-if nil ~= sp then
-    require "cocos.spine.SpineConstants"
-end
 
 require "cocos.cocos2d.deprecated"
 require "cocos.cocos2d.DrawPrimitives"
@@ -87,10 +81,6 @@ require "cocos.extension.DeprecatedExtensionClass"
 require "cocos.extension.DeprecatedExtensionEnum"
 require "cocos.extension.DeprecatedExtensionFunc"
 
--- register_network_module
-require "cocos.network.DeprecatedNetworkClass"
-require "cocos.network.DeprecatedNetworkEnum"
-require "cocos.network.DeprecatedNetworkFunc"
 
 -- register_ui_module
 if nil ~= ccui then
@@ -101,8 +91,6 @@ end
 -- cocosbuilder
 require "cocos.cocosbuilder.CCBReaderLoad"
 
--- physics3d
-require "cocos.physics3d.physics3d-constants"
 
 if CC_USE_FRAMEWORK then
     require "cocos.framework.init"

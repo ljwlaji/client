@@ -57,11 +57,14 @@ function MapLoader.saveToFile(mapStruct)
 	assert(MapLoader.isSameTbl(mapStruct, tbl))
 	assert(MapLoader.isSameTbl(tbl, mapStruct))
 	release_print("保存成功!!!")
-	return true
+	return currPath
 end	
 
 function MapLoader.loadFromFile(path)
-
+	local file = io.open(path, "rb")
+	local str = file:read("*a")
+	local tbl = loadstring("return "..str)()
+	return tbl
 end
 
 

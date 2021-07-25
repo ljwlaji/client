@@ -36,7 +36,7 @@ function WindowMgr:removeWindow(window, removeAll)
 		local length = #self.m_Windows
 		for i=1, #self.m_Windows do
 			if self.m_Windows[i].__cname == window then
-				table.remove(self.m_Windows, i)
+				table.remove(self.m_Windows, i):removeFromParent()
 				if not removeAll then break end
 				i = i - 1
 				length = length - 1

@@ -1,3 +1,4 @@
+local DragAndDrop = require("app.components.DragAndDropManager")
 local ViewBaseEx = class("ViewBaseEx", cc.load("mvc").ViewBase)
 
 function ViewBaseEx:autoAlgin()
@@ -41,17 +42,27 @@ function ViewBaseEx:createLayout(param)
                             :setContentSize(param.size or cc.size(0, 0))
                             :setBackGroundColor(param.color or cc.c3b(255, 255, 255))
                             :setBackGroundColorOpacity(param.op or 30)
-                            :setAnchorPoint(0.5, 0.5)
-    if param.cb then
-    	btn:setTouchEnabled(true)
-    	btn:onTouch(param.cb)
-	    btn:setSwallowTouches(param.st == nil and true or param.st)
+                            :setAnchorPoint(param.ap and param.ap or cc.p(0.5, 0.5))
+
+    if param.dad then
+        btn:onNodeEvent("cleanup", function()
+            DragAndDrop:removeDragAndDropNode(btn)
+        end)
+        DragAndDrop:enableDragAndDrop(btn)
+        btn.___onNormalTouchCallBack = param.cb
+        btn:setSwallowTouches(param.st == nil and true or param.st)
+    elseif param.cb then
+        btn:setTouchEnabled(true)
+        btn:onTouch(param.cb)
+        btn:setSwallowTouches(param.st == nil and true or param.st)
     end
+
     local label = cc.LabelTTF:create()
     label:setString(param.str or "")
-    label:setFontSize(22)
+    label:setFontSize(param.fs and param.fs or 22)
     label:addTo(btn):alignCenter()
-    btn.setTitleStr = function(this, str) label:setString(str) end 
+    btn.setTitleStr = function(this, str) label:setString(str) return this end 
+    btn.getTitleStr = function(this) return label:getString() end
     return btn
 end
 
@@ -76,5 +87,6 @@ function ViewBaseEx:cEditBox(param)
     end
     return layouter
 end
+
 
 return ViewBaseEx
