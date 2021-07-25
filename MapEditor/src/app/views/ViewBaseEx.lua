@@ -45,24 +45,23 @@ function ViewBaseEx:createLayout(param)
                             :setAnchorPoint(param.ap and param.ap or cc.p(0.5, 0.5))
 
     if param.dad then
-        btn:onNodeEvent("cleanup", function()
-            DragAndDrop:removeDragAndDropNode(btn)
-        end)
         DragAndDrop:enableDragAndDrop(btn)
         btn.___onNormalTouchCallBack = param.cb
         btn:setSwallowTouches(param.st == nil and true or param.st)
+        btn.__onDrop = type(param.dad) == "function" and param.dad or nil
     elseif param.cb then
         btn:setTouchEnabled(true)
         btn:onTouch(param.cb)
         btn:setSwallowTouches(param.st == nil and true or param.st)
     end
-
-    local label = cc.LabelTTF:create()
-    label:setString(param.str or "")
-    label:setFontSize(param.fs and param.fs or 22)
-    label:addTo(btn):alignCenter()
-    btn.setTitleStr = function(this, str) label:setString(str) return this end 
-    btn.getTitleStr = function(this) return label:getString() end
+    if param.str then
+        local label = cc.LabelTTF:create()
+        label:setString(param.str or "")
+        label:setFontSize(param.fs and param.fs or 22)
+        label:addTo(btn):alignCenter()
+        btn.setTitleStr = function(this, str) label:setString(str) return this end 
+        btn.getTitleStr = function(this) return label:getString() end
+    end
     return btn
 end
 

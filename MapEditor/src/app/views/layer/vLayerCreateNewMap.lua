@@ -101,13 +101,19 @@ end
 function vLayerCreateNewMap:onTouchBtnConfirm(e)
 	if e.name ~= "ended" then return end
 	local mapStruct = {
-		entry = self.entry:getText(),
+		entry = tonumber(self.entry:getText()),
 		name = self.name:getText(),
-		height = self.height:getText(),
-		width = self.width:getText(),
+		height = tonumber(self.height:getText()),
+		width = tonumber(self.width:getText()),
 		script = self.script:getText(),
 		desc = self.desc:getText(),
 	}
+	print(mapStruct.width % 20)
+	print(mapStruct.height % 20)
+	if mapStruct.height % 20 ~= 0 or mapStruct.width % 20 ~= 0 then
+		release_print("宽高只能是20的整数倍!")
+		return
+	end
 	if not self:isDataVailed(mapStruct) then return end
 	local ret = {}
     for dir in lfs.dir(lfs.currentdir().."/../../../../../maps/") do

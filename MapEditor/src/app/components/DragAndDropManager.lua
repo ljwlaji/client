@@ -62,17 +62,17 @@ function DragAndDropManager:onDragEnded(this, touch, event)
 		end
 	end
     local Delta = cc.pSub(touch:getStartLocation(), touch:getLocation())
-	if otherNode and otherNode.__onDrop and otherNode.__onDrop(this) then
+	this:move(cc.pAdd(cc.p(this:getPosition()), Delta))
+	if otherNode and otherNode.__onDrop then
+		otherNode.__onDrop(this)
 		return
-	else
-		this:move(cc.pAdd(cc.p(this:getPosition()), Delta))
 	end
 
-    if math.abs(Delta.x) >= 10 or math.abs(Delta.y) >= 10 then release_print("偏移量过大, 丢弃这个触摸!") return end
 	if this.___onNormalTouchCallBack then this.___onNormalTouchCallBack({
 		touch = touch,
-		target = target,
-		name = "began"
+		target = this,
+		name = "began",
+		largeOffset = math.abs(Delta.x) >= 10 or math.abs(Delta.y) >= 10
 	}) end
 end
 
@@ -90,6 +90,9 @@ end
 
 function DragAndDropManager:insertDragAndDropNode(node)
 	table.insert(self._DragNodes, 1, node)
+    node:onNodeEvent("cleanup", function()
+        self:removeDragAndDropNode(btn)
+    end)
 	node.__drawNode = node.__drawNode or cc.DrawNode:create():addTo(node)
 end
 
@@ -110,7 +113,7 @@ function DragAndDropManager:isMoveInside(node, touch)
 end
 
 function DragAndDropManager:onMouseDown(event)
-	dump(event:getMouseButton())
+	-- dump(event:getMouseButton())
 end
 
 function DragAndDropManager:onMouseUp(event)

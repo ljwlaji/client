@@ -26,7 +26,7 @@ function vLayerEditor:createMenus()
 														  	:addTo(self.m_Children["node_Left_Up"])
 	local rightMenu = require("app.views.node.vNodeRightMenu"):create()
 														  	  :addTo(self.m_Children["node_Right_Up"])
-	local centerMenu = require("app.views.node.vNodeMainScene"):create(cc.size(display.width - leftMenu:getContentSize().width - rightMenu:getContentSize().width, display.height - topMenu:getContentSize().height * 2))
+	local centerMenu = require("app.views.node.vNodeMainScene"):create(cc.size(display.width - leftMenu:getContentSize().width - rightMenu:getContentSize().width, display.height - topMenu:getContentSize().height * 2), self.maptbl)
 														  	   :addTo(self.m_Children["node_Center"])
 
 end
