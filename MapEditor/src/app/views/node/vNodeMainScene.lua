@@ -1,3 +1,4 @@
+local WindowMgr = require("app.components.WindowMgr")
 local ViewBaseEx = require("app.views.ViewBaseEx")
 local DragAndDropMgr = require("app.components.DragAndDropManager")
 local vNodeMainScene = class("vNodeMainScene", ViewBaseEx)
@@ -40,6 +41,7 @@ function vNodeMainScene:onCreate(size, mapInfo)
 		cb = handler(self, self.onMoveCanvas)
 	}):addTo(self.viewport)
 	self.canvas.onMouseMove = handler(self, self.onMouseMove)
+	self.canvas.onMouseOutSide = handler(self, self.onMouseOutSide)
 	DragAndDropMgr:enableMouseMoveEvents(self.canvas)
 	self.canvas.____drawNode = cc.DrawNode:create():addTo(self.canvas)
 	self.mapInfo = mapInfo
@@ -56,17 +58,23 @@ end
 
 function vNodeMainScene:onDropItemToCanvas(node, touch)
 	local itemType = node.getTitleStr and node:getTitleStr() or nil
+	if not itemType then return end
+
 	local pos = self.canvas:convertToNodeSpaceAR(touch:getLocation())
 	local GridPosX = pos.x - pos.x % SINGLE_GRID_WIDTH
 	local GridPosY = pos.y - pos.y % SINGLE_GRID_WIDTH
 	local GridIndex = 1 + GridPosX / SINGLE_GRID_WIDTH + (self.mapInfo.width / SINGLE_GRID_WIDTH * GridPosY / SINGLE_GRID_WIDTH)
 	
 	if itemType == "建筑" then
+		WindowMgr:createWindow("app.views.layer.vLayerChooseBuild", pos)
 	elseif itemType == "生物" then
+		WindowMgr:createWindow("app.views.layer.vLayerChooseCreature", pos)
 	elseif itemType == "采集物" then
+		WindowMgr:createWindow("app.views.layer.vLayerChoosePickable", pos)
 	elseif itemType == "传送门" then
+		WindowMgr:createWindow("app.views.layer.vLayerChoosePortal", pos)
 	elseif itemType == "游戏物体" then
-	elseif itemType == "区域框" then
+		WindowMgr:createWindow("app.views.layer.vLayerChooseGameObject", pos)
 	end
 end
 
@@ -81,8 +89,13 @@ function vNodeMainScene:tryUpdatePointerGrid(pos)
 end
 
 function vNodeMainScene:onMouseMove(touch)
+	if WindowMgr:getTopWindowName() ~= "vLayerEditor" then return end
 	local pos = self.canvas:convertToNodeSpaceAR(touch:getLocationInView())
 	self:tryUpdatePointerGrid(pos)
+end
+
+function vNodeMainScene:onMouseOutSide()
+	self.canvas.____drawNode:clear()
 end
 
 return vNodeMainScene

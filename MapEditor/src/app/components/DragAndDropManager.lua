@@ -154,7 +154,11 @@ function DragAndDropManager:onMouseMove(touch)
     	end
     end
     for _, v in ipairs(self._MouseMoveEventNodes) do
-    	if self:isMoveInside(v, touch) and v.onMouseMove then v.onMouseMove(touch) end
+    	if self:isMoveInside(v, touch) then 
+    		if v.onMouseMove then v.onMouseMove(touch) end
+    	else
+    		if v.onMouseOutSide then v.onMouseOutSide() end
+    	end
     end
 end
 
@@ -171,7 +175,6 @@ function DragAndDropManager:regiestMouseListener()
     local eventDispatcher = display.getRunningScene():getEventDispatcher()
     eventDispatcher:addEventListenerWithSceneGraphPriority(listener, display.getRunningScene())
 end
-
 
 
 return DragAndDropManager:getInstance()

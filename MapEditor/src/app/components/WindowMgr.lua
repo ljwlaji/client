@@ -1,5 +1,5 @@
 local WindowMgr 	= class("WindowMgr")
-local ShareDefine 	= import("app.ShareDefine")
+local ShareDefine 	= require("app.ShareDefine")
 
 WindowMgr.instance 	= nil
 
@@ -18,17 +18,31 @@ function WindowMgr:popCheckWindow(...)
 	self:createWindow("app.views.layer.vLayerCheckWindow", ...)
 end
 
-function WindowMgr:findWindowIndexByClassName(className)
-	local ret = nil
+function WindowMgr:findWindowIndexByName(className)
 	local index = nil
 	for i=1, #self.m_Windows do
 		if self.m_Windows[i].__cname == className then
-			ret = self.m_Windows[i]
 			index = i
 			break
 		end
 	end
-	return ret, index
+	return index
+end
+
+function WindowMgr:findWindowByName(className)
+	local ret = nil
+	for i=1, #self.m_Windows do
+		if self.m_Windows[i].__cname == className then
+			ret = self.m_Windows[i]
+			break
+		end
+	end
+	return ret
+end
+
+function WindowMgr:getTopWindowName()
+	if #self.m_Windows == 0 then return nil end
+	return self.m_Windows[#self.m_Windows].__cname
 end
 
 function WindowMgr:removeWindow(window, removeAll)
@@ -60,7 +74,7 @@ function WindowMgr:sortZOrder()
 end
 
 function WindowMgr:createWindow(path, ...)
-	local template = import(path)
+	local template = require(path)
 	if rawget(template, "DisableDuplicateCreation") == true and rawget(template, "inDisplay") then 
         -- print("\nModule <"..template.__cname.."> Was Disabled For Duplicate Creation, Call onReset Instead.")
         local currentWindow, index = self:findWindowIndexByClassName(template.__cname)
@@ -74,12 +88,10 @@ function WindowMgr:createWindow(path, ...)
     window:setAnchorPoint(0.5, 0.5):move(display.center)
 	table.insert(self.m_Windows, window)
 	self:sortZOrder()
-	local temp = window.onCleanup
-	window.onCleanup = function(...)
+	window:onNodeEvent("cleanup", function()
 		rawset(template, "inDisplay", nil)
 		self:removeWindow(window)
-		if temp then temp(...) end
-	end
+	end)
 	release_print(string.format("create Window : [%s]", path))
 	return window
 end
