@@ -1,4 +1,5 @@
 local ViewBaseEx = require("app.views.ViewBaseEx")
+local WindowMgr = require("app.components.WindowMgr")
 local vNodeLeftMenu = class("vNodeLeftMenu", ViewBaseEx)
 
 local BG_WIDTH = 180
@@ -92,44 +93,55 @@ function vNodeLeftMenu:onCreate()
 		ap = cc.p(0, 1),
 		fs = 16,
 		str = "地形刷",
-		dad = true,
 		cb = handler(self, self.onTouchBtnGroundBrush),
+	}))
+	self:addBtn(self:createLayout({
+		size = cc.size(SINGLE_BTN_WIDTH, SINGLE_BTN_HEIGHT),
+		ap = cc.p(0, 1),
+		fs = 16,
+		str = "区域编辑",
+		cb = handler(self, self.onTouchBtnAreaEdit),
 	}))
 end
 
 function vNodeLeftMenu:onTouchBtnAddCreature(e)
-	if e.name ~= "ended" or e.largeOffset then return end
-	dump(e)
+	if e.name ~= "ended" then return end
+
 end
 
 function vNodeLeftMenu:onTouchBtnAddPortal(e)
-	if e.name ~= "ended" or e.largeOffset then return end
-	dump(e)
+	if e.name ~= "ended" then return end
+
 end
 
 function vNodeLeftMenu:onTouchBtnAddPickable(e)
-	if e.name ~= "ended" or e.largeOffset then return end
-	dump(e)
+	if e.name ~= "ended" then return end
+
 end
 
 function vNodeLeftMenu:onTouchBtnAddBuilding(e)
-	if e.name ~= "ended" or e.largeOffset then return end
-	dump(e)
+	if e.name ~= "ended" then return end
+
 end
 
 function vNodeLeftMenu:onTouchBtnAddGobject(e)
-	if e.name ~= "ended" or e.largeOffset then return end
-	dump(e)
+	if e.name ~= "ended" then return end
+
 end
 
 function vNodeLeftMenu:onTouchBtnAreaBrush(e)
-	if e.name ~= "ended" or e.largeOffset then return end
-	dump(e)
+	if e.name ~= "ended" then return end
+
 end
 
 function vNodeLeftMenu:onTouchBtnGroundBrush(e)
-	if e.name ~= "ended" or e.largeOffset then return end
-	dump(e)
+	if e.name ~= "ended" then return end
+	WindowMgr:createWindow("app.views.layer.vLayerChooseBrush")
+end
+
+function vNodeLeftMenu:onTouchBtnAreaEdit(e)
+	if e.name ~= "ended" then return end
+
 end
 
 

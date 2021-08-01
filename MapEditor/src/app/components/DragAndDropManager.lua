@@ -11,6 +11,7 @@ end
 
 function DragAndDropManager:ctor()
 	self._DragNodes = {}
+	self._MouseMoveEventNodes = {}
 	self:regiestMouseListener()
 end
 
@@ -64,10 +65,7 @@ function DragAndDropManager:onDragEnded(this, touch, event)
     local Delta = cc.pSub(touch:getStartLocation(), touch:getLocation())
 	this:move(cc.pAdd(cc.p(this:getPosition()), Delta))
 	if otherNode and otherNode.__onDrop then
-		otherNode.__onDrop({
-			touch = touch,
-			otherNode = otherNode,
-		})
+		otherNode.__onDrop(this, touch)
 		return
 	end
 
@@ -91,10 +89,26 @@ function DragAndDropManager:enableDragAndDrop(node)
     self:insertDragAndDropNode(node)
 end
 
+function DragAndDropManager:enableMouseMoveEvents(node)
+	table.insert(self._MouseMoveEventNodes, node)
+    node:onNodeEvent("cleanup", function()
+        self:removeMouseMoveEvents(node)
+    end)
+end
+
+function DragAndDropManager:removeMouseMoveEvents(node)
+	for k, v in ipairs(self._MouseMoveEventNodes) do
+		if v == node then
+			table.remove(self._MouseMoveEventNodes, k)
+			break
+		end
+	end
+end
+
 function DragAndDropManager:insertDragAndDropNode(node)
 	table.insert(self._DragNodes, 1, node)
     node:onNodeEvent("cleanup", function()
-        self:removeDragAndDropNode(btn)
+        self:removeDragAndDropNode(node)
     end)
 	node.__drawNode = node.__drawNode or cc.DrawNode:create():addTo(node)
 end
@@ -123,10 +137,10 @@ function DragAndDropManager:onMouseUp(event)
 	-- dump(event:getMouseButton())
 end
 
-function DragAndDropManager:onMouseMove(event)
+function DragAndDropManager:onMouseMove(touch)
 	if self.__isTouchDown then return end
 	for _, node in pairs(self._DragNodes) do
-    	if self:isMoveInside(node, event) then
+    	if self:isMoveInside(node, touch) then
     		if not node.__drawNode.drawing then
     			local size = node:getContentSize()
 			    node.__drawNode:drawPolygon({cc.p(0, 0), cc.p(size.width, 0), cc.p(size.width, size.height), cc.p(0, size.height)}, 4, cc.c4f(0,0,0,0), 1, cc.c4f(1,1,1,1))
@@ -137,6 +151,13 @@ function DragAndDropManager:onMouseMove(event)
     			node.__drawNode:clear()
     			node.__drawNode.drawing = false
     		end
+    	end
+    end
+    for _, v in ipairs(self._MouseMoveEventNodes) do
+    	if self:isMoveInside(v, touch) then 
+    		if v.onMouseMove then v.onMouseMove(touch) end
+    	else
+    		if v.onMouseOutSide then v.onMouseOutSide() end
     	end
     end
 end
@@ -154,7 +175,6 @@ function DragAndDropManager:regiestMouseListener()
     local eventDispatcher = display.getRunningScene():getEventDispatcher()
     eventDispatcher:addEventListenerWithSceneGraphPriority(listener, display.getRunningScene())
 end
-
 
 
 return DragAndDropManager:getInstance()

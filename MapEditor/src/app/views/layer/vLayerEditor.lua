@@ -4,6 +4,8 @@ local TableViewEx = require("app.components.TableViewEx")
 local MapLoader = require("app.components.MapLoader")
 local vLayerEditor = class("vLayerEditor", ViewBaseEx)
 
+vLayerEditor.DisableDuplicateCreation = true
+
 function vLayerEditor:createAlignNodes()
 	self.m_Children = self.m_Children or {}
 	for _, v in ipairs({"node_Center", "node_Left_Up", "node_Left", "node_Left_Buttom", "node_Center_Up", 
