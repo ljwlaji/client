@@ -98,31 +98,38 @@ function vNodeLeftMenu:onCreate()
 end
 
 function vNodeLeftMenu:onTouchBtnAddCreature(e)
-
+	if e.name ~= "ended" or e.largeOffset then return end
+	dump(e)
 end
 
 function vNodeLeftMenu:onTouchBtnAddPortal(e)
-
+	if e.name ~= "ended" or e.largeOffset then return end
+	dump(e)
 end
 
 function vNodeLeftMenu:onTouchBtnAddPickable(e)
-
+	if e.name ~= "ended" or e.largeOffset then return end
+	dump(e)
 end
 
 function vNodeLeftMenu:onTouchBtnAddBuilding(e)
-
+	if e.name ~= "ended" or e.largeOffset then return end
+	dump(e)
 end
 
 function vNodeLeftMenu:onTouchBtnAddGobject(e)
-
+	if e.name ~= "ended" or e.largeOffset then return end
+	dump(e)
 end
 
 function vNodeLeftMenu:onTouchBtnAreaBrush(e)
-
+	if e.name ~= "ended" or e.largeOffset then return end
+	dump(e)
 end
 
 function vNodeLeftMenu:onTouchBtnGroundBrush(e)
-
+	if e.name ~= "ended" or e.largeOffset then return end
+	dump(e)
 end
 
 

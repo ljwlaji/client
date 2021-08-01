@@ -20,7 +20,15 @@ function vNodeMainScene:genGroundGrids()
 			local grid = require("app.views.node.vNodeGroundGrid"):create(self._groundGridInfo[width + width * (height - 1)])
 			grid:addTo(self.canvas)
 			grid:move((width - 1) * 20, (height - 1) * 20)
+			table.insert(self._groundGridInfo, grid)
 		end
+	end
+end
+
+function vNodeMainScene:genMapObjects()
+	local mapInfo = self.mapInfo
+	for _, v in ipairs(mapInfo.mapObjects or {}) do
+
 	end
 end
 
@@ -57,7 +65,13 @@ function vNodeMainScene:onMoveCanvas(e)
 end
 
 function vNodeMainScene:onDropItemToCanvas(e)
-	dump(e)
+	local node = e.otherNode
+	local touch = e.touch
+	
+end
+
+function vNodeMainScene:saveToFile()
+
 end
 
 return vNodeMainScene

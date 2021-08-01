@@ -64,14 +64,17 @@ function DragAndDropManager:onDragEnded(this, touch, event)
     local Delta = cc.pSub(touch:getStartLocation(), touch:getLocation())
 	this:move(cc.pAdd(cc.p(this:getPosition()), Delta))
 	if otherNode and otherNode.__onDrop then
-		otherNode.__onDrop(this)
+		otherNode.__onDrop({
+			touch = touch,
+			otherNode = otherNode,
+		})
 		return
 	end
 
 	if this.___onNormalTouchCallBack then this.___onNormalTouchCallBack({
 		touch = touch,
 		target = this,
-		name = "began",
+		name = "ended",
 		largeOffset = math.abs(Delta.x) >= 10 or math.abs(Delta.y) >= 10
 	}) end
 end

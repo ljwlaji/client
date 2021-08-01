@@ -58,6 +58,10 @@ end
 
 
 ----------------	Events	 ----------------
+function vNodeTopMenu:onTouchBtnNew(e)
+	if e.name ~= "ended" then return end
+end
+
 function vNodeTopMenu:onTouchBtnPublish(e)
 	if e.name ~= "ended" then return end
 end

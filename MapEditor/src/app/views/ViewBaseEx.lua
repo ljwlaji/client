@@ -44,23 +44,31 @@ function ViewBaseEx:createLayout(param)
                             :setBackGroundColorOpacity(param.op or 30)
                             :setAnchorPoint(param.ap and param.ap or cc.p(0.5, 0.5))
 
-    if param.dad then
+    if param.dad then -- Drag And Drop Issus
         DragAndDrop:enableDragAndDrop(btn)
         btn.___onNormalTouchCallBack = param.cb
         btn:setSwallowTouches(param.st == nil and true or param.st)
         btn.__onDrop = type(param.dad) == "function" and param.dad or nil
-    elseif param.cb then
+    elseif param.cb then -- onTouchEnded Only
         btn:setTouchEnabled(true)
         btn:onTouch(param.cb)
         btn:setSwallowTouches(param.st == nil and true or param.st)
     end
     if param.str then
         local label = cc.LabelTTF:create()
-        label:setString(param.str or "")
         label:setFontSize(param.fs and param.fs or 22)
-        label:addTo(btn):alignCenter()
-        btn.setTitleStr = function(this, str) label:setString(str) return this end 
+        label:addTo(btn)
+        btn.setTitleStr = function(this, str) 
+                                label:setString(str)
+                                local size = btn:getContentSize()
+                                size.width = math.max(label:getContentSize().width + 10, size.width)
+                                btn:setContentSize(size)
+                                label:alignCenter()
+                                return this 
+                        end 
         btn.getTitleStr = function(this) return label:getString() end
+        btn.getStringSize = function(this) return label:getContentSize() end
+        btn:setTitleStr(param.str or "")
     end
     return btn
 end
