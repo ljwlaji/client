@@ -12,7 +12,12 @@ function MainScene:run()
 end
 
 function MainScene:onEnterTransitionFinish()
-    WindowMgr:createWindow("app.views.layer.vLayerModeChoose")
+	self:runAction(cc.Sequence:create(
+		cc.DelayTime:create(1),
+		cc.CallFunc:create(function() 
+   			WindowMgr:createWindow("app.views.layer.vLayerModeChoose")
+		end)
+	))
 end
 
 return MainScene
