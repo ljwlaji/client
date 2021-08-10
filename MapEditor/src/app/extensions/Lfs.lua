@@ -1,5 +1,5 @@
 -- local Utils = import("app.components.Utils")
-local LFile = import("app.components.LFile")
+local LFile = require("app.extensions.LFile")
 local LFS = class("LFS")
 
 

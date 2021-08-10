@@ -7,6 +7,7 @@ function LFile:ctor()
 	self.m_SubFiles = {}
 	self.m_CurrentDir = ""
 	self.m_TotalFileCount = nil
+	self.m_Parent = nil
 end
 
 function LFile:isDir()
@@ -15,6 +16,10 @@ end
 
 function LFile:subFiles()
 	return self.m_SubFiles
+end
+
+function LFile:setParent(LFile)
+	self.m_Parent = LFile
 end
 
 function LFile:setAttr(attr)
@@ -29,8 +34,14 @@ function LFile:getPath()
 	return self.m_CurrentDir
 end
 
+function LFile:getFullPath()
+	local upperDir = self.m_Parent and self.m_Parent:getFullPath().."/" or nil
+	return (upperDir or "")..self.m_CurrentDir
+end
+
 function LFile:addSubFile(file)
 	table.insert(self.m_SubFiles, file)
+	file:setParent(self)
 end
 
 function LFile:_getFileCount()
