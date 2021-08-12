@@ -27,7 +27,7 @@ end
 function vNodeMainScene:genMapObjects()
 	local mapInfo = self.mapInfo
 	for _, v in ipairs(mapInfo.mapObjects or {}) do
-		
+		require("app.views.node.vNodeGroundGrid"):create(v):addTo(self.canvas)
 	end
 end
 
@@ -57,6 +57,8 @@ function vNodeMainScene:onCreate(size, mapInfo)
 	self.canvas.____drawNode = cc.DrawNode:create():addTo(self.canvas)
 	self.mapInfo = mapInfo
 	self:genGroundGrids()
+
+	self:regiestCustomEventListenter("MSG_ON_SAVE_BTN_CLICKED", handler(self, self.saveToFile))
 end
 
 function vNodeMainScene:onMoveCanvas(e)
@@ -109,8 +111,8 @@ function vNodeMainScene:onMouseOutSide()
 	self.canvas.____drawNode:clear()
 end
 
-function vNodeMainScene:saveToFile()
-	MapLoader:saveToFile(self._mapInfo)
+function vNodeMainScene:saveToFile(...)
+	MapLoader.saveToFile(self.mapInfo)
 end
 
 return vNodeMainScene

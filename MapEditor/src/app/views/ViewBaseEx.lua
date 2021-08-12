@@ -95,5 +95,4 @@ function ViewBaseEx:cEditBox(param)
     return layouter
 end
 
-
 return ViewBaseEx

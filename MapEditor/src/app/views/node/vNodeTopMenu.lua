@@ -67,11 +67,9 @@ function vNodeTopMenu:onTouchBtnPublish(e)
 end
 
 function vNodeTopMenu:onTouchBtnSave(e)
+	print("onTouchBtnSave")
 	if e.name ~= "ended" then return end
-end
-
-function vNodeTopMenu:onTouchBtnSave(e)
-	if e.name ~= "ended" then return end
+	self:sendAppMsg("MSG_ON_SAVE_BTN_CLICKED")
 end
 
 function vNodeTopMenu:onTouchBtnSaveAll(e)
