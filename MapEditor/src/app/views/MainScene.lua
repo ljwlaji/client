@@ -1,11 +1,12 @@
 local MainScene     = class("MainScene", cc.load("mvc").ViewBase)
-local WindowMgr = require("app.components.WindowMgr")
+local WindowMgr 	= require("app.components.WindowMgr")
 local ShareDefine   = require("app.ShareDefine")
 
 local updateCount = 0
 local totalMS = 0
 
 function MainScene:onCreate()
+	require("app.components.DataBase"):openDB(cc.FileUtils:getInstance():getWritablePath().."res/datas.db")
 end
 
 function MainScene:run()

@@ -24,8 +24,19 @@ THE SOFTWARE.
 
 local Widget = ccui.Widget
 
-function Widget:onTouch(callback)
+function Widget:isVailedTouchEnd()
+    local beginPos = self:getTouchBeganPosition()
+    local endPos = self:getTouchEndPosition()
+    local diffX = math.abs(beginPos.x - endPos.x)
+    local diffY = math.abs(beginPos.y - endPos.y)
+    return math.max(diffY, diffX) < 5
+end
+
+function Widget:onTouch(callback, dropIfMoved)
     self:addTouchEventListener(function(sender, state)
+        if dropIfMoved and state == 2 or state == 3 then
+            if not self:isVailedTouchEnd() then return end
+        end
         local event = {x = 0, y = 0}
         if state == 0 then
             event.name = "began"
@@ -36,6 +47,7 @@ function Widget:onTouch(callback)
         else
             event.name = "cancelled"
         end
+
         event.target = sender
         callback(event)
     end)

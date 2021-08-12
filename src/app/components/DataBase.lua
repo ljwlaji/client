@@ -41,9 +41,9 @@ function DataBase:getItemTemplateByEntry(itemEntry)
     return self.m_ItemTemplate[itemEntry] or self:fetchItemTemplate(itemEntry)
 end
 
-function DataBase:openDB()
+function DataBase:openDB(path)
 	if self.db then return self.db end
-    self.db = sqlite3.open(Utils.getCurrentResPath()..DBPATH)
+    self.db = sqlite3.open(path or Utils.getCurrentResPath()..DBPATH)
 	return self.db
 end
 
