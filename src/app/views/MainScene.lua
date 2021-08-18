@@ -16,8 +16,6 @@ function MainScene:onEnterTransitionFinish()
 end
 
 function MainScene:run()
-    self:testLineOfSight()
-    do return end
     local chosedCharacterID = 1
     if not self.Timmer then
         self.Timmer = cc.Timmer:create():addTo(self)

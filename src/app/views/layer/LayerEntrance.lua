@@ -8,8 +8,8 @@ LayerEntrance.RESOURCE_FILENAME = "res/csb/layer/CSB_Layer_Entrance.csb"
 LayerEntrance.RESOURCE_BINDING = {}
 
 local DevMode 								= import("app.ShareDefine"):isDevMode()
-local RemoteVersionFile 					= "http://vv2.azerothcn.com/AllUpdates"
-local RemoteUpdatePath 						= "http://vv2.azerothcn.com/downloads/"
+local RemoteVersionFile 					= "https://vv2.azerothcn.com/update/AllUpdates"
+local RemoteUpdatePath 						= "https://vv2.azerothcn.com/update/downloads/"
 local STATE_CHECK_VERSION 					= 1
 local STATE_FIRST_INIT 						= 2
 local STATE_REQUEST_NEW_VERSION 			= 3
@@ -79,7 +79,10 @@ function LayerEntrance:requestVersionList()
 	xhr.responseType = cc.XMLHTTPREQUEST_RESPONSE_STRING
 	xhr:open("GET", RemoteVersionFile)
 	local function onRespone()
-		if xhr.readyState~=4 or xhr.status~=200 then release_print("http代码返回 : "..xhr.status) return end
+		if xhr.readyState~=4 or xhr.status~=200 then 
+			release_print("http代码返回 : "..xhr.status)
+			return 
+		end
 	    local responseData = "return "..xhr.response
 	    responseData = loadstring(responseData) and loadstring(responseData)() or nil
 	    if responseData then self:onRequestNewVersionListCallBack(responseData) end
