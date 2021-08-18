@@ -1,9 +1,19 @@
 cc.FileUtils:getInstance():setPopupNotify(false)
 
+devRequire = function(path)
+    if package.loaded[path] then
+        package.loaded[path] = nil
+    end
+    return require(path)
+end
+
 require "config"
 require "cocos.init"
 require "app.components.UITextEx"
 require "app.extensions.NodeEx"
+
+
+
 
 local function saveToFile(mapStruct, tabs)
     local upperTabs = tabs

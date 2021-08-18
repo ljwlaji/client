@@ -72,7 +72,7 @@ function DragAndDropManager:onDragEnded(this, touch, event)
 	if this.___onNormalTouchCallBack then this.___onNormalTouchCallBack({
 		touch = touch,
 		target = this,
-		name = "began",
+		name = "ended",
 		largeOffset = math.abs(Delta.x) >= 10 or math.abs(Delta.y) >= 10
 	}) end
 end

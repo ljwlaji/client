@@ -1,6 +1,6 @@
-local Object = class("Object", cc.Node)
-local DataBase = import("app.components.DataBase")
-local ShareDefine = import("app.ShareDefine")
+local Object 		= class("Object", cc.Node)
+local DataBase 		= require("app.components.DataBase")
+local ShareDefine 	= require("app.ShareDefine")
 
 function Object:ctor(context, ...)
 	self.context = context

@@ -39,3 +39,4 @@ frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcuserdata/ljw.xcuserdat
 frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcuserdata/ljw.xcuserdatad/xcschemes/xcschememanagement.plist
 sqlcompare/*
 Tools/Zipper/lib
+MapEditor/res

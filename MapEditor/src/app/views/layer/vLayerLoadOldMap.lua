@@ -3,7 +3,7 @@ local ViewBaseEx = require("app.views.ViewBaseEx")
 local TableViewEx = require("app.components.TableViewEx")
 local vLayerCreateNewMap = class("vLayerCreateNewMap", ViewBaseEx)
 
-local rootPath = lfs.currentdir().."/../../../../../maps/"
+local rootPath = device.platform == "windows" and lfs.currentdir().."/../maps/" or lfs.currentdir().."/../../../../../maps/"
 function vLayerCreateNewMap:onCreate( ... )
     self:autoAlgin()
 	local bg = self:createLayout({

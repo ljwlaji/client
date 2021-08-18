@@ -74,7 +74,7 @@ function WindowMgr:sortZOrder()
 end
 
 function WindowMgr:createWindow(path, ...)
-	local template = require(path)
+	local template = devRequire(path)
 	if rawget(template, "DisableDuplicateCreation") == true and rawget(template, "inDisplay") then 
         -- print("\nModule <"..template.__cname.."> Was Disabled For Duplicate Creation, Call onReset Instead.")
         local currentWindow, index = self:findWindowIndexByClassName(template.__cname)

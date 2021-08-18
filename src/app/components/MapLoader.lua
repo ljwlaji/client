@@ -47,7 +47,7 @@ function MapLoader.isSameTbl(left, right)
 end
 
 function MapLoader.saveToFile(mapStruct)
-	local currPath = lfs.currentdir().."/../../../../../maps/"..mapStruct.name..".map"
+	local currPath = (device.platform == "windows" and lfs.currentdir().."/../maps/" or lfs.currentdir().."/../../../../../maps/")..mapStruct.name..".map"
 	local file = io.open(currPath, "wb")
 	file:write(MapLoader.toString(mapStruct))
 	file:close()
