@@ -51,7 +51,7 @@ bool ZipReader::ReadFiles()
 		printf("{");
 		printf("\n");
 	*/
-	delete buffer;
+	delete[] buffer;
 	return true;
 }
 

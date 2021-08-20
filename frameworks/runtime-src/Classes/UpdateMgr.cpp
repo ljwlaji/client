@@ -50,7 +50,7 @@ void UpdateMgr::Run()
 		//Download
 		FILE* FileToSave = nullptr;
 		m_Downloaded = 0;
-		if (FileToSave = fopen(m_To.c_str(), "r"))
+        if ((FileToSave = fopen(m_To.c_str(), "r")))
 		{
 			fseek(FileToSave, 0, SEEK_END);
 			m_Downloaded = ftell(FileToSave);

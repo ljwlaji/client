@@ -1,5 +1,11 @@
 cc.FileUtils:getInstance():setPopupNotify(false)
 
+function devRequire(path)
+    package.loaded[path] = nil
+    return require(path)
+end
+
+
 require "config"
 require "cocos.init"
 require "app.components.UITextEx"
@@ -85,7 +91,6 @@ q = 3; p = 7
 -- local function decode(str, pvk, bigNumber)
 --     return str^pvk % bigNumber
 -- end
-
 local function main()
     -- test()
     -- local p = 13

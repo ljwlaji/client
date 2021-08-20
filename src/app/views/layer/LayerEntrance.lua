@@ -1,13 +1,14 @@
-local ViewBaseEx 		= import("app.views.ViewBaseEx")
-local StateMachine 		= import("app.components.StateMachine")
-local Utils				= import("app.components.Utils")
+local ViewBaseEx 		= require("app.views.ViewBaseEx")
+local StateMachine 		= require("app.components.StateMachine")
+local Utils				= require("app.components.Utils")
+local WindowMgr			= require("app.components.WindowMgr")
 local LayerEntrance 	= class("LayerEntrance", ViewBaseEx)
 
 
 LayerEntrance.RESOURCE_FILENAME = "res/csb/layer/CSB_Layer_Entrance.csb"
 LayerEntrance.RESOURCE_BINDING = {}
 
-local DevMode 								= import("app.ShareDefine"):isDevMode()
+local DevMode 								= require("app.ShareDefine"):isDevMode()
 local RemoteVersionFile 					= "https://vv2.azerothcn.com/update/AllUpdates"
 local RemoteUpdatePath 						= "https://vv2.azerothcn.com/update/downloads/"
 local STATE_CHECK_VERSION 					= 1
@@ -15,6 +16,7 @@ local STATE_FIRST_INIT 						= 2
 local STATE_REQUEST_NEW_VERSION 			= 3
 local STATE_TRY_DOWNLOAD_UPDATES			= 4
 local STATE_REQUEST_NEW_VERSION_TIME_OUT 	= 6
+local MAX_RETRY_TIME						= 3
 
 
 function LayerEntrance:onCreate(onFinishedCallBack)
@@ -44,6 +46,7 @@ function LayerEntrance:initStateMachine()
 end
 
 function LayerEntrance:onEnterCheckVersion()
+	self.m_MaxRetryTime = MAX_RETRY_TIME
 	self.m_Children["textState"]:setString("STATE_CHECK_VERSION")
 end
 
@@ -81,6 +84,14 @@ function LayerEntrance:requestVersionList()
 	local function onRespone()
 		if xhr.readyState~=4 or xhr.status~=200 then 
 			release_print("http代码返回 : "..xhr.status)
+			WindowMgr:popCheckWindow({
+				onConfirm = function()
+					self.m_SM:setState(STATE_CHECK_VERSION)
+				end,
+				onCancel = function()
+					self:enterGame()
+				end
+			})
 			return 
 		end
 	    local responseData = "return "..xhr.response
@@ -114,7 +125,7 @@ function LayerEntrance:onRequestNewVersionListCallBack(RemoteVersionInfo)
 end
 
 function LayerEntrance:onEnterRequestNewVersion()
-	self.m_MaxRetryTime = self.m_MaxRetryTime and self.m_MaxRetryTime - 1 or 3
+	self.m_MaxRetryTime = self.m_MaxRetryTime - 1
 	self.m_Children["textState"]:setString("STATE_REQUEST_NEW_VERSION RetryTimeLeft : "..self.m_MaxRetryTime)
 	if self.m_MaxRetryTime < 0 then
 		-- Break Loop

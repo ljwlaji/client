@@ -84,6 +84,7 @@ struct FCFile
 	{
 		if (FileData)
 			return &FileData[GetHeadLen()];
+        return nullptr;
 	}
 
 	int GetIndex()

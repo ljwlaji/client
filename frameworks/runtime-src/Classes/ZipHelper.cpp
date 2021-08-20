@@ -16,11 +16,11 @@ bool ZipHelper::Compress(const char * InBuffer, std::string& OutBuffer)
 	if (compress((Bytef *)TempBuffer, &blen, (Bytef *)InBuffer, tlen) != Z_OK)
 	{
 		printf("compress failed!\n");
-		delete[] TempBuffer;
+		delete TempBuffer;
 		return false;
 	}
 	OutBuffer = TempBuffer;
-	delete [] TempBuffer;
+	delete TempBuffer;
 	return true;
 }
 
@@ -37,10 +37,10 @@ bool ZipHelper::UnCompress(const char * InBuffer, std::string& OutBuffer)
 	if (uncompress((Bytef *)TempOut, &LengOut, (Bytef *)InBuffer, SourceLen) != Z_OK)
 	{
 		printf("compress failed!\n");
-		delete[] TempOut;
+		delete TempOut;
 		return false;
 	}
 	OutBuffer = TempOut;
-	delete[] TempOut;
+	delete TempOut;
 	return true;
 }

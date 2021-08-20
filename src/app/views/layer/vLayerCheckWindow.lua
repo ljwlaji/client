@@ -1,6 +1,7 @@
-local ViewBaseEx 			= import("app.views.ViewBaseEx")
-local DataBase 				= import("app.components.DataBase")
-local Utils             	= import("app.components.Utils")
+local ViewBaseEx 			= require("app.views.ViewBaseEx")
+local DataBase 				= require("app.components.DataBase")
+local Utils             	= require("app.components.Utils")
+local WindowMgr 			= require("app.components.WindowMgr")
 local vLayerCheckWindow 	= class("vLayerCheckBox", ViewBaseEx)
 
 vLayerCheckWindow.DisableDuplicateCreation = true
@@ -28,13 +29,13 @@ end
 function vLayerCheckWindow:onTouchButtonComfirm(e)
 	if e.name ~= "ended" then return end
 	if self.context.onConfirm then self.context.onConfirm() end
-	self:removeFromParent()
+	WindowMgr:removeWindow(self)
 end
 
 function vLayerCheckWindow:onTouchButtonCancel(e)
 	if e.name ~= "ended" then return end
 	if self.context.onCancel then self.context.onCancel() end
-	self:removeFromParent()
+	WindowMgr:removeWindow(self)
 end
 
 function vLayerCheckWindow:onTouchButtonBlock(e)

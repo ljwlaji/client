@@ -21,7 +21,7 @@ function MainScene:run()
         self.Timmer = cc.Timmer:create():addTo(self)
         self:onUpdate(handler(self, self.onNativeUpdate))
     end
-    LayerEntrance:create( function() 
+    LayerEntrance:create(function() 
         self.m_HUDLayer = import("app.views.layer.vLayerHUD"):create():addTo(self):setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_HUD_LAYER"))
         self:startGame(chosedCharacterID)
         self.m_HUDLayer:onReset()
@@ -92,10 +92,19 @@ function MainScene:testRichText()
     rich:debugDraw(rich, cc.c4f(1,1,0,0.3))
 end
 
-function MainScene:testGausBlurSprite(Scale)
+function MainScene:testGausBlurSprite(img, Scale)
     Scale = Scale or 0.2
-    local img = self:ScreenImage(Scale)
+    -- local img = self:ScreenImage(Scale)
     self.ssp = cc.GausBlurSprite:createWithImage(img):addTo(self):move(display.center):setScale(1 / Scale)
+    local timer = 500
+    self:onUpdate(function() 
+        if timer < 16 then
+            timer = 500
+            self.ssp:override()
+        else
+            timer = timer - 16
+        end
+    end)
 end
 
 function MainScene:ScreenShot()
@@ -112,7 +121,7 @@ function MainScene:ScreenImage(scale)
     local img = nil
     self:setScale(scale)
     texture:beginWithClear(0, 0, 0, 0)
-    display.getRunningScene():visit()
+    self:visit()
     texture:endToLua()
     cc.Director:getInstance():drawScene();
     img = texture:newImage()
