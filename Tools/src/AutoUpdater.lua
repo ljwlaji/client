@@ -1,5 +1,5 @@
-local LFS 				= import("app.components.Lfs")
-local Utils 			= import("app.components.Utils")
+local LFS 				= require("app.components.Lfs")
+local Utils 			= require("app.components.Utils")
 local AutoUpdater 		= class("AutoUpdater")
 
 local MD5 = cc.MD5:create()
@@ -112,9 +112,6 @@ local function exit(msg)
     cc.Director:getInstance():endToLua()
 end
 
-
-local WLSPath = "ubuntu1604.exe"
-
 function AutoUpdater.checkModified(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
@@ -137,11 +134,6 @@ function AutoUpdater.checkModified(firstCommit, lastCommit)
 		end
 	end
 	return files
-end
-
-function AutoUpdater.runLinuxCMD(cmd)
-	local file = io.popen(string.format('D:/WorkSpace/prj_framework/client/framework/Tools/Upload.bat "%s"', cmd))
-	dump(file:read("*a"))
 end
 
 function AutoUpdater.getMD5(filePath)

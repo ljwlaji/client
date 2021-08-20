@@ -17,6 +17,7 @@ local STATE_REQUEST_NEW_VERSION 			= 3
 local STATE_TRY_DOWNLOAD_UPDATES			= 4
 local STATE_REQUEST_NEW_VERSION_TIME_OUT 	= 6
 local MAX_RETRY_TIME						= 3
+local NETWORK_NO_PROGRESS_TIMEOUT_TIME 		= 60000
 
 
 function LayerEntrance:onCreate(onFinishedCallBack)
@@ -68,7 +69,6 @@ end
 function LayerEntrance:onExecuteFirstInit()
     Utils.copyFile(Utils.getPackagePath().."res/version", Utils.getCurrentResPath().."res/version")
     Utils.copyFile(Utils.getPackagePath().."res/datas.db", Utils.getCurrentResPath().."res/datas.db")
-    -- release_print("初始化完毕...")
     self:setState(STATE_CHECK_VERSION)
 end
 
@@ -86,7 +86,7 @@ function LayerEntrance:requestVersionList()
 			release_print("http代码返回 : "..xhr.status)
 			WindowMgr:popCheckWindow({
 				onConfirm = function()
-					self.m_SM:setState(STATE_CHECK_VERSION)
+					self:setState(STATE_CHECK_VERSION)
 				end,
 				onCancel = function()
 					self:enterGame()
@@ -95,7 +95,8 @@ function LayerEntrance:requestVersionList()
 			return 
 		end
 	    local responseData = "return "..xhr.response
-	    responseData = loadstring(responseData) and loadstring(responseData)() or nil
+	    local func = loadstring(responseData)
+	    responseData = func and func() or nil
 	    if responseData then self:onRequestNewVersionListCallBack(responseData) end
 	end
 	xhr:registerScriptHandler(onRespone)
@@ -107,6 +108,10 @@ function LayerEntrance:onRequestNewVersionListCallBack(RemoteVersionInfo)
 	local LocalVersionInfo = Utils.getVersionInfo()
 	if not LocalVersionInfo then
 		self.m_Children["textState"]:setString("获取本地版本信息失败, 尝试修复客户端.")
+		WindowMgr:popCheckWindow({
+			onConfirm 	= function() self:setState(STATE_FIRST_INIT) 		end,
+			onCancel 	= function() cc.Director:getInstance():endToLua() 	end
+		})
 		return
 	end
 	LocalVersionInfo = LocalVersionInfo.version
@@ -126,14 +131,13 @@ end
 
 function LayerEntrance:onEnterRequestNewVersion()
 	self.m_MaxRetryTime = self.m_MaxRetryTime - 1
-	self.m_Children["textState"]:setString("STATE_REQUEST_NEW_VERSION RetryTimeLeft : "..self.m_MaxRetryTime)
 	if self.m_MaxRetryTime < 0 then
 		-- Break Loop
 		self.m_Children["textState"]:setString("STATE_REQUEST_NEW_VERSION RetryTimeLeft : TimeOut")
 		self:setState(STATE_REQUEST_NEW_VERSION_TIME_OUT)
 		return
 	end
-
+	self.m_Children["textState"]:setString("STATE_REQUEST_NEW_VERSION RetryTimeLeft : "..self.m_MaxRetryTime)
 	self:requestVersionList()
 	self.m_WaitTime = 0
 end
@@ -184,6 +188,8 @@ function LayerEntrance:tryStartNewTask()
 			release_print("添加新任务 : "..path)
 			self.downloadIndex = self.downloadIndex + 1
 			UpdateMgr:start(self:getCurrentTask().DownloadUrl, path)
+			self.m_NoProgressTimer = NETWORK_NO_PROGRESS_TIMEOUT_TIME
+			self.m_CurrentDownloadedSize = 0
 			return true
 		end
 		return false
@@ -199,11 +205,17 @@ function LayerEntrance:getMD5FromFile(path)
 	return self.MD5:getString()
 end
 
-function LayerEntrance:onDownloadProgress()
+function LayerEntrance:onDownloadProgress(diff)
 	local UpdateMgr 		= cc.UpdateMgr:getInstance()
 	local nowDownloaded 	= UpdateMgr:getDownloadedSize()
 	local totalToDownload 	= UpdateMgr:getTotalSize()
-	release_print(string.format("%s/%s", nowDownloaded, totalToDownload))
+	if self.m_CurrentDownloadedSize == nowDownloaded then
+		self.m_NoProgressTimer = self.m_NoProgressTimer - diff
+		if self.m_NoProgressTimer <= 0 then self:setState(STATE_CHECK_VERSION) assert(false, "下载超时") end
+	else
+		self.m_CurrentDownloadedSize = nowDownloaded
+		self.m_NoProgressTimer 		 = NETWORK_NO_PROGRESS_TIMEOUT_TIME
+	end
 	self.m_Children["progressBar"]:setPercent(nowDownloaded / totalToDownload * 100)
 	if UpdateMgr:isStopped() then
 		--验证/解压 等后续处理
