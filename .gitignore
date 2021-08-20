@@ -40,3 +40,4 @@ frameworks/runtime-src/proj.ios_mac/framework.xcodeproj/xcuserdata/ljw.xcuserdat
 sqlcompare/*
 Tools/Zipper/lib
 MapEditor/res
+Tools/bin

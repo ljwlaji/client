@@ -235,8 +235,8 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	os.remove(path)
 	-- local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper.exe"
 	-- local callBack = io.popen(string.format("%s %s %s", ZipperPath, updateDir, updateDir))
-	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper"
-	local callBack = io.popen(string.format("%s %s %s", ZipperPath, updateDir, updateDir))
+	local ZipperPath = currentDir.."/Tools/bin/Zipper"
+	local callBack = io.popen(string.format("%s %s %s compress", ZipperPath, updateDir, updateDir))
 
 	local Successed = false
 	for line in callBack:lines() do
@@ -261,7 +261,6 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	release_print("文件解压完毕! 正在写入更新数据....")
 	release_print("")
-	local ZipperPath = currentDir.."/Tools/Zipper/Buildings/Src/Debug/Zipper"
 	local callBack = io.popen(string.format("%s %s %s unCompress", ZipperPath, path, updateDir.."/TestUnZip")):read("*all")
 	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"rb")
 	local originData = originFile and loadstring("return "..originFile:read("*a"))() or {}

@@ -140,6 +140,54 @@ autoUpload()
 	read -p "按任意键返回 :"
 }
 
+buildZipperMacOS()
+{
+	read -p "进入[构建Zipper工具]按任意键继续:"
+	rm -rf ${project_path}/Tools/Zipper/Buildings
+	mkdir ${project_path}/Tools/Zipper/Buildings
+	cd ${project_path}/Tools/Zipper/Buildings
+	cmake .. -G Xcode
+	xcodebuild -project Zipper.xcodeproj -scheme Zipper -configuration Release
+	rm -rf ${project_path}/Tools/bin
+	mkdir ${project_path}/Tools/bin
+	cp ${project_path}/Tools/Zipper/Buildings/bin/Release/Zipper ${project_path}/Tools/bin/
+	read -p "构建完成 按任意键返回:"
+}
+
+buildZipperMain()
+{
+	clear
+	echo "====================================="
+	echo "请选择当前环境"
+	echo "MacOS."
+	echo "Windows."
+	echo "Linux."
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo "====================================="
+	echo ""
+	echo ""
+	read -p "请输入你的选择 :" value;
+	if [ "${value}" == "1" ]; then
+		buildZipperMacOS
+	fi
+}
+
+
 start()
 {
 	clear
@@ -150,7 +198,7 @@ start()
 	echo "3. 自动上传资源"
 	echo ""
 	echo ""
-	echo ""
+	echo "8. 构建Zipper工具"
 	echo "9. 导出地图数据."
 	echo ""
 	echo ""
@@ -179,6 +227,9 @@ start()
 	fi
 	if [ "${value}" == "3" ]; then
 		autoUpload
+	fi
+	if [ "${value}" == "8" ]; then
+		buildZipperMain
 	fi
 }
 
