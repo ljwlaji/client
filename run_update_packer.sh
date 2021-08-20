@@ -133,6 +133,13 @@ run_source_packer()
 	read -p "按任意键返回 :"
 }
 
+autoUpload()
+{
+	scp ${project_path}/Update/*.FCZip "root@vv2.azerothcn.com:/home/wwwroot/3DCEList/update/downloads/"
+	scp ${project_path}/AllUpdates "root@vv2.azerothcn.com:/home/wwwroot/3DCEList/update/"
+	read -p "按任意键返回 :"
+}
+
 start()
 {
 	clear
@@ -140,7 +147,7 @@ start()
 	echo "半自动打包脚本运行中..."
 	echo "1. 打包数据库更新."
 	echo "2. 打包脚本与资源更新."
-	echo ""
+	echo "3. 自动上传资源"
 	echo ""
 	echo ""
 	echo ""
@@ -169,6 +176,9 @@ start()
 	fi
 	if [ "${value}" == "2" ]; then
 		run_source_packer
+	fi
+	if [ "${value}" == "3" ]; then
+		autoUpload
 	fi
 }
 
