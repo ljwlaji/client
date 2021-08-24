@@ -747,7 +747,7 @@ function Player:resetGossipList()
 end
 
 function Player:sendGossipMenu(pObject, pTitleStringID)
-	local window = WindowMgr:findWindowIndexByClassName("vLayerGossipMenu")
+	local window = WindowMgr:findWindowByName("vLayerGossipMenu")
 	if window then window:removeFromParent() end
 	WindowMgr:createWindow("app.views.layer.vLayerGossipMenu", self.m_GossipItemList, self, pObject, pTitleStringID)
 	self:resetGossipList()

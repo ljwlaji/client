@@ -202,7 +202,7 @@ function Spell:onUpdate(diff)
 end
 
 function Spell:cleanUpBeforeDelete()
-	local window = WindowMgr:findWindowIndexByClassName("vLayerCasttingBar")
+	local window = WindowMgr:findWindowByName("vLayerCasttingBar")
 	if window then window:hide() end
 end
 
