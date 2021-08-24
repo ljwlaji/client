@@ -37,7 +37,9 @@
 #include "base/CCDirector.h"
 #include "base/CCEventCustom.h"
 
+#ifdef WIN32
 #pragma comment(lib,"lua51.lib")
+#endif
 
 NS_CC_BEGIN
 
