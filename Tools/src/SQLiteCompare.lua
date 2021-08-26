@@ -104,7 +104,7 @@ end
 local function exit(msg)
 	if msg then release_print(msg) end
 	LFS.createDir(currentDir.."/../Log")
-	outLog(currentDir.."/../Log/log.txt")
+	outLog(currentDir.."/../Log/sql_compare_log.txt")
     cc.Director:getInstance():endToLua()
 end
 
@@ -238,7 +238,7 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 			local compare = clone(oldInfo)
 			for k, v in pairs(fieldInfo) do
 				-- print(k, v, oldInfo[k])
-				assert(oldInfo[k] == v, string.format("检查到[%s]表内[%s]字段属性[%s]变更", tableName, fieldName, k))
+				if (oldInfo[k] ~= v) then exit(string.format("检查到[%s]表内[%s]字段属性[%s]变更", tableName, fieldName, k)) end
 				string.format("检查到[%s]表内[%s]字段属性[%s]检查通过", tableName, fieldName, k)
 				oldInfo[k] = nil
 			end
@@ -257,7 +257,7 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 
 	if #newTableRecords.pks == 0 or #oldTableRecords.pks == 0 then
 		dump(newTableRecords)
-		assert(false, string.format("无主键的表 : [%s]", tableName))
+		exit(string.format("无主键的表 : [%s]", tableName))
 	end
 	table.sort(newTableRecords.records, function(a, b) return comp(a, b, 1) end)
 	table.sort(oldTableRecords.records, function(a, b) return comp(a, b, 1) end)

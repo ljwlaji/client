@@ -52,7 +52,6 @@ run_map_extractor()
 run_sql_compare()
 {
 	read -p "自动打包即将开始, 请确认已经提交所有修改项, 输入任意键开始脚本! "
-	echo "$(git pull)"
 	firstCommit="$(get_input_val '请输入初始commit(7位以上) : ' )"
 	lastCommit="$(get_input_val '请输入目标commit(7位以上) : ' )" 
 	# echo "$firstCommit"
@@ -72,6 +71,7 @@ run_sql_compare()
 
 	# 切换到老分支
 	git reset $firstCommit res/datas.db
+	echo git reset $firstCommit res/datas.db
 	git checkout res/datas.db
 	dbfile="${project_path}/res/datas.db"
 	check_file_exist "${dbfile}"
@@ -79,9 +79,8 @@ run_sql_compare()
 	mv "${compareDir}/datas.db" "${compareDir}/data_old.db"
 	check_file_exist "${compareDir}/data_old.db"
 
-
 	# 切换到新分支
-	git reset $firstCommit res/datas.db
+	git reset $lastCommit res/datas.db
 	git checkout res/datas.db
 	check_file_exist "${dbfile}"
 	cp "${dbfile}" "${compareDir}/"
@@ -96,6 +95,10 @@ run_sql_compare()
 	cp "${project_path}/Tools/src/main_sql_compare.lua" "${project_path}/Tools/src/main.lua"
 
 	$project_path/runtime/mac/framework-desktop.app/Contents/MacOS/framework-desktop -workdir $project_path/Tools
+
+	cat $project_path/Update/Log/sql_compare_log.txt
+	echo ""
+	read -p "按任意键返回 :"
 }
 
 run_source_packer()
@@ -249,10 +252,6 @@ start()
 	echo "7. 自动打包工程."
 	echo "8. 构建Zipper工具"
 	echo "9. 导出地图数据."
-	echo ""
-	echo ""
-	echo ""
-	echo ""
 	echo ""
 	echo ""
 	echo ""
