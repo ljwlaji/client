@@ -71,8 +71,8 @@ run_sql_compare()
 
 
 	# 切换到老分支
-	switch_to_commit "${firstCommit}"
-
+	git reset $firstCommit res/datas.db
+	git checkout res/datas.db
 	dbfile="${project_path}/res/datas.db"
 	check_file_exist "${dbfile}"
 	cp "${dbfile}" "${compareDir}/"
@@ -81,7 +81,8 @@ run_sql_compare()
 
 
 	# 切换到新分支
-	switch_to_commit "${lastCommit}"
+	git reset $firstCommit res/datas.db
+	git checkout res/datas.db
 	check_file_exist "${dbfile}"
 	cp "${dbfile}" "${compareDir}/"
 	mv "${compareDir}/datas.db" "${compareDir}/data_new.db"
