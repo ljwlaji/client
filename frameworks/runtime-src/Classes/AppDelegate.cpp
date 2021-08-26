@@ -31,7 +31,7 @@
 #include "lfs.h"
 
 // 导入头文件 CrashReport.h
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "TencentBugly/CrashReport.h"
 #include "TencentBugly/lua/BuglyLuaAgent.h"
 #endif
@@ -101,8 +101,14 @@ bool AppDelegate::applicationDidFinishLaunching()
     // register lua module
     auto engine = LuaEngine::getInstance();
     // For Bugly Issus
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    CrashReport::initCrashReport("86536930d0", true);
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+        const char* appid = "86536930d0";
+    #else
+        const char* appid = "832cdc1e32";
+    #endif
+    CrashReport::initCrashReport(appid, true);
     BuglyLuaAgent::registerLuaExceptionHandler(engine);
 #endif
     ScriptEngineManager::getInstance()->setScriptEngine(engine);

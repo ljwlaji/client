@@ -11,7 +11,11 @@
 #include "cocos2d.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 
-#include "CrashReport.h"
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	#include "../CrashReport.h"
+#else
+	#include "CrashReport.h"
+#endif
 
 #ifndef CATEGORY_LUA_EXCEPTION
 #define CATEGORY_LUA_EXCEPTION 6
