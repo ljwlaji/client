@@ -140,53 +140,99 @@ autoUpload()
 	read -p "按任意键返回 :"
 }
 
-buildZipperMacOS()
+buildZipper()
 {
-	read -p "进入[构建Zipper工具]按任意键继续:"
-	rm -rf ${project_path}/Tools/Zipper/Buildings
-	mkdir ${project_path}/Tools/Zipper/Buildings
-	cd ${project_path}/Tools/Zipper/Buildings
-	cmake .. -G Xcode
-	xcodebuild -project Zipper.xcodeproj -scheme Zipper -configuration Release
-	rm -rf ${project_path}/Tools/bin
-	mkdir ${project_path}/Tools/bin
-	cp ${project_path}/Tools/Zipper/Buildings/bin/Release/Zipper ${project_path}/Tools/bin/
-	read -p "构建完成 按任意键返回:"
-}
-
-buildZipperMain()
-{
-	clear
-	echo "====================================="
-	echo "请选择当前环境"
-	echo "MacOS."
-	echo "Windows."
-	echo "Linux."
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo ""
-	echo "====================================="
-	echo ""
-	echo ""
-	read -p "请输入你的选择 :" value;
-	if [ "${value}" == "1" ]; then
-		buildZipperMacOS
+	SelectPlatform "请选择对应平台:"
+	read -p "请输入对应平台 :" value;
+	if [ $value == "1" ]; then
+		read -p "进入[构建Zipper工具]按任意键继续:"
+		rm -rf ${project_path}/Tools/Zipper/Buildings
+		mkdir ${project_path}/Tools/Zipper/Buildings
+		cd ${project_path}/Tools/Zipper/Buildings
+		cmake .. -G Xcode
+		xcodebuild -project Zipper.xcodeproj -scheme Zipper -configuration Release
+		rm -rf ${project_path}/Tools/bin
+		mkdir ${project_path}/Tools/bin
+		cp ${project_path}/Tools/Zipper/Buildings/bin/Release/Zipper ${project_path}/Tools/bin/
+		read -p "构建完成 按任意键返回:"
 	fi
 }
 
+buildMacOS()
+{
+	read -p "输入项目.xcodeproj名, 默认为(framework.xcodeproj) :" proj;
+	if [ "${proj}" == "" ]; then
+		proj="framework.xcodeproj"
+	fi
+	echo "proj: $proj"
+
+	read -p "输入目标scheme, 默认为(framework-desktop) :" scheme;
+	if [ "${scheme}" == "" ]; then
+		scheme="framework-desktop"
+	fi
+	echo "scheme: $scheme"
+
+	read -p "输入目标dest, 默认为(platform=macOS,arch=x86_64,id=00008103-0002291122F2001E) :" dest;
+	if [ "${dest}" == "" ]; then
+		dest="platform=macOS,arch=x86_64,id=00008103-0002291122F2001E"
+	fi
+	echo "dest: $dest"
+
+	read -p "输入目标版本, 默认为(Debug) :" mode;
+	if [ "${mode}" == "" ]; then
+		mode="Debug"
+	fi
+	echo "mode: $mode"
+
+	cd ${project_path}/frameworks/runtime-src/proj.ios_mac
+	echo "xcodebuild MACOSX_DEPLOYMENT_TARGET=11.3 -project $proj -scheme $scheme -destination '$dest' -configuration $mode"
+	xcodebuild MACOSX_DEPLOYMENT_TARGET=11.3 -project $proj -scheme $scheme -destination "$dest" -configuration $mode
+	read -p "执行完成, 按任意键继续 :" value;
+}
+
+SelectPlatform()
+{
+	clear
+	echo "====================================="
+	echo $1
+	echo "1. MacOS."
+	echo "2. iOS."
+	echo "3. Windows."
+	echo "4. Linux."
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo "0, 返回"
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo "====================================="
+	echo ""
+	echo ""
+}
+
+buildProject()
+{
+	while [ 1 == 1 ]; do
+		SelectPlatform "请选择目标平台:"
+		read -p "请输入当前环境 :" value;
+		if [ "${value}" == "1" ]; then
+			buildMacOS
+		fi
+		if [ "${value}" == "0" ]; then
+			return
+		fi
+	done
+}
 
 start()
 {
@@ -198,6 +244,8 @@ start()
 	echo "3. 自动上传资源"
 	echo ""
 	echo ""
+	echo ""
+	echo "7. 自动打包工程."
 	echo "8. 构建Zipper工具"
 	echo "9. 导出地图数据."
 	echo ""
@@ -228,8 +276,11 @@ start()
 	if [ "${value}" == "3" ]; then
 		autoUpload
 	fi
+	if [ "${value}" == "7" ]; then
+		buildProject
+	fi
 	if [ "${value}" == "8" ]; then
-		buildZipperMain
+		buildZipper
 	fi
 }
 
