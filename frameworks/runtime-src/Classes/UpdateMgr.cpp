@@ -31,6 +31,7 @@ void UpdateMgr::StartWithTask(std::string& Form, std::string& To)
 {
 	if (!m_Stopped || m_DownloadThread)
 		return;
+	m_ErrorCode = 0;
 	m_Stopped = false;
 	m_From = Form;
 	m_To = To;
@@ -76,9 +77,9 @@ void UpdateMgr::Run()
 		curl_easy_setopt(m_Handler, CURLOPT_NOPROGRESS, 0L);
 		curl_easy_setopt(m_Handler, CURLOPT_PROGRESSFUNCTION, progress_func);
 		curl_easy_setopt(m_Handler, CURLOPT_PROGRESSDATA, this);
-		CURLcode res = curl_easy_perform(m_Handler);
+		m_ErrorCode = (uint32)curl_easy_perform(m_Handler);
 		fclose(FileToSave);
-		if (res != CURLE_ABORTED_BY_CALLBACK)
+		if (m_ErrorCode != CURLE_ABORTED_BY_CALLBACK)
 		{
 			curl_easy_cleanup(m_Handler);
 			m_Handler = nullptr;
@@ -122,7 +123,7 @@ void UpdateMgr::OnProgress(uint32 Now, uint32 Total)
 	m_OutputDownLoadSize = Now;
 }
 
-UpdateMgr::UpdateMgr() : m_Stopped(true), m_DownloadThread(nullptr), m_Handler(nullptr)
+UpdateMgr::UpdateMgr() : m_Stopped(true), m_DownloadThread(nullptr), m_Handler(nullptr), m_ErrorCode(0)
 {
 }
 

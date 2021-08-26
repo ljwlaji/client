@@ -171,9 +171,9 @@ public:
 	bool ReadSingleFile(char* Buffer, uint32& RedPos, uint32 TotalLen, FCFile* rootFile);
 	void ShowUp(FCFile* root, uint32 Pos);
 	static std::string GetSpace(std::string printString, uint32 Pos);
-	void ExecuteAll(std::string Path);
+	bool ExecuteAll(std::string Path);
 	void ExecuteFile(uint32 Index);
-	void _executeFile(FCFile* file, std::string RootPath);
+	bool _executeFile(FCFile* file, std::string RootPath);
 	FCFile* FindFile(uint32 Index, FCFile * file = nullptr);
 private:
 	FCFile RootFile;

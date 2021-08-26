@@ -593,7 +593,7 @@ int tolua_firecore_UpdateMgr_getDownloadedSize(lua_State* tolua_S)
 int tolua_firecore_UpdateMgr_getTotalSize(lua_State* tolua_S)
 {
     int argc = 0;
-	UpdateMgr* cobj = nullptr;
+    UpdateMgr* cobj = nullptr;
     bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
@@ -622,7 +622,7 @@ int tolua_firecore_UpdateMgr_getTotalSize(lua_State* tolua_S)
             tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_UpdateMgr_getTotalSize'", nullptr);
             return 0;
         }
-		lua_pushinteger(tolua_S, cobj->GetTotalSizeDisplay());
+        lua_pushinteger(tolua_S, cobj->GetTotalSizeDisplay());
         return 1;
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.UpdateMgr:getTotalSize",argc, 0);
@@ -631,6 +631,51 @@ int tolua_firecore_UpdateMgr_getTotalSize(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'tolua_firecore_UpdateMgr_getTotalSize'.",&tolua_err);
+#endif
+    return 0;
+}
+
+int tolua_firecore_UpdateMgr_getErrorCode(lua_State* tolua_S)
+{
+    int argc = 0;
+    UpdateMgr* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.UpdateMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (UpdateMgr*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'tolua_firecore_UpdateMgr_getErrorCode'", nullptr);
+        return 0;
+    }
+#endif
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'tolua_firecore_UpdateMgr_getErrorCode'", nullptr);
+            return 0;
+        }
+        lua_pushinteger(tolua_S, cobj->GetErrorCode());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.UpdateMgr:getErrorCode",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_firecore_UpdateMgr_getErrorCode'.",&tolua_err);
 #endif
     return 0;
 }
@@ -645,7 +690,8 @@ int register_fire_core_assets_manager_module(lua_State* L)
 		tolua_function(L, "start",				tolua_firecore_UpdateMgr_start);
 		tolua_function(L, "isStopped",			tolua_firecore_UpdateMgr_isStopped);
 		tolua_function(L, "getDownloadedSize",	tolua_firecore_UpdateMgr_getDownloadedSize);
-		tolua_function(L, "getTotalSize",		tolua_firecore_UpdateMgr_getTotalSize);
+        tolua_function(L, "getTotalSize",       tolua_firecore_UpdateMgr_getTotalSize);
+		tolua_function(L, "getErrorCode",		tolua_firecore_UpdateMgr_getErrorCode);
 
 	tolua_endmodule(L);
 	std::string typeName	= typeid(UpdateMgr).name();
@@ -900,8 +946,8 @@ int tolua_firecore_ZipReader_uncompress(lua_State* tolua_S)
 		ok &= luaval_to_std_string(tolua_S, 2, &arg1, "cc.ZipReader:uncompress");
 		if (!ok) return 0;
 		ZipReader reader(arg0);
-		reader.ExecuteAll(arg1);
-		lua_settop(tolua_S, 1);
+		bool ret = reader.ExecuteAll(arg1);
+        tolua_pushboolean(tolua_S, ret);
 		return 1;
 	}
 	else

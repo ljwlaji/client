@@ -130,47 +130,53 @@ std::string ZipReader::GetSpace(std::string printString, uint32 Pos)
 	return space;
 }
 
-void ZipReader::ExecuteAll(std::string Path)
+bool ZipReader::ExecuteAll(std::string Path)
 {
 	for (std::map<uint32, FCFile*>::iterator i = RootFile.DirInfo.begin(); i != RootFile.DirInfo.end(); i++)
-		_executeFile(i->second, Path);
+		if (!_executeFile(i->second, Path)) return false;
+	return true;
 }
 
-void ZipReader::_executeFile(FCFile * file, std::string RootPath)
+bool ZipReader::_executeFile(FCFile * file, std::string RootPath)
 {
+	bool ret = false;
 	std::string CurrDir = RootPath + "/";
 	if (file->IsDir())
 	{
 		CurrDir += file->GetFileName().c_str();
 		cocos2d::FileUtils::getInstance()->createDirectory(CurrDir);
 		for (std::map<uint32, FCFile*>::iterator i = file->DirInfo.begin(); i != file->DirInfo.end(); i++)
-			_executeFile(i->second, CurrDir);
+			ret = _executeFile(i->second, CurrDir);
 	}
 	else
 	{
 		uint32 OriginLen = file->GetOriginFileLen();
 		uint32 HeadLen = file->GetHeadLen();
-
 		char* OriginFileData = new (std::nothrow)char[OriginLen]();
-		if (!OriginFileData)
-			return;
-
-		uLong origin = OriginLen;
-		if (uncompress((Bytef*)OriginFileData, &origin, (Bytef*)file->GetDataPointer(), file->GetCompressLen()) == Z_OK)
+		do
 		{
-			std::string CurrPath = RootPath + "/" + file->GetFileName();
 
+			if (!OriginFileData)
+				break;
+
+			uLong origin = OriginLen;
+			if (uncompress((Bytef*)OriginFileData, &origin, (Bytef*)file->GetDataPointer(), file->GetCompressLen()) != Z_OK)
+				break;
+			std::string CurrPath = RootPath + "/" + file->GetFileName();
 			ofstream cppFile(CurrPath.c_str(), ios::binary);
 			if (!cppFile)
-				return;
+				break;
 
 			uint32 count = 0;
 			for (uint32 i = 0; i < OriginLen; i++)
 				cppFile << OriginFileData[i];
+
 			cppFile.close();
-		}
+			ret = true;
+		} while(0);
 		delete[] OriginFileData;
 	}
+	return ret;
 }
 
 FCFile * ZipReader::FindFile(uint32 Index, FCFile * file)

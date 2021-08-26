@@ -46,7 +46,7 @@ public:
 	uint32 GetDownloadedSize() const { return m_Downloaded; }
 	void OnProgress(uint32 Now, uint32 Total);
 	bool IsStopped() const { return m_Stopped; }
-
+	uint32 GetErrorCode() const { return m_ErrorCode; }
 	uint32 GetDownloadedSizeDisplay() const { return m_OutputDownLoadSize; }
 	uint32 GetTotalSizeDisplay() const { return m_OutputTotalSize; }
 
@@ -70,6 +70,7 @@ private:
 	uint32 m_TotalToDownload;
 	std::atomic<bool> m_Stopped;
 	std::thread* m_DownloadThread;
+	uint32 m_ErrorCode;
 
 	void* m_Handler;
 };

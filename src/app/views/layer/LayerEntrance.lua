@@ -219,15 +219,17 @@ function LayerEntrance:onDownloadProgress(diff)
 	self.m_Children["progressBar"]:setPercent(nowDownloaded / totalToDownload * 100)
 	if UpdateMgr:isStopped() then
 		--验证/解压 等后续处理
-		self:handleUpdateFiles()
-		self:setCurrentTask(nil)
+		if self:handleUpdateFiles() then
+			self:setCurrentTask(nil)
+		end
 	end
 end
 
 function LayerEntrance:handleUpdateFiles()
 	local zipFilePath = Utils.getDownloadCachePath()..self:getCurrentTask().versionID..".FCZip"
 	local tempDir = Utils.getDownloadCachePath().."temp/"
-	cc.ZipReader.uncompress(zipFilePath, tempDir)
+	if not cc.ZipReader.uncompress(zipFilePath, tempDir) then release_print(string.format("解压失败%s失败!", zipFilePath)) return false end
+
 	local needCheck = {}
 	local allPassed = true
 
@@ -244,7 +246,7 @@ function LayerEntrance:handleUpdateFiles()
 	if not allPassed then
 		self.m_Children["textState"]:setString("FILE_MD5_CHECK_FAILED")
 		self.m_SM:stop()
-		return 
+		return false
 	end
 	-- 文件全部检测通过
 	-- 把临时文件复制到正式目录
@@ -253,6 +255,7 @@ function LayerEntrance:handleUpdateFiles()
 		Utils.copyFile(oldDir, string.format("%s/%s", Utils.getCurrentResPath(), v.Dir ))
 		os.remove(oldDir)
 	end
+	return true
 end
 
 function LayerEntrance:setCurrentTask(task)
