@@ -34,7 +34,7 @@ function Area:ctor(context)
     self.m_ObjectArray = {}
     local scriptPath = (content.scriptName and content.scriptName ~= "") and "Area."..content.scriptName or "AreaAI" 
     self.m_Script = require(string.format("app.scripts.", scriptPath)):create(self)
-    if self.onCreate then self:onCreate(...) end
+    if self.onCreate then self:onCreate(context) end
 end
 
 function Area:onCreate()

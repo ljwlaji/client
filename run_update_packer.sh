@@ -188,9 +188,23 @@ buildMacOS()
 	fi
 	echo "mode: $mode"
 
-	cd ${project_path}/frameworks/runtime-src/proj.ios_mac
-	echo "xcodebuild MACOSX_DEPLOYMENT_TARGET=11.3 -project $proj -scheme $scheme -destination '$dest' -configuration $mode"
-	xcodebuild MACOSX_DEPLOYMENT_TARGET=11.3 -project $proj -scheme $scheme -destination "$dest" -configuration $mode
+	read -p "是否将lua文件编译为字节码(Y) :" codec;
+	if [ "${codec}" == "Y" ]; then
+		clear_dir $project_path/src_c
+		mkdir $project_path/src_c/src
+		compileLua $project_path/src $project_path/src_c
+		mv $project_path/src $project_path/src_back
+		mv $project_path/src_c/src $project_path/src
+		cd ${project_path}/frameworks/runtime-src/proj.ios_mac
+	fi
+
+	echo "xcodebuild MACOSX_DEPLOYMENT_TARGET=11.2 -project $proj -scheme $scheme -destination '$dest' -configuration $mode"
+	xcodebuild MACOSX_DEPLOYMENT_TARGET=11.2 -project $proj -scheme $scheme -destination "$dest" -configuration $mode
+
+	if [ "${codec}" == "Y" ]; then
+		rm -rf $project_path/src
+		mv $project_path/src_back $project_path/src
+	fi
 	read -p "执行完成, 按任意键继续 :" value;
 }
 
@@ -238,6 +252,24 @@ buildProject()
 	done
 }
 
+compileLua()
+{
+	for file in $1/*
+	do
+	    if test -f $file 
+	    then
+	    	echo "正在编译" $file
+			luajit -b $file $2${file#*${project_path}}c
+	    else 
+	    	if test -d $file 
+	    	then
+		        mkdir $2${file#*${project_path}}
+		        compileLua $file $2
+		    fi
+	    fi
+	done
+}
+
 start()
 {
 	clear
@@ -246,7 +278,7 @@ start()
 	echo "1. 打包数据库更新."
 	echo "2. 打包脚本与资源更新."
 	echo "3. 自动上传资源"
-	echo ""
+	echo "4. 单独编译Lua文件"
 	echo ""
 	echo ""
 	echo "7. 自动打包工程."
@@ -275,6 +307,12 @@ start()
 	fi
 	if [ "${value}" == "3" ]; then
 		autoUpload
+	fi
+	if [ "${value}" == "4" ]; then
+		clear_dir $project_path/src_c
+		mkdir $project_path/src_c/src
+		compileLua $project_path/src $project_path/src_c
+		read -p "完成 :" value;
 	fi
 	if [ "${value}" == "7" ]; then
 		buildProject
