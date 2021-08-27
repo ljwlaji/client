@@ -1,4 +1,5 @@
-local ViewBaseEx = class("ViewBaseEx", cc.load("mvc").ViewBase)
+local ViewBaseEx 		= class("ViewBaseEx", cc.load("mvc").ViewBase)
+local WindowMgr			= require("app.components.WindowMgr")
 
 function ViewBaseEx:autoAlgin()
 	self:setContentSize(display.width, display.height)
@@ -30,6 +31,10 @@ end
 
 function ViewBaseEx:runSequence(...)
 	self:runAction( cc.Sequence:create( ... ) )
+end
+
+function ViewBaseEx:removeSelf()
+	WindowMgr:removeWindow(self)
 end
 
 return ViewBaseEx

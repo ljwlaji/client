@@ -1,7 +1,8 @@
-local ViewBaseEx 		= import("app.views.ViewBaseEx")
-local Player			= import("app.components.Object.Player")
-local SpellBookCell 	= import("app.views.node.vNodeSpellBookCell")
-local SpellMgr 			= import("app.components.SpellMgr")
+local ViewBaseEx 		= require("app.views.ViewBaseEx")
+local Player			= require("app.components.Object.Player")
+local SpellBookCell 	= require("app.views.node.vNodeSpellBookCell")
+local WindowMgr			= require("app.components.WindowMgr")
+local SpellMgr 			= require("app.components.SpellMgr")
 local vLayerSpellBook 	= class("vLayerSpellBook", ViewBaseEx)
 
 vLayerSpellBook.DisableDuplicateCreation = true
@@ -11,7 +12,7 @@ vLayerSpellBook.RESOURCE_BINDING = {
 }
 
 function vLayerSpellBook:onCreate()
-	self.tableView = import("app.components.TableViewEx"):create({
+	self.tableView = require("app.components.TableViewEx"):create({
         cellSize = cc.size(430, 80),
         direction = cc.SCROLLVIEW_DIRECTION_VERTICAL,
         fillOrder = cc.TABLEVIEW_FILL_TOPDOWN,
@@ -39,7 +40,7 @@ end
 
 function vLayerSpellBook:onTouchButtonExit(e)
 	if e.name ~= "ended" then return end
-	self:removeFromParent()
+	self:removeSelf()
 end
 
 

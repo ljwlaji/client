@@ -90,7 +90,6 @@ function WindowMgr:createWindow(path, ...)
 	self:sortZOrder()
 	window:onNodeEvent("cleanup", function()
 		rawset(template, "inDisplay", nil)
-		self:removeWindow(window)
 	end)
 	release_print(string.format("create Window : [%s]", path))
 	return window

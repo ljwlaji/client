@@ -1,13 +1,13 @@
 local Map 				= class("Map", cc.Node)
-local DataBase 			= import("app.components.DataBase")
-local Camera 			= import("app.components.Camera")
-local Player        	= import("app.components.Object.Player")
-local GameObject    	= import("app.components.Object.GameObject")
-local Ground    		= import("app.components.Object.Ground")
-local Creature    		= import("app.components.Object.Creature")
-local DamageEffectNode 	= import("app.views.node.vNodeDamageEffect")
-local ShareDefine 		= import("app.ShareDefine")
-local FactionMgr		= import("app.components.FactionMgr")
+local DataBase 			= require("app.components.DataBase")
+local Camera 			= require("app.components.Camera")
+local Player        	= require("app.components.Object.Player")
+local GameObject    	= require("app.components.Object.GameObject")
+local Ground    		= require("app.components.Object.Ground")
+local Creature    		= require("app.components.Object.Creature")
+local DamageEffectNode 	= require("app.views.node.vNodeDamageEffect")
+local ShareDefine 		= require("app.ShareDefine")
+local FactionMgr		= require("app.components.FactionMgr")
 
 -- 需要实现的功能
 -- 无缝地图

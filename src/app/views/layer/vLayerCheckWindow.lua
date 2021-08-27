@@ -29,13 +29,13 @@ end
 function vLayerCheckWindow:onTouchButtonComfirm(e)
 	if e.name ~= "ended" then return end
 	if self.context.onConfirm then self.context.onConfirm() end
-	WindowMgr:removeWindow(self)
+	self:removeSelf()
 end
 
 function vLayerCheckWindow:onTouchButtonCancel(e)
 	if e.name ~= "ended" then return end
 	if self.context.onCancel then self.context.onCancel() end
-	WindowMgr:removeWindow(self)
+	self:removeSelf()
 end
 
 function vLayerCheckWindow:onTouchButtonBlock(e)

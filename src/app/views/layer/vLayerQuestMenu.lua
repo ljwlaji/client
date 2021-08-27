@@ -1,6 +1,7 @@
-local ViewBaseEx 		= import("app.views.ViewBaseEx")
-local DataBase 			= import("app.components.DataBase")
-local TableView      	= import("app.components.TableViewEx")
+local ViewBaseEx 		= require("app.views.ViewBaseEx")
+local DataBase 			= require("app.components.DataBase")
+local WindowMgr			= require("app.components.WindowMgr")
+local TableView      	= require("app.components.TableViewEx")
 local vLayerQuestMenu 	= class("vLayerQuestMenu", ViewBaseEx)
 
 vLayerQuestMenu.DisableDuplicateCreation = true
@@ -30,7 +31,7 @@ function vLayerQuestMenu:onReset(questEntry)
 
 	local strID = 10000
 	local ButtonVisible = true
-	local plr = import("app.components.Object.Player"):getInstance()
+	local plr = require("app.components.Object.Player"):getInstance()
 	if plr:canAcceptQuest(questEntry) then
 		release_print("可以接取任务")
 	elseif plr:canSubmitQuest(questEntry) then
@@ -93,7 +94,7 @@ end
 
 function vLayerQuestMenu:onTouchButtonAccept(e)
 	if e.name ~= "ended" then return end
-	local plr = import("app.components.Object.Player"):getInstance()
+	local plr = require("app.components.Object.Player"):getInstance()
 	if not plr then return end
 	if plr:canAcceptQuest(self.context) then
 		plr:acceptQuest(self.context)
@@ -101,12 +102,12 @@ function vLayerQuestMenu:onTouchButtonAccept(e)
 		release_print("trySubmit")
 		plr:trySubmitQuest(self.context)
 	end
-	self:removeFromParent()
+	self:removeSelf()
 end
 
 function vLayerQuestMenu:onTouchOutside(e)
 	if e.name ~= "ended" then return end
-	self:removeFromParent()
+	self:removeSelf()
 end
 
 

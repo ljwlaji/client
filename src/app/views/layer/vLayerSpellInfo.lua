@@ -1,10 +1,10 @@
-local ViewBaseEx 		= import("app.views.ViewBaseEx")
-local Utils             = import("app.components.Utils")
-local WindowMgr			= import("app.components.WindowMgr")
-local Player			= import("app.components.Object.Player")
-local DataBase 			= import("app.components.DataBase")
-local SpellMgr 			= import("app.components.SpellMgr")
-local ShareDefine       = import("app.ShareDefine")
+local ViewBaseEx 		= require("app.views.ViewBaseEx")
+local Utils             = require("app.components.Utils")
+local WindowMgr			= require("app.components.WindowMgr")
+local Player			= require("app.components.Object.Player")
+local DataBase 			= require("app.components.DataBase")
+local SpellMgr 			= require("app.components.SpellMgr")
+local ShareDefine       = require("app.ShareDefine")
 local vLayerSpellInfo 	= class("vLayerSpellInfo", ViewBaseEx)
 
 vLayerSpellInfo.RESOURCE_FILENAME = "res/csb/layer/CSB_Layer_SpellInfo.csb"
@@ -46,7 +46,7 @@ end
 
 function vLayerSpellInfo:onReset()
 	local plr = Player:getInstance()
-	if not plr or not plr:hasSpell(self.context.entry) then self:removeFromParent() return end
+	if not plr or not plr:hasSpell(self.context.entry) then self:removeSelf() return end
 
 	self:resetSpellButtons()
 	local desc = SpellMgr:getSpellDescString(self.context)
@@ -77,7 +77,7 @@ end
 
 function vLayerSpellInfo:onTouchButtonExit(e)
 	if e.name ~= "ended" then return end
-	self:removeFromParent()
+	self:removeSelf()
 end
 
 return vLayerSpellInfo

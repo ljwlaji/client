@@ -1,7 +1,7 @@
-local ViewBaseEx 			= import("app.views.ViewBaseEx")
-local TalentIcon 			= import("app.views.node.vNodeTalentIcon")
-local DataBase 				= import("app.components.DataBase")
-local Player 				= import("app.components.Object.Player")
+local ViewBaseEx 			= require("app.views.ViewBaseEx")
+local TalentIcon 			= require("app.views.node.vNodeTalentIcon")
+local DataBase 				= require("app.components.DataBase")
+local Player 				= require("app.components.Object.Player")
 local vLayerTalent 			= class("vLayerTalent", ViewBaseEx)
 
 vLayerTalent.DisableDuplicateCreation = true
@@ -55,7 +55,7 @@ end
 
 function vLayerTalent:onTouchPanelExit(e)
 	if e.name ~= "ended" then return end
-	self:removeFromParent()
+	self:removeSelf()
 end
 
 return vLayerTalent

@@ -1,8 +1,9 @@
-local ViewBaseEx 		= import("app.views.ViewBaseEx")
-local Player 			= import("app.components.Object.Player")
-local GridView			= import("app.components.GridView")
-local ShareDefine		= import("app.ShareDefine")
-local DataBase 			= import("app.components.DataBase")
+local ViewBaseEx 		= require("app.views.ViewBaseEx")
+local Player 			= require("app.components.Object.Player")
+local GridView			= require("app.components.GridView")
+local ShareDefine		= require("app.ShareDefine")
+local DataBase 			= require("app.components.DataBase")
+local WindowMgr			= require("app.components.WindowMgr")
 local vLayerInventory 	= class("vLayerInventory", ViewBaseEx)
 
 vLayerInventory.DisableDuplicateCreation = true
@@ -110,13 +111,13 @@ function vLayerInventory:fetchInventoryDatas()
 end
 
 function vLayerInventory:onCellAtIndex(cell, data)
-	cell.item = cell.item or import("app.views.node.vNodeInventorySlot"):create():addTo(cell)
+	cell.item = cell.item or require("app.views.node.vNodeInventorySlot"):create():addTo(cell)
 	cell.item:onReset(data)
 end
 
 function vLayerInventory:Exit(e)
 	if e.name ~= "ended" then return end
-	self:removeFromParent()
+	self:removeSelf()
 end
 
 

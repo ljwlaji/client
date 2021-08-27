@@ -1,6 +1,7 @@
-local ViewBaseEx 			= import("app.views.ViewBaseEx")
-local TableViewEx      		= import("app.components.TableViewEx")
-local DataBase 				= import("app.components.DataBase")
+local ViewBaseEx 			= require("app.views.ViewBaseEx")
+local WindowMgr				= require("app.components.WindowMgr")
+local TableViewEx      		= require("app.components.TableViewEx")
+local DataBase 				= require("app.components.DataBase")
 local vLayerVendorMenu 		= class("vLayerVendorMenu", ViewBaseEx)
 
 vLayerVendorMenu.RESOURCE_FILENAME = "res/csb/layer/CSB_Layer_VendorMenu.csb"
@@ -9,7 +10,7 @@ vLayerVendorMenu.RESOURCE_BINDING = {
 }
 
 function vLayerVendorMenu:onCreate(creatureEntry)
-	self.VendorTable = import("app.components.TableViewEx"):create({
+	self.VendorTable = require("app.components.TableViewEx"):create({
         cellSize = cc.size(400, 80),
         direction = cc.SCROLLVIEW_DIRECTION_VERTICAL,
         fillOrder = cc.TABLEVIEW_FILL_TOPDOWN,
@@ -29,13 +30,13 @@ function vLayerVendorMenu:onReset(creatureEntry)
 end
 
 function vLayerVendorMenu:onCellAtIndex(cell, index)
-	cell.item = cell.item or import("app.views.node.vNodeVendorMenuCell"):create():addTo(cell)
+	cell.item = cell.item or require("app.views.node.vNodeVendorMenuCell"):create():addTo(cell)
 	cell.item:onReset(self.datas[index + 1])
 end
 
 function vLayerVendorMenu:onTouchPanelExit(e)
 	if e.name ~= "ended" then return end
-	self:removeFromParent()
+	self:removeSelf()
 end
 
 return vLayerVendorMenu
