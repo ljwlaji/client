@@ -1,9 +1,9 @@
-local ViewBaseEx 		= import("app.views.ViewBaseEx")
-local DataBase 			= import("app.components.DataBase")
-local TableView      	= import("app.components.TableViewEx")
-local Player 			= import("app.components.Object.Player")
-local ShareDefine       = import("app.ShareDefine")
-local Cell 				= import("app.views.node.vNodeQuestBookTargetCell")
+local ViewBaseEx 		= require("app.views.ViewBaseEx")
+local DataBase 			= require("app.components.DataBase")
+local TableView      	= require("app.components.TableViewEx")
+local Player 			= require("app.components.Object.Player")
+local ShareDefine       = require("app.ShareDefine")
+local Cell 				= require("app.views.node.vNodeQuestBookTargetCell")
 local vLayerQuestBook 	= class("vLayerQuestBook", ViewBaseEx)
 
 vLayerQuestBook.DisableDuplicateCreation = true
@@ -49,7 +49,7 @@ function vLayerQuestBook:onReset()
 end
 
 function vLayerQuestBook:onCellAtIndex(cell, idx)
-	cell.item = import("app.views.node.vNodeQuestBookCell"):create()
+	cell.item = require("app.views.node.vNodeQuestBookCell"):create()
 														   :addTo(cell)
 														   :onTouch(handler(self, self.switchToQuest))
 														   :move(0, 0)
@@ -146,7 +146,7 @@ end
 
 function vLayerQuestBook:onTouchPanelExit(e)
 	if e.name ~= "ended" then return end
-	self:removeFromParent()
+	self:removeSelf()
 end
 
 return vLayerQuestBook
