@@ -270,6 +270,13 @@ compileLua()
 	done
 }
 
+makeLink()
+{
+	cd $project_path/MapEditor/src/app
+	ln -s $project_path/src/app/components components
+	read -p "执行完成, 按任意键继续 :" value;
+}
+
 start()
 {
 	clear
@@ -279,7 +286,7 @@ start()
 	echo "2. 打包脚本与资源更新."
 	echo "3. 自动上传资源"
 	echo "4. 单独编译Lua文件"
-	echo ""
+	echo "5. 创建软连接"
 	echo ""
 	echo "7. 自动打包工程."
 	echo "8. 构建Zipper工具"
@@ -313,6 +320,9 @@ start()
 		mkdir $project_path/src_c/src
 		compileLua $project_path/src $project_path/src_c
 		read -p "完成 :" value;
+	fi
+	if [ "${value}" == "5" ]; then
+		makeLink
 	fi
 	if [ "${value}" == "7" ]; then
 		buildProject
