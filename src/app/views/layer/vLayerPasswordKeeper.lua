@@ -8,6 +8,7 @@ local HEIGHT = 800
 local offset = 0
 function vLayerPasswordKeeper:onCreate()
 	dump(Utils:getVersionInfo())
+	print("first Commit")
 	self:onRefresh()
 end
 
