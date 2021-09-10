@@ -1,11 +1,13 @@
 local ViewBaseEx 			= require("app.views.ViewBaseEx")
 local DataBase 				= require("app.components.DataBase")
-local WindowMgr 	= require("app.components.WindowMgr")
+local WindowMgr 			= require("app.components.WindowMgr")
+local Utils 				= require("app.components.Utils")
 local vLayerPasswordKeeper 	= class("vLayerPasswordKeeper", ViewBaseEx)
 
 local HEIGHT = 800
 local offset = 0
 function vLayerPasswordKeeper:onCreate()
+	dump(Utils:getVersionInfo())
 	self:onRefresh()
 end
 
@@ -42,7 +44,7 @@ function vLayerPasswordKeeper:onNormalEnter()
 	}):addTo(self):move(0, display.cy - offset)
 	offset = offset + HEIGHT + 2
 
-	self.catagoryView = import("app.components.TableViewEx"):create({
+	self.catagoryView = require("app.components.TableViewEx"):create({
         size = cc.size(500, HEIGHT),
         direction = cc.SCROLLVIEW_DIRECTION_VERTICAL,
         fillOrder = cc.TABLEVIEW_FILL_TOPDOWN,

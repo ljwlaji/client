@@ -169,7 +169,7 @@ end
 function LayerEntrance:onExecuteTryDownloadUpdates(diff)
 	--正在进行下载任务
 	if self:getCurrentTask() then
-		self:onDownloadProgress()
+		self:onDownloadProgress(diff)
 		return 
 	end
 	--没有正在进行的下载任务 尝试添加新任务
