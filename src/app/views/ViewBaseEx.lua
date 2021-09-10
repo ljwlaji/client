@@ -40,6 +40,11 @@ function ViewBaseEx:onPushToTop()
 
 end
 
+function ViewBaseEx:removeFromParent()
+    assert(self:getParent(), "Cannot Remove From Parent While No Parent Existed!")
+    cc.Node.removeFromParent(self)
+end
+
 function ViewBaseEx:removeSelf()
     WindowMgr:removeWindow(self)
 end

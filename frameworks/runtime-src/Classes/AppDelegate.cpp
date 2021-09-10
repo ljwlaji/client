@@ -130,7 +130,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     
     std::string writeblePath = FileUtils::getInstance()->getWritablePath().c_str();
     CCLOG("%s", writeblePath.c_str());
-#ifdef WIN32
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     writeblePath += "virtualDir/";
 #endif
     
