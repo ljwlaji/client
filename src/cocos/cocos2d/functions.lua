@@ -56,7 +56,7 @@ function dump(value, description, nesting)
     local result = {}
 
     local traceback = string.split(debug.traceback("", 2), "\n")
-    print("dump from: " .. string.trim(traceback[3]))
+    release_print("dump from: " .. string.trim(traceback[3]))
 
     local function dump_(value, description, indent, nest, keylen)
         description = description or "<var>"
@@ -102,7 +102,7 @@ function dump(value, description, nesting)
     dump_(value, description, "- ", 1)
 
     for i, line in ipairs(result) do
-        print(line)
+        release_print(line)
     end
 end
 

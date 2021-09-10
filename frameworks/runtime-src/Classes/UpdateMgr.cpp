@@ -69,6 +69,8 @@ void UpdateMgr::Run()
 		m_Handler = m_Handler ? m_Handler : curl_easy_init();
 		curl_easy_setopt(m_Handler, CURLOPT_URL, m_From.c_str());
 		curl_easy_setopt(m_Handler, CURLOPT_TIMEOUT, 10);
+        curl_easy_setopt(m_Handler, CURLOPT_SSL_VERIFYHOST, 0L);
+        curl_easy_setopt(m_Handler, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(m_Handler, CURLOPT_HEADERFUNCTION, getcontentlengthfunc);
 		curl_easy_setopt(m_Handler, CURLOPT_WRITEFUNCTION, write_func);
 		curl_easy_setopt(m_Handler, CURLOPT_WRITEDATA, FileToSave);
@@ -82,7 +84,7 @@ void UpdateMgr::Run()
 		if (m_ErrorCode != CURLE_ABORTED_BY_CALLBACK)
 		{
 			curl_easy_cleanup(m_Handler);
-			m_Handler = nullptr;
+            m_Handler = nullptr;
 			break;
 		}
 	}
