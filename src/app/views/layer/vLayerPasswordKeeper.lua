@@ -7,8 +7,10 @@ local vLayerPasswordKeeper 	= class("vLayerPasswordKeeper", ViewBaseEx)
 local HEIGHT = 800
 local offset = 0
 function vLayerPasswordKeeper:onCreate()
-	dump(Utils:getVersionInfo())
-	print("first Commit")
+        	WindowMgr:popCheckWindow({
+        		title = 990002,
+        		desc = 990001,
+        	})
 	self:onRefresh()
 end
 
