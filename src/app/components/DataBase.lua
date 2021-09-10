@@ -43,6 +43,7 @@ end
 
 function DataBase:openDB(path)
 	if self.db then return self.db end
+    print(path or Utils.getCurrentResPath()..DBPATH)
     self.db = sqlite3.open(path or Utils.getCurrentResPath()..DBPATH)
 	return self.db
 end

@@ -283,7 +283,7 @@ function LayerEntrance:enterGame()
 	if self.MD5 then self.MD5:desotry() self.MD5 = nil end
 	self.m_SM:stop()
 	dump(Utils.getVersionInfo(), "本地版本信息: ")
-	self:runSequence(cc.DelayTime:create(1), cc.CallFunc:create(function() self.onFinishedCallBack() self:removeFromParent() end))
+	self:runSequence(cc.DelayTime:create(1), cc.CallFunc:create(function() self.onFinishedCallBack() self:removeSelf() end))
 end
 
 return LayerEntrance

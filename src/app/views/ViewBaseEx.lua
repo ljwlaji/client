@@ -1,9 +1,12 @@
-local ViewBaseEx 		= class("ViewBaseEx", cc.load("mvc").ViewBase)
-local WindowMgr			= require("app.components.WindowMgr")
+local WindowMgr     = import("app.components.WindowMgr")
+local DragAndDrop = require("app.components.DragAndDropManager")
+local ViewBaseEx = class("ViewBaseEx", cc.load("mvc").ViewBase)
 
 function ViewBaseEx:autoAlgin()
 	self:setContentSize(display.width, display.height)
-	self:getResourceNode():setContentSize(display.width, display.height)
+	if self:getResourceNode() then
+		self:getResourceNode():setContentSize(display.width, display.height)
+	end
 
 	if self.m_Children["node_Left_Up"] 			then self.m_Children["node_Left_Up"]:move(0, display.height):setAnchorPoint(0, 1) 	end
 	if self.m_Children["node_Left"] 			then self.m_Children["node_Left"]:move(0, display.cy):setAnchorPoint(0, 0.5) 		end
@@ -33,8 +36,74 @@ function ViewBaseEx:runSequence(...)
 	self:runAction( cc.Sequence:create( ... ) )
 end
 
+function ViewBaseEx:onPushToTop()
+
+end
+
 function ViewBaseEx:removeSelf()
-	WindowMgr:removeWindow(self)
+    WindowMgr:removeWindow(self)
+end
+
+function ViewBaseEx:createLayout(param)
+    param = param or {}
+    local btn  = ccui.Layout:create()
+                            :setBackGroundColorType(ccui.LayoutBackGroundColorType.solid)
+                            :setContentSize(param.size or cc.size(0, 0))
+                            :setBackGroundColor(param.color or cc.c3b(255, 255, 255))
+                            :setBackGroundColorOpacity(param.op or 30)
+                            :setAnchorPoint(param.ap and param.ap or cc.p(0.5, 0.5))
+
+    if param.dad then -- Drag And Drop Issus
+        DragAndDrop:enableDragAndDrop(btn)
+        btn.___onNormalTouchCallBack = param.cb
+        btn:setSwallowTouches(param.st == nil and true or param.st)
+        btn.__onDrop = type(param.dad) == "function" and param.dad or nil
+    elseif param.cb then -- onTouchEnded Only
+        btn:setTouchEnabled(true)
+        btn:onTouch(param.cb)
+        btn:setSwallowTouches(param.st == nil and true or param.st)
+    end
+    if param.str then
+        local label = cc.LabelTTF:create()
+        label:setFontSize(param.fs and param.fs or 22)
+        label:addTo(btn)
+        btn.setTitleStr = function(this, str) 
+                                label:setString(str)
+                                local size = btn:getContentSize()
+                                size.width = math.max(label:getContentSize().width + 10, size.width)
+                                btn:setContentSize(size)
+                                label:alignCenter()
+                                if param.fc then label:setColor(param.fc) end
+                                return this 
+                        end 
+        btn.getTitleStr = function(this) return label:getString() end
+        btn.getStringSize = function(this) return label:getContentSize() end
+        btn:setTitleStr(param.str or "")
+    end
+    return btn
+end
+
+function ViewBaseEx:cEditBox(param)
+    param = param or {}
+    local layouter = self:createLayout(param)
+
+    local box  = ccui.EditBox:create(param.size or cc.size(300, 40), "")
+                             :setAnchorPoint(0.5, 0.5)
+                             :addTo(layouter)
+                             :alignCenter()
+                             :setFontSize(20)
+                             :setPlaceholderFontSize(20)
+
+    if param.cb then
+    	box:registerScriptEditBoxHandler(param.cb)
+    end
+
+    layouter.getText = function() return box:getText() end
+    if param.ph then
+        box:setPlaceHolder(param.ph)
+    end
+    layouter.setText = function(this, text) box:setText(text) end 
+    return layouter
 end
 
 return ViewBaseEx

@@ -5,6 +5,7 @@ WindowMgr.instance 	= nil
 
 function WindowMgr:ctor()
 	self.m_Windows = {}
+	self.m_topWindow = nil
 end
 
 function WindowMgr:getInstance()
@@ -68,13 +69,19 @@ function WindowMgr:removeWindow(window, removeAll)
 end
 
 function WindowMgr:sortZOrder()
+	if #self.m_Windows > 0 then
+		if self.m_topWindow ~= self.m_Windows[#self.m_Windows] then
+			self.m_topWindow = self.m_Windows[#self.m_Windows]
+			self.m_topWindow:onPushToTop()
+		end
+	end
 	for i=1, #self.m_Windows do
 		self.m_Windows[i]:setLocalZOrder(ShareDefine.getZOrderByType("ZORDER_WINDOW_START") + i)
 	end
 end
 
 function WindowMgr:createWindow(path, ...)
-	local template = devRequire(path)
+	local template = ShareDefine:isDevMode() and devRequire(path) or require(path)
 	if rawget(template, "DisableDuplicateCreation") == true and rawget(template, "inDisplay") then 
         -- print("\nModule <"..template.__cname.."> Was Disabled For Duplicate Creation, Call onReset Instead.")
         local currentWindow, index = self:findWindowByName(template.__cname)
@@ -86,6 +93,7 @@ function WindowMgr:createWindow(path, ...)
 	local window = template:create(...):addTo(display.getRunningScene())
 	rawset(template, "inDisplay", true)
     window:setAnchorPoint(0.5, 0.5):move(display.center)
+	self.m_topWindow = window
 	table.insert(self.m_Windows, window)
 	self:sortZOrder()
 	window:onNodeEvent("cleanup", function()
