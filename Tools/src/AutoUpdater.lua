@@ -171,11 +171,20 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	-- local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "") -- For Win Only
 	local currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	currentDir = string.gsub(currentDir, "\n", "")
-	print(currentDir)
 	local modifiedFiles = AutoUpdater.checkModified(firstCommit, lastCommit)
-
+	table.insert(modifiedFiles, "res/version")
 	-- Create Update Dir
 	-- dump(modifiedFiles)
+	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"rb")
+	local originData = originFile and loadstring("return "..originFile:read("*a"))() or {}
+	fileWrite = io.open(currentDir.."/res/version","w")
+	fileWrite:write(Utils.TableToString({
+		Date 		= os.date(),
+		firstCommit = firstCommit,
+		lastCommit 	= lastCommit,
+		version 	= #originData + 1
+	}))
+	fileWrite:close()
 
 	updateDir = currentDir.."/Update"
 	LFS.createDir(updateDir)
@@ -262,8 +271,6 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("文件解压完毕! 正在写入更新数据....")
 	release_print("")
 	local callBack = io.popen(string.format("%s %s %s unCompress", ZipperPath, path, updateDir.."/TestUnZip")):read("*all")
-	local originFile = io.open(string.gsub(currentDir.."/AllUpdates", "\\", "/"),"rb")
-	local originData = originFile and loadstring("return "..originFile:read("*a"))() or {}
 	if originFile then
 		originFile:close()
 		originFile = nil
@@ -297,16 +304,16 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("正在更新根目录[AllUpdates]文件")
 	Utils.bCopyFile(fileTo, currentDir.."/AllUpdates")
 
-	release_print("正在更新本地[version]文件")
-	local Info = originData[#originData]
-	fileWrite = io.open(currentDir.."/res/version","w")
-	fileWrite:write(Utils.TableToString({
-		Date 		= Info.Date,
-		firstCommit = Info.commitBase,
-		lastCommit 	= Info.commitLast,
-		version 	= #originData
-	}))
-	fileWrite:close()
+	-- release_print("正在更新本地[version]文件")
+	-- local Info = originData[#originData]
+	-- fileWrite = io.open(currentDir.."/res/version","w")
+	-- fileWrite:write(Utils.TableToString({
+	-- 	Date 		= Info.Date,
+	-- 	firstCommit = Info.commitBase,
+	-- 	lastCommit 	= Info.commitLast,
+	-- 	version 	= #originData
+	-- }))
+	-- fileWrite:close()
 
 	release_print("")
 	release_print("")

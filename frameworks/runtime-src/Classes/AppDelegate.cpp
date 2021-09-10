@@ -133,7 +133,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     writeblePath += "virtualDir/";
 #endif
-    
+    FileUtils::getInstance()->addSearchPath(writeblePath);
     FileUtils::getInstance()->addSearchPath(writeblePath + "src");
     FileUtils::getInstance()->addSearchPath(writeblePath + "res");
      #if CC_64BITS
