@@ -1185,8 +1185,8 @@ int register_ui_module(lua_State* L)
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS) && !defined(CC_TARGET_OS_TVOS)
         register_all_cocos2dx_experimental_video(L);
         register_all_cocos2dx_experimental_video_manual(L);
-        register_all_cocos2dx_experimental_webview(L);
-        register_all_cocos2dx_experimental_webview_manual(L);
+//        register_all_cocos2dx_experimental_webview(L);
+//        register_all_cocos2dx_experimental_webview_manual(L);
 #endif
         extendEventListenerFocusEvent(L);
     }
