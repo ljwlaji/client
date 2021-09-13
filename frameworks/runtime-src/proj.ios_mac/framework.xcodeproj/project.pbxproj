@@ -74,6 +74,8 @@
 		725B07E62362F10D001A22F7 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 725B07E52362F10D001A22F7 /* libcurl.a */; };
 		7267CC7523729955004EC500 /* GausBlurSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7267CC7323729955004EC500 /* GausBlurSprite.cpp */; };
 		7267CC7623729955004EC500 /* GausBlurSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7267CC7323729955004EC500 /* GausBlurSprite.cpp */; };
+		72913AB526EF3B9B001C6654 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72913AB426EF3B9B001C6654 /* LocalAuthentication.framework */; };
+		72913AB926EF3F75001C6654 /* YZAuthID.mm in Sources */ = {isa = PBXBuildFile; fileRef = 72913AB826EF3F75001C6654 /* YZAuthID.mm */; };
 		72DAFE0A2386E33500B93FAE /* Bugly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE072386E33500B93FAE /* Bugly.framework */; };
 		72DAFE0D2386E36500B93FAE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE0C2386E36500B93FAE /* SystemConfiguration.framework */; };
 		72DAFE0F2386E36E00B93FAE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE0E2386E36E00B93FAE /* Security.framework */; };
@@ -265,6 +267,9 @@
 		725B07E52362F10D001A22F7 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = "../../cocos2d-x/external/curl/prebuilt/ios/libcurl.a"; sourceTree = "<group>"; };
 		7267CC7323729955004EC500 /* GausBlurSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GausBlurSprite.cpp; path = ../Classes/GausBlurSprite/GausBlurSprite.cpp; sourceTree = "<group>"; };
 		7267CC7423729955004EC500 /* GausBlurSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GausBlurSprite.h; path = ../Classes/GausBlurSprite/GausBlurSprite.h; sourceTree = "<group>"; };
+		72913AB426EF3B9B001C6654 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.4.sdk/System/Library/Frameworks/LocalAuthentication.framework; sourceTree = DEVELOPER_DIR; };
+		72913AB826EF3F75001C6654 /* YZAuthID.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = YZAuthID.mm; sourceTree = "<group>"; };
+		72C99B4626EF3143001BD249 /* YZAuthID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YZAuthID.h; sourceTree = "<group>"; };
 		72DAFE072386E33500B93FAE /* Bugly.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bugly.framework; sourceTree = "<group>"; };
 		72DAFE0C2386E36500B93FAE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
 		72DAFE0E2386E36E00B93FAE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
@@ -330,6 +335,7 @@
 				72DAFE0A2386E33500B93FAE /* Bugly.framework in Frameworks */,
 				72DAFE0F2386E36E00B93FAE /* Security.framework in Frameworks */,
 				72DAFE0D2386E36500B93FAE /* SystemConfiguration.framework in Frameworks */,
+				72913AB526EF3B9B001C6654 /* LocalAuthentication.framework in Frameworks */,
 				1AF4C403178663F200122817 /* libz.dylib in Frameworks */,
 				294D0D721D0D572600F7F5D4 /* CoreText.framework in Frameworks */,
 				9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */,
@@ -450,6 +456,16 @@
 			name = GausBlurSprite;
 			sourceTree = "<group>";
 		};
+		72C99B4426EF3143001BD249 /* YZAuthID */ = {
+			isa = PBXGroup;
+			children = (
+				72913AB826EF3F75001C6654 /* YZAuthID.mm */,
+				72C99B4626EF3143001BD249 /* YZAuthID.h */,
+			);
+			name = YZAuthID;
+			path = ../Classes/YZAuthID;
+			sourceTree = "<group>";
+		};
 		9FF504791A5E86D600AFDA55 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -496,6 +512,7 @@
 		F293B3CB15EB7BE500256477 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				72913AB426EF3B9B001C6654 /* LocalAuthentication.framework */,
 				72DAFE182386E5ED00B93FAE /* libBuglyAgent.a */,
 				72DAFE112386E38900B93FAE /* libc++.tbd */,
 				72DAFE102386E37D00B93FAE /* libz.tbd */,
@@ -534,6 +551,7 @@
 		F293BB7C15EB830F00256477 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				72C99B4426EF3143001BD249 /* YZAuthID */,
 				721C427526823F8100F18557 /* TencentBugly */,
 				7267CC7023729944004EC500 /* GausBlurSprite */,
 				725AF5B22362D9F50033F8A1 /* UpdateMgr.cpp */,
@@ -799,6 +817,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72913AB926EF3F75001C6654 /* YZAuthID.mm in Sources */,
 				720EB5F6230E58FC003ADE72 /* UnitTest.cpp in Sources */,
 				7267CC7523729955004EC500 /* GausBlurSprite.cpp in Sources */,
 				5023812517EBBCAC00990C9B /* RootViewController.mm in Sources */,
@@ -1031,7 +1050,7 @@
 					"$(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib",
 				);
 				INFOPLIST_FILE = ios/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../cocos2d-x/external/curl/prebuilt/ios\"",
 					"$(PROJECT_DIR)",
@@ -1082,7 +1101,7 @@
 					"$(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib",
 				);
 				INFOPLIST_FILE = ios/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../cocos2d-x/external/curl/prebuilt/ios\"",
 					"$(PROJECT_DIR)",

@@ -147,7 +147,7 @@ end
 
 function vLayerPasswordKeeper:refreshSearch(str)
 	str = str or ".*"
-	local result = DataBase:query(string.format("SELECT entry, desc, value FROM pass"))
+	local result = DataBase:query(string.format("SELECT entry, desc, value FROM pass WHERE entry != 0"))
 	local ret = {}
 	for _, v in pairs(result) do
 		if v.desc:find(str) then

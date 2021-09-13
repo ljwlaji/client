@@ -85,6 +85,17 @@ function vLayerPasswordDetail:onCreate(context)
 	offset = offset + 40
 	self:createLayout({
 		size = cc.size(WIDTH, 35),
+		str = "复制密码到剪切板",
+		op = 0,
+		fc = cc.c3b(0, 255, 127),
+		ap = cc.p(0.5, 1),
+		-- cb = function(e) if e.name ~= "ended" then return end self:removeSelf() end
+	}):addTo(self.bg):move(WIDTH * 0.5, self.bg:getContentSize().height - offset)
+
+
+	offset = offset + 40
+	self:createLayout({
+		size = cc.size(WIDTH, 35),
 		str = "返回",
 		op = 0,
 		fc = cc.c3b(127, 127, 127),
