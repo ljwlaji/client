@@ -24,6 +24,12 @@
     return instance;
 }
 
++ (void)pasteToClipBoar:(NSDictionary *)dic {
+    UIPasteboard* board = [UIPasteboard generalPasteboard];
+    NSString* string = [dic objectForKey:@"value"];
+    [board setString:string];
+}
+
 + (void)test:(NSDictionary *)dic {
     YZAuthID *authID = [[YZAuthID sharedInstance] init];
     [authID yz_showAuthIDWithDescribe:nil block:^(YZAuthIDState state, NSError *error) {

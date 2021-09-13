@@ -31,6 +31,12 @@ function luaoc.callStaticMethod(className, methodName, args)
     return ok, ret
 end
 
+function MainScene:testPasteBoard(str)
+    local ok, ret = luaoc.callStaticMethod("YZAuthID", "pasteToClipBoar", {
+    	value = str
+    })
+end
+
 function MainScene:onCreate()
 	-- require("app.components.DataBase"):openDB(cc.FileUtils:getInstance():getWritablePath().."res/datas.db")
 end
@@ -53,7 +59,8 @@ function MainScene:onEnterTransitionFinish()
 		cc.CallFunc:create(function() 
    			WindowMgr:createWindow("app.views.layer.LayerEntrance", function()
                 WindowMgr:createWindow("app.views.layer.vLayerPasswordKeeper")
-                self:testTouchID()
+                -- self:testTouchID()
+                self:testPasteBoard()
             end)
 		end)
 	))
