@@ -2,20 +2,21 @@ local ViewBaseEx 			= require("app.views.ViewBaseEx")
 local DataBase 				= require("app.components.DataBase")
 local WindowMgr 			= require("app.components.WindowMgr")
 local Utils 				= require("app.components.Utils")
+local NativeHelper 			= require("app.components.NativeHelper")
 local vLayerPasswordKeeper 	= class("vLayerPasswordKeeper", ViewBaseEx)
 
 local HEIGHT = 800
 local offset = 0
+
+
 function vLayerPasswordKeeper:onCreate()
-        	WindowMgr:popCheckWindow({
-        		title = 990002,
-        		desc = 990001,
-        	})
+	self:tryVerify(function()
+		self:onRefresh()
+	end)
 	self:onRefresh()
 end
 
 function vLayerPasswordKeeper:onPushToTop()
-	print("vLayerPasswordKeeper:onPushToTop()")
 	self:onRefresh()
 end
 
@@ -30,6 +31,13 @@ function vLayerPasswordKeeper:onRefresh()
 		self:refreshSearch()
 	end
 	local bg = cc.Sprite:create("res/bg.jpg"):addTo(self):setLocalZOrder(-1)
+end
+
+function vLayerPasswordKeeper:tryVerify(onSuccessed)
+	NativeHelper:verify(function(success)
+		if success then onSuccessed() return end
+		self:tryVerify(onSuccessed)
+	end)
 end
 
 function vLayerPasswordKeeper:onNormalEnter()

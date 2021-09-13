@@ -24,13 +24,13 @@
     return instance;
 }
 
-+ (void)pasteToClipBoar:(NSDictionary *)dic {
++ (void)pasteToClipBoard:(NSDictionary *)dic {
     UIPasteboard* board = [UIPasteboard generalPasteboard];
     NSString* string = [dic objectForKey:@"value"];
     [board setString:string];
 }
 
-+ (void)test:(NSDictionary *)dic {
++ (void)verify:(NSDictionary *)dic {
     YZAuthID *authID = [[YZAuthID sharedInstance] init];
     [authID yz_showAuthIDWithDescribe:nil block:^(YZAuthIDState state, NSError *error) {
         int handerID = (int)[[dic objectForKey:@"callback"] integerValue];

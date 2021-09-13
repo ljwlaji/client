@@ -1,6 +1,7 @@
 local ViewBaseEx 			= require("app.views.ViewBaseEx")
 local DataBase 				= require("app.components.DataBase")
 local WindowMgr 			= require("app.components.WindowMgr")
+local NativeHelper 			= require("app.components.NativeHelper")
 local vLayerPasswordDetail 	= class("vLayerPasswordDetail", ViewBaseEx)
 
 local WIDTH = display.width - 100
@@ -89,7 +90,7 @@ function vLayerPasswordDetail:onCreate(context)
 		op = 0,
 		fc = cc.c3b(0, 255, 127),
 		ap = cc.p(0.5, 1),
-		-- cb = function(e) if e.name ~= "ended" then return end self:removeSelf() end
+		cb = handler(self, self.onPasteToClipBoard)
 	}):addTo(self.bg):move(WIDTH * 0.5, self.bg:getContentSize().height - offset)
 
 
@@ -132,6 +133,12 @@ function vLayerPasswordDetail:onDelete(e)
     	self:removeSelf()
     end
 	})
+end
+
+function vLayerPasswordDetail:onPasteToClipBoard(e)
+	if e.name ~= "ended" then return end 
+	NativeHelper:pasteToClipBoard(self.context.value)
+	self:removeSelf() 
 end
 
 
