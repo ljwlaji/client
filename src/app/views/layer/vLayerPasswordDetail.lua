@@ -6,6 +6,11 @@ local vLayerPasswordDetail 	= class("vLayerPasswordDetail", ViewBaseEx)
 
 local WIDTH = display.width - 100
 function vLayerPasswordDetail:onCreate(context)
+	self:regiestCustomEventListenter("MSG_APP_WILL_ENTER_FOREGROUND", function()
+		if NativeHelper:canVerify() then NativeHelper:verify(function(sec)
+			if not sec then self:removeSelf() return end
+		end) end
+	end)
 	self:createLayout({
 		size = cc.size(display.width, display.height),
 		op = 127,

@@ -153,7 +153,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 void AppDelegate::applicationDidEnterBackground()
 {
     Director::getInstance()->stopAnimation();
-
+    LuaEngine::getInstance()->getLuaStack()->executeGlobalFunction("applicationDidEnterBackground");
 #if USE_AUDIO_ENGINE
     AudioEngine::pauseAll();
 #elif USE_SIMPLE_AUDIO_ENGINE
@@ -166,7 +166,7 @@ void AppDelegate::applicationDidEnterBackground()
 void AppDelegate::applicationWillEnterForeground()
 {
     Director::getInstance()->startAnimation();
-
+    LuaEngine::getInstance()->getLuaStack()->executeGlobalFunction("applicationWillEnterForeground");
 #if USE_AUDIO_ENGINE
     AudioEngine::resumeAll();
 #elif USE_SIMPLE_AUDIO_ENGINE
