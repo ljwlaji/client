@@ -24,7 +24,7 @@
     return instance;
 }
 
-+ (void)pasteToClipBoard:(NSDictionary *)dic {
++ (void)pasteToClipBoar:(NSDictionary *)dic {
     UIPasteboard* board = [UIPasteboard generalPasteboard];
     NSString* string = [dic objectForKey:@"value"];
     [board setString:string];
@@ -59,9 +59,9 @@
 - (void)yz_showAuthIDWithDescribe:(NSString *)describe block:(YZAuthIDStateBlock)block {
     if(!describe) {
         if(iPhoneX){
-            describe = @"验证已有面容";
+            describe = @"验证面容以查看密码";
         }else{
-            describe = @"通过Home键验证已有指纹";
+            describe = @"验证指纹以查看密码";
         }
     }
     
@@ -79,6 +79,7 @@
     
     // 认证失败提示信息，为 @"" 则不提示
     context.localizedFallbackTitle = @"输入密码";
+//    context.localizedCancelTitle = @"返回";
     
     NSError *error = nil;
     
