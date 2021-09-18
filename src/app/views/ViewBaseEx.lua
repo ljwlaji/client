@@ -96,8 +96,10 @@ function ViewBaseEx:cEditBox(param)
                              :setAnchorPoint(0.5, 0.5)
                              :addTo(layouter)
                              :alignCenter()
-                             :setFontSize(20)
-                             :setPlaceholderFontSize(20)
+                             :setFontSize(param.efs and param.efs or 20)
+                             :setPlaceholderFontSize(param.efs and param.efs or 20)
+                             :setPlaceholderFontColor(param.efc and param.efc or cc.c3b(127, 127, 127))
+                             :setFontColor(param.fc and param.fc or cc.c3b(127, 127, 127))
 
     if param.cb then
     	box:registerScriptEditBoxHandler(param.cb)

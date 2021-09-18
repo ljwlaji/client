@@ -10,9 +10,12 @@ function MainScene:onCreate()
 end
 
 function MainScene:run()
+
 end
 
 function MainScene:onEnterTransitionFinish()
+
+-- 点击回调函数
 	self:runAction(cc.Sequence:create(
 		cc.DelayTime:create(1),
 		cc.CallFunc:create(function() 

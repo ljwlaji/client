@@ -2,45 +2,59 @@ local ViewBaseEx 			= require("app.views.ViewBaseEx")
 local DataBase 				= require("app.components.DataBase")
 local WindowMgr 			= require("app.components.WindowMgr")
 local Utils 				= require("app.components.Utils")
+local NativeHelper 			= require("app.components.NativeHelper")
 local vLayerPasswordKeeper 	= class("vLayerPasswordKeeper", ViewBaseEx)
 
 local HEIGHT = 800
-local offset = 0
+local offset = 40
+
+local singleHeight = 40
+
+
 function vLayerPasswordKeeper:onCreate()
-        	WindowMgr:popCheckWindow({
-        		title = 990002,
-        		desc = 990001,
-        	})
-	self:onRefresh()
+	local bg = cc.Sprite:create("res/bg.jpg"):addTo(self):setLocalZOrder(-1)
+	self:onNormalEnter()
 end
 
 function vLayerPasswordKeeper:onPushToTop()
-	print("vLayerPasswordKeeper:onPushToTop()")
-	self:onRefresh()
 end
 
 function vLayerPasswordKeeper:onRefresh()
-	self:removeAllChildren()
-	offset = 30
-	local result = DataBase:query(string.format("SELECT entry, desc, value FROM pass"))
-	if #result == 0 then
-		self:onNewEnter()
-	else
-		self:onNormalEnter()
-		self:refreshSearch()
-	end
-	local bg = cc.Sprite:create("res/bg.jpg"):addTo(self):setLocalZOrder(-1)
+	-- offset = 40
+	-- self:removeAllChildren()
+	-- if NativeHelper:canVerify() then
+	-- 	release_print("可以原生认证, 进入原生认证.")
+	-- 	self:tryVerify(function() 
+	-- 		self:onNormalEnter()
+	-- 	end)
+	-- else
+	-- 	release_print("不可以原生认证, 普通认证")
+	-- 	if #DataBase:query(string.format("SELECT entry, desc, value FROM pass")) == 0 then
+	-- 		self:onNewEnter()
+	-- 	else
+	-- 		self:onNormalEnter()
+	-- 	end
+	-- end
+	-- local bg = cc.Sprite:create("res/bg.jpg"):addTo(self):setLocalZOrder(-1)
+end
+
+function vLayerPasswordKeeper:tryVerify(onSuccessed)
+	NativeHelper:verify(function(success)
+		if success then onSuccessed() return end
+		self:tryVerify(onSuccessed)
+	end)
 end
 
 function vLayerPasswordKeeper:onNormalEnter()
 	self:cEditBox({
-		size = cc.size(display.width * 0.8, 35),
+		size = cc.size(display.width * 0.8, singleHeight),
 		ap = cc.p(0.5, 1),
 		op = 127,
 		cb = handler(self, self.onTextChange),
-		ph = "输入描述以提供模糊查询"
-	}):addTo(self):move(0, display.cy - 30)
-	offset = offset + 37
+		ph = "输入描述以提供模糊查询",
+		efs = 24,
+	}):addTo(self):move(0, display.cy - offset)
+	offset = offset + singleHeight + 2
 	self.layout = self:createLayout({
         size = cc.size(500, HEIGHT),
         ap = cc.p(0.5, 1)
@@ -51,19 +65,27 @@ function vLayerPasswordKeeper:onNormalEnter()
         size = cc.size(500, HEIGHT),
         direction = cc.SCROLLVIEW_DIRECTION_VERTICAL,
         fillOrder = cc.TABLEVIEW_FILL_TOPDOWN,
-        cellSize = cc.size(500, 35),
+        cellSize = cc.size(500, singleHeight),
     }):addTo(self.layout)
     self.catagoryView:onCellAtIndex(
         function(cell, index)
         	index = index + 1
         	cell.item = cell.item or self:createLayout({
-        		size = cc.size(500, 35),
+        		size = cc.size(500, singleHeight),
         		str = "",
         		fc = cc.c3b(0, 0, 0),
         		ap = cc.p(0, 0),
         		cb = function(e)
         			if e.name ~= "ended" then return end
-        			WindowMgr:createWindow("app.views.layer.vLayerPasswordDetail", self.datas[index])
+					if NativeHelper:canVerify() then
+						NativeHelper:verify(function(success)
+							if not success then return end
+		        			WindowMgr:createWindow("app.views.layer.vLayerPasswordDetail", self.datas[index])
+						end)
+					else
+	        			WindowMgr:createWindow("app.views.layer.vLayerPasswordDetail", self.datas[index])
+					end
+
         		end
         	}):addTo(cell)
         	cell.item:setTitleStr(self.datas[index].desc)
@@ -72,57 +94,64 @@ function vLayerPasswordKeeper:onNormalEnter()
 
 
 	self:createLayout({
-        size = cc.size(500, 35),
+        size = cc.size(500, singleHeight),
         str = "添加新的密码",
-        ap = cc.p(0.5, 1)
+        ap = cc.p(0.5, 1),
+        fc = cc.c3b(127, 127, 127),
 	}):addTo(self):move(0, display.cy - offset)
-	offset = offset + 37
+	offset = offset + singleHeight + 2
 	self.newPass = self:cEditBox({
-		size = cc.size(display.width * 0.8, 35),
+		size = cc.size(display.width * 0.8, singleHeight),
 		ap = cc.p(0.5, 1),
 		op = 127,
+		efs = 24,
 		ph = "输入新的密码",
 	}):addTo(self):move(0, display.cy - offset)
-	offset = offset + 37
+	offset = offset + singleHeight + 2
 
 	self.newDesc = self:cEditBox({
-		size = cc.size(display.width * 0.8, 35),
+		size = cc.size(display.width * 0.8, singleHeight),
 		ap = cc.p(0.5, 1),
 		op = 127,
+		efs = 24,
 		ph = "新密码的描述",
 	}):addTo(self):move(0, display.cy - offset)
-	offset = offset + 37
+	offset = offset + singleHeight + 2
 
 	self:createLayout({
-        size = cc.size(500, 35),
+        size = cc.size(500, singleHeight),
         str = "提交",
         ap = cc.p(0.5, 1),
+        fc = cc.c3b(127, 127, 127),
         cb = handler(self, self.submitNewPass),
 	}):addTo(self):move(0, display.cy - offset)
+	self:refreshSearch()
 end
 
 function vLayerPasswordKeeper:onNewEnter()
 	self:createLayout({
-        size = cc.size(500, 35),
+        size = cc.size(500, singleHeight),
         str = "第一次进入，请创建备忘录密码",
         ap = cc.p(0.5, 1),
 	}):addTo(self):move(0, display.cy - offset)
-	offset = offset + 37
+	offset = offset + singleHeight + 2
 
 	self.pw1 = self:cEditBox({
-		size = cc.size(display.width * 0.8, 35),
+		size = cc.size(display.width * 0.8, singleHeight),
 		ap = cc.p(0.5, 1),
+		efs = 24,
 		op = 127,
 	}):addTo(self):move(0, display.cy - offset)
-	offset = offset + 37
+	offset = offset + singleHeight + 2
 	self.pw2 = self:cEditBox({
-		size = cc.size(display.width * 0.8, 35),
+		size = cc.size(display.width * 0.8, singleHeight),
 		ap = cc.p(0.5, 1),
+		efs = 24,
 		op = 127,
 	}):addTo(self):move(0, display.cy - offset)
-	offset = offset + 37
+	offset = offset + singleHeight + 2
 	self:createLayout({
-        size = cc.size(500, 35),
+        size = cc.size(500, singleHeight),
         str = "确认输入",
         ap = cc.p(0.5, 1),
         cb = function(e) 
@@ -147,7 +176,7 @@ end
 
 function vLayerPasswordKeeper:refreshSearch(str)
 	str = str or ".*"
-	local result = DataBase:query(string.format("SELECT entry, desc, value FROM pass"))
+	local result = DataBase:query(string.format("SELECT entry, desc, value FROM pass WHERE entry != 0"))
 	local ret = {}
 	for _, v in pairs(result) do
 		if v.desc:find(str) then

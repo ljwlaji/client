@@ -1,10 +1,16 @@
 local ViewBaseEx 			= require("app.views.ViewBaseEx")
 local DataBase 				= require("app.components.DataBase")
 local WindowMgr 			= require("app.components.WindowMgr")
+local NativeHelper 			= require("app.components.NativeHelper")
 local vLayerPasswordDetail 	= class("vLayerPasswordDetail", ViewBaseEx)
 
 local WIDTH = display.width - 100
 function vLayerPasswordDetail:onCreate(context)
+	self:regiestCustomEventListenter("MSG_APP_WILL_ENTER_FOREGROUND", function()
+		if NativeHelper:canVerify() then NativeHelper:verify(function(sec)
+			if not sec then self:removeSelf() return end
+		end) end
+	end)
 	self:createLayout({
 		size = cc.size(display.width, display.height),
 		op = 127,
@@ -85,6 +91,17 @@ function vLayerPasswordDetail:onCreate(context)
 	offset = offset + 40
 	self:createLayout({
 		size = cc.size(WIDTH, 35),
+		str = "复制密码到剪切板",
+		op = 0,
+		fc = cc.c3b(0, 255, 127),
+		ap = cc.p(0.5, 1),
+		cb = handler(self, self.onPasteToClipBoard)
+	}):addTo(self.bg):move(WIDTH * 0.5, self.bg:getContentSize().height - offset)
+
+
+	offset = offset + 40
+	self:createLayout({
+		size = cc.size(WIDTH, 35),
 		str = "返回",
 		op = 0,
 		fc = cc.c3b(127, 127, 127),
@@ -121,6 +138,12 @@ function vLayerPasswordDetail:onDelete(e)
     	self:removeSelf()
     end
 	})
+end
+
+function vLayerPasswordDetail:onPasteToClipBoard(e)
+	if e.name ~= "ended" then return end 
+	NativeHelper:pasteToClipBoard(self.context.value)
+	self:removeSelf() 
 end
 
 

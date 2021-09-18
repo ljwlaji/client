@@ -52,7 +52,7 @@ static AppDelegate s_sharedApplication;
 
     // Add the view controller's view to the window and display.
     window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
-
+    [self.window snapshotViewAfterScreenUpdates:YES];
     // Use RootViewController to manage CCEAGLView
     _viewController = [[RootViewController alloc]init];
     _viewController.wantsFullScreenLayout = YES;
@@ -95,6 +95,7 @@ static AppDelegate s_sharedApplication;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    [[self window ] setAlpha:1.0];
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
@@ -107,6 +108,7 @@ static AppDelegate s_sharedApplication;
      Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
      If your application supports background execution, called instead of applicationWillTerminate: when the user quits.
      */
+    [[self window ] setAlpha:0.0];
     cocos2d::Application::getInstance()->applicationDidEnterBackground();
 }
 
@@ -115,6 +117,7 @@ static AppDelegate s_sharedApplication;
      Called as part of  transition from the background to the inactive state: here you can undo many of the changes made on entering the background.
      */
     cocos2d::Application::getInstance()->applicationWillEnterForeground();
+
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

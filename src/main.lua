@@ -1,3 +1,14 @@
+applicationDidEnterBackground = function()
+    local pEvent = cc.EventCustom:new("MSG_APP_DID_ENTER_BACKGROUND")
+    cc.Director:getInstance():getEventDispatcher():dispatchEvent(pEvent)
+end
+
+applicationWillEnterForeground = function()
+    local pEvent = cc.EventCustom:new("MSG_APP_WILL_ENTER_FOREGROUND")
+    cc.Director:getInstance():getEventDispatcher():dispatchEvent(pEvent)
+end
+
+
 cc.FileUtils:getInstance():setPopupNotify(false)
 
 devRequire = function(path)
