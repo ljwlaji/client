@@ -16,6 +16,8 @@ function MainScene:onEnterTransitionFinish()
 end
 
 function MainScene:run()
+	self:testShader(cc.Sprite:create("res/HelloWorld.png"):addTo(self):move(display.center), 0.5)
+	do return end
     local chosedCharacterID = 1
     if not self.Timmer then
         self.Timmer = cc.Timmer:create():addTo(self)
@@ -95,7 +97,7 @@ end
 function MainScene:testGausBlurSprite(img, Scale)
     Scale = Scale or 0.2
     -- local img = self:ScreenImage(Scale)
-    self.ssp = cc.GausBlurSprite:createWithImage(img):addTo(self):move(display.center):setScale(1 / Scale)
+    self.ssp = cc.GausBlurSprite:createWithImage(img):addTo(self):move(display.center):setScale(Scale)
     local timer = 500
     self:onUpdate(function() 
         if timer < 16 then
@@ -244,85 +246,198 @@ local vertSource = "\n"..
 "}\n"
 
 
-local fragSource =  "\n" ..
-"#ifdef GL_ES \n" ..
-"precision mediump float; \n" ..
-"#endif \n" ..
-"varying vec4 v_fragmentColor; \n" ..
-"varying vec2 v_texCoord; \n" ..
-"uniform vec2 resolution; \n" ..
-"uniform float blurRadius;\n" ..
-"uniform float sampleNum; \n" ..
-"vec4 blur(vec2);\n" ..
-"\n" ..
+local fragSource =  [[#ifdef GL_ES 
+precision mediump float; 
+#endif 
+varying vec4 v_fragmentColor; 
+varying vec2 v_texCoord; 
+uniform vec2 resolution; 
+uniform float blurRadius;
+uniform float time; 
+uniform float offsetY; 
 
-"void main(void)\n" ..
-"{\n" ..
-"    vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;\n" ..
-"    gl_FragColor = vec4(col);\n" ..
-"}\n" ..
-"\n" ..
 
-"vec4 blur(vec2 p)\n" ..
-"{\n" ..
-"    if (blurRadius > 0.0 && sampleNum > 1.0)\n" ..
-"    {\n" ..
-"        vec4 col = vec4(0);\n" ..
-"        vec2 unit = 1.0 / resolution.xy;\n" .. -- 这边是步进长度
-" \n" ..       
-"        float r = blurRadius;\n" ..
-"        float sampleStep = r / sampleNum;\n" ..
-"\n" ..        
-"        float count = 0.0;\n" ..
-"\n" ..        
-"        for(float x = -r; x < r; x += sampleStep)\n" ..
-"        {\n" ..
-"            for(float y = -r; y < r; y += sampleStep)\n" ..
-"            {\n" ..
-"                float weight = (r - abs(x)) * (r - abs(y));\n" ..
-"                col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;\n" ..
-"                count += weight;\n" ..
-"            }\n" ..
-"        }\n" ..
-"\n" ..        
-"        return col / count;\n" ..
-"    }\n" ..
-"\n" .. 
-"    return texture2D(CC_Texture0, p);\n" ..
-"}\n"
+vec4 gray(void);
+vec4 transform(void);
+vec4 move(void);
+vec4 center(void);
+vec4 blackPoint(void);
+vec4 pointLight(void);
+vec4 wave(void);
+vec4 wave2(void);
+vec4 wave3(void);
+
+float rand(vec2 co){
+    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+void main(void)
+{
+    gl_FragColor = wave3();
+}
+
+vec4 gray(void)
+{
+	vec4 color = texture2D(CC_Texture0, v_texCoord);
+	color.r = color.g;
+	color.g = color.g;
+	color.b = color.g;
+    return color;
+}
+
+vec4 transform(void)
+{
+	vec4 color = texture2D(CC_Texture0, v_texCoord);
+	color.r = color.r > 0.5 ? 1.0 : 0.0;
+    return color;
+}
+
+vec4 center(void)
+{
+	vec2 cord = v_texCoord.xy;
+	vec2 center = vec2(0.5, 0.5);
+	vec2 distance = cord - center;
+	float dis = sqrt( distance.x * distance.x + distance.y * distance.y );
+	if (dis > time)
+		return vec4(0, 0, 0, 1);
+	return texture2D(CC_Texture0, v_texCoord);
+}
+
+vec4 blackPoint(void)
+{
+	vec2 cord = v_texCoord.xy;
+	vec2 center = vec2(time, time);
+	float radio = 0.5;
+	vec2 distance = cord - center;
+	float dis = sqrt( distance.x * distance.x + distance.y * distance.y );
+	if (dis > radio)
+		return texture2D(CC_Texture0, v_texCoord);
+	//return texture2D(CC_Texture0, v_texCoord) * (dis / radio);
+	return texture2D(CC_Texture0, v_texCoord) * abs(1.0 - (dis / radio)); // 透镜效果
+}
+
+vec4 pointLight(void)
+{
+	float radio = 0.5;
+	float lightWidget = 1.5;
+
+	vec2 cord = v_texCoord.xy;
+	vec2 center = vec2(time, time);
+	vec2 distance = cord - center;
+	float dis = sqrt( distance.x * distance.x + distance.y * distance.y );
+	if (dis > radio)
+		return vec4(0.0, 0.0, 0.0, 0.0);
+	return texture2D(CC_Texture0, v_texCoord) * abs(1.0 - (dis / radio)) * lightWidget/* 光照强度 */;
+}
+
+vec4 wave(void)
+{
+	vec2 cord = v_texCoord.xy;
+	float offsetX = cos((cord.y * time/*速度*/ / 0.0125 /*水波之间的间隔*/ ));
+	//cord.x += offsetX * 0.025/*波浪偏移值大小*/;
+	cord.x += offsetX * 0.025/*波浪偏移值大小*/;
+	return texture2D(CC_Texture0, cord);
+}
+
+vec4 wave2(void)
+{
+	vec2 cord = v_texCoord.xy;
+	float offsetX = cos(((cord.y + time/*速度*/) / 0.025 /*水波之间的间隔*/ ));
+	//cord.x += offsetX * 0.025/*波浪偏移值大小*/;
+	cord.x += offsetX * 0.025/*波浪偏移值大小*/;
+	return texture2D(CC_Texture0, cord);
+}
+
+vec4 wave3(void)
+{
+	vec2 cord = v_texCoord.xy;
+	float offsetX = sin(((cord.y + time/*速度*/) / 0.04 /*水波之间的间隔*/ ));
+	float offsetY = cos(((cord.x + time/*速度*/) / 0.04 /*水波之间的间隔*/ ));
+	cord.y += offsetY * 0.02/*波浪偏移值大小*/;
+	cord.x += offsetX * 0.02/*波浪偏移值大小*/;
+	return texture2D(CC_Texture0, cord);
+}
+
+vec4 circle(void)
+{
+	
+	return texture2D(CC_Texture0, cord);
+}
+
+vec4 move(void)
+{
+
+	vec2 cord = v_texCoord.xy;
+	cord.x *= 0.7;
+    return texture2D(CC_Texture0, cord);
+}
+
+]]
+
+local circleFrag =  [[#ifdef GL_ES 
+precision mediump float; 
+#endif 
+varying vec4 v_fragmentColor; 
+varying vec2 v_texCoord; 
+uniform float time;
+uniform float time2;
+uniform float time3;
+uniform float time4;
+
+
+void render(float pRadio, float pRadio2, float pRadio3, float pRadio4)
+{
+	vec2 cord = vec2( abs( 0.5 - v_texCoord.x ), abs( 0.5 - v_texCoord.y) );
+	float dis = sqrt((cord.x * cord.x + cord.y * cord.y));
+	float radio = abs(dis - pRadio);
+	float radio2 = abs(dis - pRadio2);
+	float radio3 = abs(dis - pRadio3);
+	float radio4 = abs(dis - pRadio4);
+	if (abs(radio) <= 0.05)
+		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio);
+	else if (abs(radio2) <= 0.05)
+		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio2);
+	else if (abs(radio3) <= 0.05)
+		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio3);
+	else if (abs(radio4) <= 0.05)
+		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio4);
+	else
+		gl_FragColor = texture2D(CC_Texture0, v_texCoord);
+}
+
+void main(void)
+{
+	render(mod(time, 1.0), mod(time2, 1.0), mod(time3, 1.0), mod(time4, 1.0));
+}
+
+
+]]
 
 function MainScene:setShader(spr)
-    local pProgram = cc.GLProgram:createWithByteArrays(vertSource,fragSource)
+    -- local pProgram = cc.GLProgram:createWithByteArrays(vertSource,fragSource)
+    local pProgram = cc.GLProgram:createWithByteArrays(vertSource,circleFrag)
     -- local pProgram = cc.GLProgram:create("res/shader/base.vsh","res/shader/gblur.fsh")
     local glprogramstate = cc.GLProgramState:getOrCreateWithGLProgram(pProgram)
     local size = spr:getTexture():getContentSizeInPixels()
     spr.m_GLPrograme = pProgram
     spr.m_GLProgrameState = glprogramstate
     spr:setGLProgramState(glprogramstate)
-    glprogramstate:setUniformVec2(pProgram:getUniform("resolution").location, cc.p(size.width, size.height));
-    glprogramstate:setUniformFloat(pProgram:getUniform("blurRadius").location, 0);
-    glprogramstate:setUniformFloat(pProgram:getUniform("sampleNum").location, 0)
 end
 
 
 function MainScene:testShader(sp)
-
     self:setShader(sp)
-    local size = sp:getTexture():getContentSizeInPixels()
-
-    local blurRadius = 0
-    local sampleNum = 0
-    local resolution = cc.p(size.width, size.height)
-    local i = 2
+    local time = 0
+    local offsetY = 0
+    local glprogramstate = sp.m_GLProgrameState
+    local prog = sp.m_GLPrograme
     sp:onUpdate(function()
-            if blurRadius > 30 then return end
-            blurRadius = blurRadius + 0.2
-            local glprogramstate = sp.m_GLProgrameState
-            local prog = sp.m_GLPrograme
-
-            glprogramstate:setUniformVec2(prog:getUniform("resolution").location, resolution);
-            glprogramstate:setUniformFloat(prog:getUniform("blurRadius").location, blurRadius);
-            glprogramstate:setUniformFloat(prog:getUniform("sampleNum").location, 5)
+    	time = time + 0.005
+        glprogramstate:setUniformFloat(prog:getUniform("time").location, time)
+        glprogramstate:setUniformFloat(prog:getUniform("time2").location, time + 0.2)
+        glprogramstate:setUniformFloat(prog:getUniform("time3").location, time + 0.4)
+        glprogramstate:setUniformFloat(prog:getUniform("time4").location, time + 0.6)
+        -- glprogramstate:setUniformFloat(prog:getUniform("offsetY").location, math.min(1, offsetY))
     end)
 end
 
