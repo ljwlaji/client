@@ -41,3 +41,4 @@ sqlcompare/*
 Tools/Zipper/lib
 MapEditor/res
 Tools/bin
+MapEditor/src/app/components
