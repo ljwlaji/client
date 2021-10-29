@@ -16,7 +16,7 @@ function MainScene:onEnterTransitionFinish()
 end
 
 function MainScene:run()
-	self:testShader(cc.Sprite:create("res/HelloWorld.png"):addTo(self):move(display.center), 0.5)
+	self:testShader(cc.Sprite:create("res/HelloWorld.png"):addTo(self):move(display.center))
 	do return end
     local chosedCharacterID = 1
     if not self.Timmer then
@@ -380,26 +380,27 @@ precision mediump float;
 varying vec4 v_fragmentColor; 
 varying vec2 v_texCoord; 
 uniform float time;
-uniform float time2;
-uniform float time3;
-uniform float time4;
-
+uniform float width;
+uniform float height;
+uniform float waveWidth;
+uniform float speed;
 
 void render(float pRadio, float pRadio2, float pRadio3, float pRadio4)
 {
-	vec2 cord = vec2( abs( 0.5 - v_texCoord.x ), abs( 0.5 - v_texCoord.y) );
+	vec2 cord = vec2( abs( (0.5 - v_texCoord.x) * (width / height) ), abs( 0.5 - v_texCoord.y) );
 	float dis = sqrt((cord.x * cord.x + cord.y * cord.y));
 	float radio = abs(dis - pRadio);
 	float radio2 = abs(dis - pRadio2);
 	float radio3 = abs(dis - pRadio3);
 	float radio4 = abs(dis - pRadio4);
-	if (abs(radio) <= 0.05)
+	float UVWidth = waveWidth / width;
+	if (abs(radio) <= UVWidth)
 		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio);
-	else if (abs(radio2) <= 0.05)
+	else if (abs(radio2) <= UVWidth)
 		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio2);
-	else if (abs(radio3) <= 0.05)
+	else if (abs(radio3) <= UVWidth)
 		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio3);
-	else if (abs(radio4) <= 0.05)
+	else if (abs(radio4) <= UVWidth)
 		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio4);
 	else
 		gl_FragColor = texture2D(CC_Texture0, v_texCoord);
@@ -407,21 +408,20 @@ void render(float pRadio, float pRadio2, float pRadio3, float pRadio4)
 
 void main(void)
 {
-	render(mod(time, 1.0), mod(time2, 1.0), mod(time3, 1.0), mod(time4, 1.0));
+	float realTime = time * speed;
+	render(mod(realTime, 1.0), mod(realTime + 0.2, 1.0), mod(realTime + 0.4, 1.0), mod(realTime + 0.6, 1.0));
 }
-
+		
 
 ]]
 
 function MainScene:setShader(spr)
-    -- local pProgram = cc.GLProgram:createWithByteArrays(vertSource,fragSource)
     local pProgram = cc.GLProgram:createWithByteArrays(vertSource,circleFrag)
-    -- local pProgram = cc.GLProgram:create("res/shader/base.vsh","res/shader/gblur.fsh")
     local glprogramstate = cc.GLProgramState:getOrCreateWithGLProgram(pProgram)
-    local size = spr:getTexture():getContentSizeInPixels()
     spr.m_GLPrograme = pProgram
     spr.m_GLProgrameState = glprogramstate
     spr:setGLProgramState(glprogramstate)
+    -- spr:setScale(0.2)
 end
 
 
@@ -429,15 +429,16 @@ function MainScene:testShader(sp)
     self:setShader(sp)
     local time = 0
     local offsetY = 0
+    local size = sp:getTexture():getContentSizeInPixels()
     local glprogramstate = sp.m_GLProgrameState
     local prog = sp.m_GLPrograme
     sp:onUpdate(function()
     	time = time + 0.005
         glprogramstate:setUniformFloat(prog:getUniform("time").location, time)
-        glprogramstate:setUniformFloat(prog:getUniform("time2").location, time + 0.2)
-        glprogramstate:setUniformFloat(prog:getUniform("time3").location, time + 0.4)
-        glprogramstate:setUniformFloat(prog:getUniform("time4").location, time + 0.6)
-        -- glprogramstate:setUniformFloat(prog:getUniform("offsetY").location, math.min(1, offsetY))
+        glprogramstate:setUniformFloat(prog:getUniform("width").location, size.width)
+        glprogramstate:setUniformFloat(prog:getUniform("height").location, size.height)
+        glprogramstate:setUniformFloat(prog:getUniform("waveWidth").location, 12)
+        glprogramstate:setUniformFloat(prog:getUniform("speed").location, 2)
     end)
 end
 
