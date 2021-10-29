@@ -40,7 +40,7 @@ end
 
 function vLayerCheckWindow:onTouchButtonBlock(e)
 	if e.name ~= "ended" then return end
-	if not self.context.block then self:removeFromParent() end
+	if not self.context.block then self:removeSelf() end
 end
 
 return vLayerCheckWindow

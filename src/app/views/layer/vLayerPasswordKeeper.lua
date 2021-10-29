@@ -5,7 +5,7 @@ local Utils 				= require("app.components.Utils")
 local NativeHelper 			= require("app.components.NativeHelper")
 local vLayerPasswordKeeper 	= class("vLayerPasswordKeeper", ViewBaseEx)
 
-local HEIGHT = 800
+local HEIGHT = 500
 local offset = 40
 
 local singleHeight = 40
@@ -73,6 +73,7 @@ function vLayerPasswordKeeper:onNormalEnter()
         	cell.item = cell.item or self:createLayout({
         		size = cc.size(500, singleHeight),
         		str = "",
+        		st = false,
         		fc = cc.c3b(0, 0, 0),
         		ap = cc.p(0, 0),
         		cb = function(e)

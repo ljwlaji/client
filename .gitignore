@@ -42,3 +42,4 @@ Tools/Zipper/lib
 MapEditor/res
 Tools/bin
 MapEditor/src/app/components
+.DS_Store

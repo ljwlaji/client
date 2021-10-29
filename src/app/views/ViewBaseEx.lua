@@ -65,7 +65,7 @@ function ViewBaseEx:createLayout(param)
         btn.__onDrop = type(param.dad) == "function" and param.dad or nil
     elseif param.cb then -- onTouchEnded Only
         btn:setTouchEnabled(true)
-        btn:onTouch(param.cb)
+        btn:onTouch(param.cb, true)
         btn:setSwallowTouches(param.st == nil and true or param.st)
     end
     if param.str then

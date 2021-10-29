@@ -9,7 +9,11 @@ function vLayerPasswordDetail:onCreate(context)
 	self:regiestCustomEventListenter("MSG_APP_WILL_ENTER_FOREGROUND", function()
 		if NativeHelper:canVerify() then NativeHelper:verify(function(sec)
 			if not sec then self:removeSelf() return end
+			self:show()
 		end) end
+	end)
+	self:regiestCustomEventListenter("MSG_APP_DID_ENTER_BACKGROUND", function()
+		self:hide()
 	end)
 	self:createLayout({
 		size = cc.size(display.width, display.height),
