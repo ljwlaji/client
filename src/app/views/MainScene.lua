@@ -374,6 +374,32 @@ vec4 move(void)
 
 ]]
 
+
+local pointLight = [[
+#ifdef GL_ES 
+precision mediump float; 
+#endif 
+varying vec4 v_fragmentColor; 
+varying vec2 v_texCoord; 
+uniform float iamge_width; //图片的宽度
+uniform float image_height; //图片的高度
+uniform float light_intensity; //光照强度
+uniform float light_pos_x; //这边是UV坐标 需要在换算后传入 0-1
+uniform float light_pos_y; //这边是UV坐标 需要在换算后传入 0-1
+uniform float light_radio; //像素值
+
+void main(void)
+{
+	float light_radio = light_radio / iamge_width;
+	vec2 center = vec2(light_pos_x, light_pos_y);
+	vec2 cord = vec2( abs((center.x - v_texCoord.x) * (iamge_width / image_height)), abs(center.y - v_texCoord.y) );
+	float dis = sqrt((cord.x * cord.x + cord.y * cord.y));
+	if (dis > light_radio)
+		gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+	gl_FragColor = texture2D(CC_Texture0, v_texCoord) * (1.0 - dis / light_radio) * light_intensity;
+}
+]]
+
 local circleFrag =  [[#ifdef GL_ES 
 precision mediump float; 
 #endif 
@@ -416,29 +442,62 @@ void main(void)
 ]]
 
 function MainScene:setShader(spr)
-    local pProgram = cc.GLProgram:createWithByteArrays(vertSource,circleFrag)
+    local pProgram = cc.GLProgram:createWithByteArrays(vertSource,pointLight)
     local glprogramstate = cc.GLProgramState:getOrCreateWithGLProgram(pProgram)
     spr.m_GLPrograme = pProgram
     spr.m_GLProgrameState = glprogramstate
     spr:setGLProgramState(glprogramstate)
-    -- spr:setScale(0.2)
 end
 
 
 function MainScene:testShader(sp)
     self:setShader(sp)
-    local time = 0
-    local offsetY = 0
+    -- 波浪
+    -- local time = 0
+    -- local offsetY = 0
+    -- local size = sp:getTexture():getContentSizeInPixels()
+    -- local glprogramstate = sp.m_GLProgrameState
+    -- local prog = sp.m_GLPrograme
+    -- sp:onUpdate(function()
+    -- 	time = time + 0.005
+    --     glprogramstate:setUniformFloat(prog:getUniform("time").location, time)
+    --     glprogramstate:setUniformFloat(prog:getUniform("width").location, size.width)
+    --     glprogramstate:setUniformFloat(prog:getUniform("height").location, size.height)
+    --     glprogramstate:setUniformFloat(prog:getUniform("waveWidth").location, 12)
+    --     glprogramstate:setUniformFloat(prog:getUniform("speed").location, 2)
+    -- end)
+
+--[[
+uniform float iamge_width;
+uniform float image_height;
+uniform float image_pos_x;
+uniform float image_pos_y;
+uniform float light_intensity;
+uniform float light_pos_x;
+uniform float light_pos_y;
+uniform float light_radio;
+]]
+    -- 点光源
+    local text = cc.LabelTTF:create():addTo(self):move(display.center)
+    text:setPositionY(display.height * 0.8)
+    text:setFontSize(22)
     local size = sp:getTexture():getContentSizeInPixels()
     local glprogramstate = sp.m_GLProgrameState
     local prog = sp.m_GLPrograme
+    local posXSeed = 0
+    local posYSeed = 0.5
     sp:onUpdate(function()
-    	time = time + 0.005
-        glprogramstate:setUniformFloat(prog:getUniform("time").location, time)
-        glprogramstate:setUniformFloat(prog:getUniform("width").location, size.width)
-        glprogramstate:setUniformFloat(prog:getUniform("height").location, size.height)
-        glprogramstate:setUniformFloat(prog:getUniform("waveWidth").location, 12)
-        glprogramstate:setUniformFloat(prog:getUniform("speed").location, 2)
+    	posYSeed = posYSeed + 0.01
+    	posXSeed = posXSeed + 0.01
+    	local posY = math.abs(math.sin(posYSeed))
+    	local posX = math.abs(math.sin(posXSeed))
+    	text:setString("Position : \t".. posX.."\t".. posY)
+        glprogramstate:setUniformFloat(prog:getUniform("light_intensity").location, 1.5)
+        glprogramstate:setUniformFloat(prog:getUniform("light_radio").location, 100)
+        glprogramstate:setUniformFloat(prog:getUniform("iamge_width").location, size.width)
+        glprogramstate:setUniformFloat(prog:getUniform("image_height").location, size.height)
+        glprogramstate:setUniformFloat(prog:getUniform("light_pos_x").location, posX)
+        glprogramstate:setUniformFloat(prog:getUniform("light_pos_y").location, posY)
     end)
 end
 
