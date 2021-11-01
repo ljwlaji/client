@@ -376,12 +376,13 @@ vec4 move(void)
 ]]
 
 
-local pointLight = [[
+local globalFragment = [[
 #ifdef GL_ES 
 precision mediump float; 
 #endif 
 varying vec4 v_fragmentColor; 
 varying vec2 v_texCoord; 
+uniform float time;
 uniform float iamge_width; //图片的宽度
 uniform float image_height; //图片的高度
 uniform float light_intensity; //光照强度
@@ -389,15 +390,33 @@ uniform float light_pos_x; //这边是UV坐标 需要在换算后传入 0-1
 uniform float light_pos_y; //这边是UV坐标 需要在换算后传入 0-1
 uniform float light_radio; //像素值
 
+vec4 pointLight(vec4 color)
+{
+    float light_radio = light_radio / iamge_width;
+    vec2 center = vec2(light_pos_x / iamge_width, light_pos_y / image_height);
+    vec2 cord = vec2( abs((center.x - v_texCoord.x) * (iamge_width / image_height)), abs(center.y - v_texCoord.y) );
+    float dis = sqrt((cord.x * cord.x + cord.y * cord.y));
+    return color * (1.0 - dis / light_radio) * light_intensity; 
+}
+
+vec4 wave(vec4 color)
+{
+    vec2 cord = v_texCoord.xy;
+    float offsetX = sin(((cord.y + time/*速度*/) / 0.04 /*水波之间的间隔*/ ));
+    float offsetY = cos(((cord.x + time/*速度*/) / 0.04 /*水波之间的间隔*/ ));
+    cord.y += offsetY * 0.02/*波浪偏移值大小*/;
+    cord.x += offsetX * 0.02/*波浪偏移值大小*/;
+    return texture2D(CC_Texture0, cord);
+}
+
 void main(void)
 {
-	float light_radio = light_radio / iamge_width;
-	vec2 center = vec2(light_pos_x / iamge_width, light_pos_y / image_height);
-	vec2 cord = vec2( abs((center.x - v_texCoord.x) * (iamge_width / image_height)), abs(center.y - v_texCoord.y) );
-	float dis = sqrt((cord.x * cord.x + cord.y * cord.y));
-	if (dis > light_radio)
-		gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-	gl_FragColor = texture2D(CC_Texture0, v_texCoord) * (1.0 - dis / light_radio) * light_intensity;
+    vec4 finalColor = vec4(.0);
+    finalColor = wave(texture2D(CC_Texture0, v_texCoord)); //位移类shader永远在最前
+    finalColor = pointLight(finalColor); //光照类shader永远在后面
+
+
+    gl_FragColor = finalColor;
 }
 ]]
 
@@ -446,14 +465,21 @@ function MainScene:testPointLightShader()
     text:setPositionY(display.height * 0.8)
     text:setFontSize(22)
 
+    local time = 0
     local sps = {}
     for i = 1, 5 do
         local spr = cc.Sprite:create("res/HelloWorld.png"):addTo(self):move(i * 250, display.height * 0.5)
+        spr:onUpdate(function()
+            local prog = spr.m_GLPrograme
+            local glprogramstate = spr.m_GLProgrameState
+            time = time + 0.1
+            glprogramstate:setUniformFloat(prog:getUniform("time").location, time)
+        end)
         local size = spr:getTexture():getContentSizeInPixels()
-        local pProgram = cc.GLProgram:createWithByteArrays(vertSource,pointLight)
+        local pProgram = cc.GLProgram:createWithByteArrays(vertSource, globalFragment)
         local glprogramstate = cc.GLProgramState:getOrCreateWithGLProgram(pProgram)
         glprogramstate:setUniformFloat(pProgram:getUniform("light_intensity").location, 1.5)
-        glprogramstate:setUniformFloat(pProgram:getUniform("light_radio").location, 100)
+        glprogramstate:setUniformFloat(pProgram:getUniform("light_radio").location, 300)
         glprogramstate:setUniformFloat(pProgram:getUniform("iamge_width").location, size.width)
         glprogramstate:setUniformFloat(pProgram:getUniform("image_height").location, size.height)
         spr:setGLProgramState(glprogramstate)
