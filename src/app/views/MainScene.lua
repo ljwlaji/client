@@ -16,7 +16,8 @@ function MainScene:onEnterTransitionFinish()
 end
 
 function MainScene:run()
-	self:testShader(cc.Sprite:create("res/HelloWorld.png"):addTo(self):move(display.center))
+	-- self:testShader(cc.Sprite:create("res/HelloWorld.png"):addTo(self):move(display.center))
+    self:testPointLightShader()
 	do return end
     local chosedCharacterID = 1
     if not self.Timmer then
@@ -391,7 +392,7 @@ uniform float light_radio; //像素值
 void main(void)
 {
 	float light_radio = light_radio / iamge_width;
-	vec2 center = vec2(light_pos_x, light_pos_y);
+	vec2 center = vec2(light_pos_x / iamge_width, light_pos_y / image_height);
 	vec2 cord = vec2( abs((center.x - v_texCoord.x) * (iamge_width / image_height)), abs(center.y - v_texCoord.y) );
 	float dis = sqrt((cord.x * cord.x + cord.y * cord.y));
 	if (dis > light_radio)
@@ -440,65 +441,41 @@ void main(void)
 		
 
 ]]
-
-function MainScene:setShader(spr)
-    local pProgram = cc.GLProgram:createWithByteArrays(vertSource,pointLight)
-    local glprogramstate = cc.GLProgramState:getOrCreateWithGLProgram(pProgram)
-    spr.m_GLPrograme = pProgram
-    spr.m_GLProgrameState = glprogramstate
-    spr:setGLProgramState(glprogramstate)
-end
-
-
-function MainScene:testShader(sp)
-    self:setShader(sp)
-    -- 波浪
-    -- local time = 0
-    -- local offsetY = 0
-    -- local size = sp:getTexture():getContentSizeInPixels()
-    -- local glprogramstate = sp.m_GLProgrameState
-    -- local prog = sp.m_GLPrograme
-    -- sp:onUpdate(function()
-    -- 	time = time + 0.005
-    --     glprogramstate:setUniformFloat(prog:getUniform("time").location, time)
-    --     glprogramstate:setUniformFloat(prog:getUniform("width").location, size.width)
-    --     glprogramstate:setUniformFloat(prog:getUniform("height").location, size.height)
-    --     glprogramstate:setUniformFloat(prog:getUniform("waveWidth").location, 12)
-    --     glprogramstate:setUniformFloat(prog:getUniform("speed").location, 2)
-    -- end)
-
---[[
-uniform float iamge_width;
-uniform float image_height;
-uniform float image_pos_x;
-uniform float image_pos_y;
-uniform float light_intensity;
-uniform float light_pos_x;
-uniform float light_pos_y;
-uniform float light_radio;
-]]
-    -- 点光源
+function MainScene:testPointLightShader()
     local text = cc.LabelTTF:create():addTo(self):move(display.center)
     text:setPositionY(display.height * 0.8)
     text:setFontSize(22)
-    local size = sp:getTexture():getContentSizeInPixels()
-    local glprogramstate = sp.m_GLProgrameState
-    local prog = sp.m_GLPrograme
-    local posXSeed = 0
-    local posYSeed = 0.5
-    sp:onUpdate(function()
-    	posYSeed = posYSeed + 0.01
-    	posXSeed = posXSeed + 0.01
-    	local posY = math.abs(math.sin(posYSeed))
-    	local posX = math.abs(math.sin(posXSeed))
-    	text:setString("Position : \t".. posX.."\t".. posY)
-        glprogramstate:setUniformFloat(prog:getUniform("light_intensity").location, 1.5)
-        glprogramstate:setUniformFloat(prog:getUniform("light_radio").location, 100)
-        glprogramstate:setUniformFloat(prog:getUniform("iamge_width").location, size.width)
-        glprogramstate:setUniformFloat(prog:getUniform("image_height").location, size.height)
-        glprogramstate:setUniformFloat(prog:getUniform("light_pos_x").location, posX)
-        glprogramstate:setUniformFloat(prog:getUniform("light_pos_y").location, posY)
-    end)
+
+    local sps = {}
+    for i = 1, 5 do
+        local spr = cc.Sprite:create("res/HelloWorld.png"):addTo(self):move(i * 250, display.height * 0.5)
+        local size = spr:getTexture():getContentSizeInPixels()
+        local pProgram = cc.GLProgram:createWithByteArrays(vertSource,pointLight)
+        local glprogramstate = cc.GLProgramState:getOrCreateWithGLProgram(pProgram)
+        glprogramstate:setUniformFloat(pProgram:getUniform("light_intensity").location, 1.5)
+        glprogramstate:setUniformFloat(pProgram:getUniform("light_radio").location, 100)
+        glprogramstate:setUniformFloat(pProgram:getUniform("iamge_width").location, size.width)
+        glprogramstate:setUniformFloat(pProgram:getUniform("image_height").location, size.height)
+        spr:setGLProgramState(glprogramstate)
+        spr.m_GLPrograme = pProgram
+        spr.m_GLProgrameState = glprogramstate
+        table.insert(sps, spr)
+    end
+
+    local listener = cc.EventListenerMouse:create()
+    listener:registerScriptHandler(function(touch)
+        for _, v in ipairs(sps) do
+            local TouchPosition = v:convertToNodeSpace(touch:getLocation())
+            local posX = TouchPosition.x
+            local posY = TouchPosition.y
+            local prog = v.m_GLPrograme
+            local glprogramstate = v.m_GLProgrameState
+            glprogramstate:setUniformFloat(prog:getUniform("light_pos_x").location, posX)
+            glprogramstate:setUniformFloat(prog:getUniform("light_pos_y").location, posY)
+        end
+    end, cc.Handler.EVENT_MOUSE_MOVE)
+    local eventDispatcher = self:getEventDispatcher()
+    eventDispatcher:addEventListenerWithSceneGraphPriority(listener, self)
 end
 
 return MainScene
