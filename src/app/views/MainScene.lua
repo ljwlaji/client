@@ -231,150 +231,21 @@ function MainScene:testPixalCollisionMgr()
     end
 end
 
-local vertSource = "\n"..
-"attribute vec4 a_position; \n" ..
-"attribute vec2 a_texCoord; \n" ..
-"#ifdef GL_ES \n" .. 
-"varying mediump vec2 v_texCoord;\n" ..
-"#else \n" ..
-"varying vec2 v_texCoord;\n" ..
-"#endif\n" ..
+local vertSource = [[
+attribute vec4 a_position;
+attribute vec2 a_texCoord;
+#ifdef GL_ES 
+varying mediump vec2 v_texCoord;
+#else
+varying vec2 v_texCoord;
+#endif
 
-"void main()\n" ..
-    "{\n" .. 
-    " gl_Position = CC_PMatrix * a_position;\n"..
-    " v_texCoord = a_texCoord;\n" ..
-"}\n"
-
-
-local fragSource =  [[#ifdef GL_ES 
-precision mediump float; 
-#endif 
-varying vec4 v_fragmentColor; 
-varying vec2 v_texCoord; 
-uniform vec2 resolution; 
-uniform float blurRadius;
-uniform float time; 
-uniform float offsetY; 
-
-
-vec4 gray(void);
-vec4 transform(void);
-vec4 move(void);
-vec4 center(void);
-vec4 blackPoint(void);
-vec4 pointLight(void);
-vec4 wave(void);
-vec4 wave2(void);
-vec4 wave3(void);
-
-float rand(vec2 co){
-    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+void main()
+{ 
+     gl_Position = CC_PMatrix * a_position;
+     v_texCoord = a_texCoord;
 }
-
-void main(void)
-{
-    gl_FragColor = wave3();
-}
-
-vec4 gray(void)
-{
-	vec4 color = texture2D(CC_Texture0, v_texCoord);
-	color.r = color.g;
-	color.g = color.g;
-	color.b = color.g;
-    return color;
-}
-
-vec4 transform(void)
-{
-	vec4 color = texture2D(CC_Texture0, v_texCoord);
-	color.r = color.r > 0.5 ? 1.0 : 0.0;
-    return color;
-}
-
-vec4 center(void)
-{
-	vec2 cord = v_texCoord.xy;
-	vec2 center = vec2(0.5, 0.5);
-	vec2 distance = cord - center;
-	float dis = sqrt( distance.x * distance.x + distance.y * distance.y );
-	if (dis > time)
-		return vec4(0, 0, 0, 1);
-	return texture2D(CC_Texture0, v_texCoord);
-}
-
-vec4 blackPoint(void)
-{
-	vec2 cord = v_texCoord.xy;
-	vec2 center = vec2(time, time);
-	float radio = 0.5;
-	vec2 distance = cord - center;
-	float dis = sqrt( distance.x * distance.x + distance.y * distance.y );
-	if (dis > radio)
-		return texture2D(CC_Texture0, v_texCoord);
-	//return texture2D(CC_Texture0, v_texCoord) * (dis / radio);
-	return texture2D(CC_Texture0, v_texCoord) * abs(1.0 - (dis / radio)); // 透镜效果
-}
-
-vec4 pointLight(void)
-{
-	float radio = 0.5;
-	float lightWidget = 1.5;
-
-	vec2 cord = v_texCoord.xy;
-	vec2 center = vec2(time, time);
-	vec2 distance = cord - center;
-	float dis = sqrt( distance.x * distance.x + distance.y * distance.y );
-	if (dis > radio)
-		return vec4(0.0, 0.0, 0.0, 0.0);
-	return texture2D(CC_Texture0, v_texCoord) * abs(1.0 - (dis / radio)) * lightWidget/* 光照强度 */;
-}
-
-vec4 wave(void)
-{
-	vec2 cord = v_texCoord.xy;
-	float offsetX = cos((cord.y * time/*速度*/ / 0.0125 /*水波之间的间隔*/ ));
-	//cord.x += offsetX * 0.025/*波浪偏移值大小*/;
-	cord.x += offsetX * 0.025/*波浪偏移值大小*/;
-	return texture2D(CC_Texture0, cord);
-}
-
-vec4 wave2(void)
-{
-	vec2 cord = v_texCoord.xy;
-	float offsetX = cos(((cord.y + time/*速度*/) / 0.025 /*水波之间的间隔*/ ));
-	//cord.x += offsetX * 0.025/*波浪偏移值大小*/;
-	cord.x += offsetX * 0.025/*波浪偏移值大小*/;
-	return texture2D(CC_Texture0, cord);
-}
-
-vec4 wave3(void)
-{
-	vec2 cord = v_texCoord.xy;
-	float offsetX = sin(((cord.y + time/*速度*/) / 0.04 /*水波之间的间隔*/ ));
-	float offsetY = cos(((cord.x + time/*速度*/) / 0.04 /*水波之间的间隔*/ ));
-	cord.y += offsetY * 0.02/*波浪偏移值大小*/;
-	cord.x += offsetX * 0.02/*波浪偏移值大小*/;
-	return texture2D(CC_Texture0, cord);
-}
-
-vec4 circle(void)
-{
-	
-	return texture2D(CC_Texture0, cord);
-}
-
-vec4 move(void)
-{
-
-	vec2 cord = v_texCoord.xy;
-	cord.x *= 0.7;
-    return texture2D(CC_Texture0, cord);
-}
-
 ]]
-
 
 local globalFragment = [[
 #ifdef GL_ES 
@@ -414,57 +285,16 @@ void main(void)
     vec4 finalColor = vec4(.0);
     finalColor = wave(texture2D(CC_Texture0, v_texCoord)); //位移类shader永远在最前
     finalColor = pointLight(finalColor); //光照类shader永远在后面
-
-
     gl_FragColor = finalColor;
 }
 ]]
 
-local circleFrag =  [[#ifdef GL_ES 
-precision mediump float; 
-#endif 
-varying vec4 v_fragmentColor; 
-varying vec2 v_texCoord; 
-uniform float time;
-uniform float width;
-uniform float height;
-uniform float waveWidth;
-uniform float speed;
-
-void render(float pRadio, float pRadio2, float pRadio3, float pRadio4)
-{
-	vec2 cord = vec2( abs( (0.5 - v_texCoord.x) * (width / height) ), abs( 0.5 - v_texCoord.y) );
-	float dis = sqrt((cord.x * cord.x + cord.y * cord.y));
-	float radio = abs(dis - pRadio);
-	float radio2 = abs(dis - pRadio2);
-	float radio3 = abs(dis - pRadio3);
-	float radio4 = abs(dis - pRadio4);
-	float UVWidth = waveWidth / width;
-	if (abs(radio) <= UVWidth)
-		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio);
-	else if (abs(radio2) <= UVWidth)
-		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio2);
-	else if (abs(radio3) <= UVWidth)
-		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio3);
-	else if (abs(radio4) <= UVWidth)
-		gl_FragColor = texture2D(CC_Texture0, v_texCoord - radio4);
-	else
-		gl_FragColor = texture2D(CC_Texture0, v_texCoord);
-}
-
-void main(void)
-{
-	float realTime = time * speed;
-	render(mod(realTime, 1.0), mod(realTime + 0.2, 1.0), mod(realTime + 0.4, 1.0), mod(realTime + 0.6, 1.0));
-}
-		
-
-]]
 function MainScene:testPointLightShader()
     local text = cc.LabelTTF:create():addTo(self):move(display.center)
     text:setPositionY(display.height * 0.8)
     text:setFontSize(22)
 
+    local pProgram = cc.GLProgram:createWithByteArrays(vertSource, globalFragment)
     local time = 0
     local sps = {}
     for i = 1, 5 do
@@ -476,10 +306,9 @@ function MainScene:testPointLightShader()
             glprogramstate:setUniformFloat(prog:getUniform("time").location, time)
         end)
         local size = spr:getTexture():getContentSizeInPixels()
-        local pProgram = cc.GLProgram:createWithByteArrays(vertSource, globalFragment)
-        local glprogramstate = cc.GLProgramState:getOrCreateWithGLProgram(pProgram)
+        local glprogramstate = cc.GLProgramState:create(pProgram)
         glprogramstate:setUniformFloat(pProgram:getUniform("light_intensity").location, 1.5)
-        glprogramstate:setUniformFloat(pProgram:getUniform("light_radio").location, 300)
+        glprogramstate:setUniformFloat(pProgram:getUniform("light_radio").location, 200)
         glprogramstate:setUniformFloat(pProgram:getUniform("iamge_width").location, size.width)
         glprogramstate:setUniformFloat(pProgram:getUniform("image_height").location, size.height)
         spr:setGLProgramState(glprogramstate)
