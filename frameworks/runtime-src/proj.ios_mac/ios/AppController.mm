@@ -29,6 +29,9 @@
 #import "AppDelegate.h"
 #import "RootViewController.h"
 
+@import Sentry;
+
+
 
 @implementation AppController
 
@@ -42,6 +45,11 @@ static AppDelegate s_sharedApplication;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+    [SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
+        options.dsn = @"http://6ca39ce4868c47248f3b0782638629bf@vv2.azerothcn.com:59000/3";
+        options.debug = YES; // Enabled debug when first installing is always helpful
+    }];
+
     cocos2d::Application *app = cocos2d::Application::getInstance();
     
     // Initialize the GLView attributes

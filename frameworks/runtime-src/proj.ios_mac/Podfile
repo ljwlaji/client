@@ -1,0 +1,18 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'framework-desktop' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for framework-desktop
+
+end
+
+target 'framework-mobile' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for framework-mobile
+  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.4.5'
+end
