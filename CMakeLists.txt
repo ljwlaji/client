@@ -67,10 +67,6 @@ set(GAME_HEADER
         ${RUNTIME_SRC_ROOT}/Classes/GausBlurSprite/GausBlurSprite.h
 
         ${RUNTIME_SRC_ROOT}/Classes/sqlite3/lsqlite3.h
-
-        # Bugly
-        ${RUNTIME_SRC_ROOT}/Classes/TencentBugly/CrashReport.h
-        ${RUNTIME_SRC_ROOT}/Classes/TencentBugly/lua/BuglyLuaAgent.h
 )
 set(GAME_SOURCE 
         ${RUNTIME_SRC_ROOT}/Classes/AppDelegate.cpp
@@ -90,10 +86,6 @@ set(GAME_SOURCE
 
         ${RUNTIME_SRC_ROOT}/Classes/sqlite3/sqlite3secure.c
         ${RUNTIME_SRC_ROOT}/Classes/sqlite3/lsqlite3.c
-
-        # Bugly
-        ${RUNTIME_SRC_ROOT}/Classes/TencentBugly/lua/BuglyLuaAgent.cpp
-        ${RUNTIME_SRC_ROOT}/Classes/TencentBugly/CrashReport.mm
 )
 # sources need to compile info, include dirs and source files
 include_directories(

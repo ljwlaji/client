@@ -30,12 +30,6 @@
 #include "sqlite3/lsqlite3.h"
 #include "lfs.h"
 
-// 导入头文件 CrashReport.h
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-#include "TencentBugly/CrashReport.h"
-#include "TencentBugly/lua/BuglyLuaAgent.h"
-#endif
-
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -100,17 +94,6 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     // register lua module
     auto engine = LuaEngine::getInstance();
-    // For Bugly Issus
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-        const char* appid = "86536930d0";
-    #else
-        const char* appid = "832cdc1e32";
-    #endif
-    CrashReport::initCrashReport(appid, true);
-    BuglyLuaAgent::registerLuaExceptionHandler(engine);
-#endif
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
     lua_State* L = engine->getLuaStack()->getLuaState();
     //ÃÌº” cjson https://www.cnblogs.com/zhangdw/p/6824350.html
