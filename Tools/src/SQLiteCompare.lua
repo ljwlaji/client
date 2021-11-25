@@ -238,8 +238,7 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 			local compare = clone(oldInfo)
 			for k, v in pairs(fieldInfo) do
 				-- print(k, v, oldInfo[k])
-				if (oldInfo[k] ~= v) then exit(string.format("检查到[%s]表内[%s]字段属性[%s]变更", tableName, fieldName, k)) end
-				string.format("检查到[%s]表内[%s]字段属性[%s]检查通过", tableName, fieldName, k)
+				if (oldInfo[k] ~= v) then release_print(string.format("检查到[%s]表内[%s]字段属性[%s]变更", tableName, fieldName, k)) end
 				oldInfo[k] = nil
 			end
 		end
@@ -325,17 +324,23 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 	-- 顺序不能乱
 	-- 删除的表
 	for tableName, tableName in pairs(droppedTables) do
-		table.insert(sql_query_strs, string.format([[DROP TABLE "%s";]], tableName))
+		table.insert(sql_query_strs, string.format([[DROP TABLE %s;]], tableName))
 	end
 
-	-- 删除的列
-	for tableName, fields in pairs(drpopedFields) do
-		if not droppedTables[tableName] then -- 如果整个表都删掉了 那就不管表内变更了
-			local sql = string.format([[CREATE TABLE %s_temp_swap AS SELECT %s FROM %s;]], tableName, table.concat(fields, ","), tableName)
-			sql = sql..string.format([[DROP TABLE %s;]], tableName)
-			sql = sql..string.format([[ALTER TABLE %s_temp_swap RENAME TO %s;]], tableName, tableName)
-			table.insert(sql_query_strs, sql)
+	-- 增加的表
+	for tableName, tableTempalte in pairs(addedTables) do
+		local suffix = {}
+		for fieldName, fieldInfo in pairs(newDB[tableName].names) do
+			table.insert(suffix, string.format([[ "%s" %s%s%s]], fieldName, 
+													   fieldInfo.type, 
+													   fieldInfo.notnull and " NOT NULL" or "", 
+													   fieldInfo.dflt_value and (" DEFAULT".." "..tostring(fieldInfo.dflt_value)) or ""))
 		end
+		local pks = ""
+		if newDB[tableName].pks and #newDB[tableName].pks > 0 then
+			pks = string.format([[,PRIMARY KEY ("%s")]], table.concat( newDB[tableName].pks, [[","]] ))
+		end
+		table.insert(sql_query_strs, string.format([[CREATE TABLE "%s" (%s %s);]], tableName, table.concat(suffix, ","), pks))
 	end
 
 	-- 增加的列
@@ -343,28 +348,42 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		if not droppedTables[tableName] then -- 如果整个表都删掉了 那就不管表内变更了
 			for fieldName, fieldInfo in pairs(fields) do
 				local sql = string.format([[ALTER TABLE %s ADD COLUMN ]], tableName)
-				sql = sql..string.format([["%s" %s%s%s;]], fieldName, 
+				sql = sql..string.format([[ "%s" %s%s%s;]], fieldName, 
 														   fieldInfo.type, 
 														   fieldInfo.notnull and " NOT NULL" or "", 
-														   fieldInfo.dflt_value and (" DEFAULT "..tostring(fieldInfo.dflt_value)) or "")
+														   fieldInfo.dflt_value and (" DEFAULT".." "..tostring(fieldInfo.dflt_value)) or "")
 				table.insert(sql_query_strs, sql)
 			end
 		end
 	end
 
-	-- 增加的表
-	for tableName, tableTempalte in pairs(addedTables) do
-		local sql = string.format([[CREATE TABLE "%s" (]], tableName)
-		for fieldName, fieldInfo in pairs(tableTempalte.names) do
-			sql = sql..string.format([["%s" %s%s%s]], fieldName, 
-													   fieldInfo.type, 
-													   fieldInfo.notnull and " NOT NULL" or "", 
-													   fieldInfo.dflt_value and (" DEFAULT "..tostring(fieldInfo.dflt_value)) or "")
-			if fieldInfo.pks and #fieldInfo.pks > 0 then
-				sql = sql..string.format([[,PRIMARY KEY ("%s")]], table.concat( fieldInfo.pks, [[","]] ))
+	-- 删除的列
+	for tableName, fields in pairs(drpopedFields) do
+		if not droppedTables[tableName] then -- 如果整个表都删掉了 那就不管表内变更了
+			--创建一个新表 只含有新db的列信息
+			local suffix = {}
+			for fieldName, fieldInfo in pairs(newDB[tableName].names) do
+				table.insert(suffix, string.format([[ "%s" %s%s%s]], fieldName, 
+														   fieldInfo.type, 
+														   fieldInfo.notnull and " NOT NULL" or "", 
+														   fieldInfo.dflt_value and (" DEFAULT".." "..tostring(fieldInfo.dflt_value)) or ""))
 			end
-			sql = sql..");"
-			table.insert(sql_query_strs, sql)
+			local pks = ""
+			if newDB[tableName].pks and #newDB[tableName].pks > 0 then
+				pks = string.format([[,PRIMARY KEY ("%s")]], table.concat( newDB[tableName].pks, [[","]] ))
+			end
+			table.insert(sql_query_strs, string.format([[CREATE TABLE "%s_temp_swap" (%s %s);]], tableName, table.concat(suffix, ","), pks))
+
+			-- 把旧数据导入
+			local names = {}
+			for key, _ in pairs(newDB[tableName].names) do table.insert(names, key) end
+			table.insert(sql_query_strs, string.format("INSERT INTO %s_temp_swap SELECT %s FROM %s;", tableName, table.concat(names, ","), tableName))
+
+			-- 删除旧表
+			table.insert(sql_query_strs, string.format("DROP TABLE %s;", tableName))
+
+			-- 新表更名
+			table.insert(sql_query_strs, string.format("ALTER TABLE %s_temp_swap RENAME TO %s;", tableName, tableName))
 		end
 	end
 
