@@ -255,8 +255,13 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 	end
 
 	if #newTableRecords.pks == 0 or #oldTableRecords.pks == 0 then
-		dump(newTableRecords)
-		exit(string.format("无主键的表 : [%s]", tableName))
+		release_print(string.format("无主键的表 : [%s]", tableName))
+		return {
+			pks = newTableRecords.pks,
+			adds = newTableRecords.records,
+			modifies = {},
+			deletes = {},
+		}
 	end
 	table.sort(newTableRecords.records, function(a, b) return comp(a, b, 1) end)
 	table.sort(oldTableRecords.records, function(a, b) return comp(a, b, 1) end)
@@ -357,6 +362,7 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		end
 	end
 
+	local fullCopyTables = {}
 	-- 删除的列
 	for tableName, fields in pairs(drpopedFields) do
 		if not droppedTables[tableName] then -- 如果整个表都删掉了 那就不管表内变更了
@@ -374,16 +380,19 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 			end
 			table.insert(sql_query_strs, string.format([[CREATE TABLE "%s_temp_swap" (%s %s);]], tableName, table.concat(suffix, ","), pks))
 
-			-- 把旧数据导入
-			local names = {}
-			for key, _ in pairs(newDB[tableName].names) do table.insert(names, key) end
-			table.insert(sql_query_strs, string.format("INSERT INTO %s_temp_swap SELECT %s FROM %s;", tableName, table.concat(names, ","), tableName))
+			-- -- 把旧数据导入
+			-- local names = {}
+			-- for key, _ in pairs(newDB[tableName].names) do table.insert(names, key) end
+			-- table.insert(sql_query_strs, string.format("INSERT INTO %s_temp_swap SELECT %s FROM %s;", tableName, table.concat(names, ","), tableName))
 
 			-- 删除旧表
 			table.insert(sql_query_strs, string.format("DROP TABLE %s;", tableName))
 
 			-- 新表更名
 			table.insert(sql_query_strs, string.format("ALTER TABLE %s_temp_swap RENAME TO %s;", tableName, tableName))
+
+			-- 加入到需要全拷贝的表内
+			table.insert(fullCopyTables, tableName)
 		end
 	end
 
@@ -407,6 +416,10 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		if oldDB[name] then
 			tableModifys[name] = self:compareSqlRecords(info, oldDB[name], name)
 		end
+	end
+
+	local function replaceDangerStr(str)
+		return string.gsub(str, "%%[a-zA-Z]", "&&")
 	end
 	for tableName, modifies in pairs(tableModifys) do
 		local sqls = {}
@@ -478,12 +491,17 @@ function SQLiteCompare:verifySQLChanges()
 	for _, sql in ipairs(tbs) do
 		release_print("Running SQL : ["..tostring(sql).."]")
 		release_print("Result :")
+		release_print(_)
 		dump(self:query(oldDB, sql))
+		if _  > 200 then break end
 	end
+	
 	for _, sql in ipairs(sqls) do
 		release_print("Running SQL : ["..tostring(sql).."]")
 		release_print("Result :")
+		release_print(_)
 		dump(self:query(oldDB, sql))
+		if _  > 200 then break end
 	end
 end
 
