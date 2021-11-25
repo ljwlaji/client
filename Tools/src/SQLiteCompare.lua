@@ -330,21 +330,25 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 
 	-- 删除的列
 	for tableName, fields in pairs(drpopedFields) do
+		if not droppedTables[tableName] then -- 如果整个表都删掉了 那就不管表内变更了
 			local sql = string.format([[CREATE TABLE %s_temp_swap AS SELECT %s FROM %s;]], tableName, table.concat(fields, ","), tableName)
 			sql = sql..string.format([[DROP TABLE %s;]], tableName)
 			sql = sql..string.format([[ALTER TABLE %s_temp_swap RENAME TO %s;]], tableName, tableName)
 			table.insert(sql_query_strs, sql)
+		end
 	end
 
 	-- 增加的列
 	for tableName, fields in pairs(addedFields) do
-		for fieldName, fieldInfo in pairs(fields) do
-			local sql = string.format([[ALTER TABLE %s ADD COLUMN ]], tableName)
-			sql = sql..string.format([["%s" %s%s%s;]], fieldName, 
-													   fieldInfo.type, 
-													   fieldInfo.notnull and " NOT NULL" or "", 
-													   fieldInfo.dflt_value and (" DEFAULT "..tostring(fieldInfo.dflt_value)) or "")
-			table.insert(sql_query_strs, sql)
+		if not droppedTables[tableName] then -- 如果整个表都删掉了 那就不管表内变更了
+			for fieldName, fieldInfo in pairs(fields) do
+				local sql = string.format([[ALTER TABLE %s ADD COLUMN ]], tableName)
+				sql = sql..string.format([["%s" %s%s%s;]], fieldName, 
+														   fieldInfo.type, 
+														   fieldInfo.notnull and " NOT NULL" or "", 
+														   fieldInfo.dflt_value and (" DEFAULT "..tostring(fieldInfo.dflt_value)) or "")
+				table.insert(sql_query_strs, sql)
+			end
 		end
 	end
 
@@ -390,6 +394,7 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		for k, v in ipairs(modifies.adds) do
 			local sql = [[INSERT INTO ]]..tableName..[[(%s) VALUES(%s);]]
 			for fieldName, fieldValue in pairs(v) do
+				fieldValue = string.upper(newDB[tableName].names[fieldName].type) == "TEXT" and "'"..fieldValue.."'" or fieldValue
 				sql = string.format(sql, (fieldName..",%s"), (fieldValue..",%s"))
 			end
 			sql = string.gsub(sql, ",%%s", "")
@@ -398,6 +403,7 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		for k, v in ipairs(modifies.modifies) do
 			local sql = [[REPLACE INTO ]]..tableName..[[(%s) VALUES(%s);]] --这边语句要熟悉一下
 			for fieldName, fieldValue in pairs(v) do
+				fieldValue = string.upper(newDB[tableName].names[fieldName].type) == "TEXT" and "'"..fieldValue.."'" or fieldValue
 				sql = string.format(sql, (fieldName..",%s"), (fieldValue..",%s"))
 			end
 			sql = string.gsub(sql, ",%%s", "")

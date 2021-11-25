@@ -49,11 +49,20 @@ run_map_extractor()
 	$project_path/runtime/mac/framework-desktop.app/Contents/MacOS/framework-desktop -workdir $project_path/Tools
 }
 
-run_sql_compare()
+run_packer()
 {
+	clear
 	read -p "自动打包即将开始, 请确认已经提交所有修改项, 输入任意键开始脚本! "
 	firstCommit="$(get_input_val '请输入初始commit(7位以上) : ' )"
 	lastCommit="$(get_input_val '请输入目标commit(7位以上) : ' )" 
+	run_sql_compare $firstCommit $lastCommit
+	run_source_packer $firstCommit $lastCommit
+}
+
+run_sql_compare()
+{
+	firstCommit=$1
+	lastCommit=$2
 	# echo "$firstCommit"
 	# read -p "请输入目标commit: " lastCommit
 	read -p "初始commit是 : [${firstCommit}] 初始commit是 : [${lastCommit}] 确认无误后输入Y继续: " comfirm
@@ -103,11 +112,8 @@ run_sql_compare()
 
 run_source_packer()
 {
-	clear
-	read -p "自动打包即将开始, 请确认已经提交所有修改项, 输入任意键开始脚本! "
-	# echo "$(git pull)"
-	firstCommit="$(get_input_val '请输入初始commit(7位以上) : ' )"
-	lastCommit="$(get_input_val '请输入目标commit(7位以上) : ' )" 
+	firstCommit=$1
+	lastCommit=$2
 
 	fileData="require 'functions'\nimport('AutoUpdater').run('${firstCommit}', '${lastCommit}' )"
 	# 初始工作完成 执行对比脚本
@@ -132,7 +138,9 @@ run_source_packer()
 	else
 		echo "打包脚本出现了未知问题...."
 	fi
-	echo ""
+	echo "正在提交更新记录到git..."
+	git add res/version AllUpdates
+	git commit -m "auto commit by update_packer"
 	echo '打包脚本运行完成, 打包日志查询: ${project_path}/Update/Logs'
 	read -p "按任意键返回 :"
 }
@@ -282,8 +290,8 @@ start()
 	clear
 	echo "====================================="
 	echo "半自动打包脚本运行中..."
-	echo "1. 打包数据库更新."
-	echo "2. 打包脚本与资源更新."
+	echo "1. 打包更新数据."
+	echo "2. "
 	echo "3. 自动上传资源"
 	echo "4. 单独编译Lua文件"
 	echo "5. 创建软连接"
@@ -307,10 +315,7 @@ start()
 		run_map_extractor
 	fi
 	if [ "${value}" == "1" ]; then
-		run_sql_compare
-	fi
-	if [ "${value}" == "2" ]; then
-		run_source_packer
+		run_packer
 	fi
 	if [ "${value}" == "3" ]; then
 		autoUpload

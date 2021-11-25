@@ -113,24 +113,15 @@ local function exit(msg)
 end
 
 function AutoUpdater.checkModified(firstCommit, lastCommit)
-	release_print("")
-	release_print("")
-	release_print("==========================================================")
-	release_print("=============热更新自动打包工具已经启动..哔哔哔..===============")
-	release_print("==========================================================")
-	release_print("")
-	release_print("")
-	release_print("======================================================================")
-	release_print(string.format("======正在自动检测提交[%s]到[%s]的差异文件(自动忽略删除的文件)=====", firstCommit, lastCommit))
-	release_print("======================================================================")
-	release_print("")
-	release_print("")
 	local rsfile = io.popen(string.format( "git diff --diff-filter=AM %s %s --name-only", firstCommit, lastCommit ) )
 	local files = {}
 	for line in rsfile:lines() do
-		local compare = string.sub(line, 1, 4)
-		if compare == "src/" or compare == "res/" then
-			table.insert(files, line)
+		print(line)
+		if not line:find("%/%.") and not line:find("res/datas.db") and not line:find("res/version") then
+			local compare = string.sub(line, 1, 4)
+			if compare == "src/" or compare == "res/" then
+				table.insert(files, line)
+			end
 		end
 	end
 	return files
@@ -168,6 +159,18 @@ local function TableToString(table)
 end
 
 function AutoUpdater.run(firstCommit, lastCommit)
+	release_print("")
+	release_print("")
+	release_print("==========================================================")
+	release_print("=============热更新自动打包工具已经启动..哔哔哔..===============")
+	release_print("==========================================================")
+	release_print("")
+	release_print("")
+	release_print("======================================================================")
+	release_print(string.format("======正在自动检测提交[%s]到[%s]的差异文件(自动忽略删除的文件)=====", firstCommit, lastCommit))
+	release_print("======================================================================")
+	release_print("")
+	release_print("")
 	-- local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "") -- For Win Only
 	local currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	currentDir = string.gsub(currentDir, "\n", "")
