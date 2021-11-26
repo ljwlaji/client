@@ -121,6 +121,10 @@ function SQLiteCompare:query(db, sql)
     return ret
 end
 
+function SQLiteCompare:exec(db, sql)
+	return db:exec(sql)
+end
+
 
 function SQLiteCompare:openDB(path)
 	local db = sqlite3.open(path)
@@ -457,7 +461,7 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 	end
 
 
-	self:verifySQLChanges()
+	self:verifySQLChanges(oldDB)
 	exit("执行完成. 正常退出!")
 end
 
@@ -470,39 +474,26 @@ function SQLiteCompare:readFileLineByLine(path, cb)
 end
 
 function SQLiteCompare:verifySQLChanges()
-	--select <column_one>, <column_two> from <table_name> order by <column_one>, <column_two>; --[[ASC, DESC]]
-	local tbs = {}
-	local sqls = {}
-	for file in lfs.dir(currentDir) do
-		if string.sub(file, 1, 1) ~= "." then
-			local tb = file == "tables.sql" and tbs or sqls
-			self:readFileLineByLine(currentDir..file, function(l)
-				table.insert(tb, l)
-			end)
-		end
-	end
-
-	local originFile = io.open(string.gsub(currentDir.."tables.sql", "\\", "/"),"rb")
 	local path = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	path = string.gsub(path, "\n", "")
 	path = string.gsub(path, "/runtime/mac/framework-desktop.app/Contents/Resources", "").."/sqlcompare/"
 	local oldDB = self:openDB(path.."data_old.db")
 
-	for _, sql in ipairs(tbs) do
-		release_print("Running SQL : ["..tostring(sql).."]")
-		release_print("Result :")
-		release_print(_)
-		dump(self:query(oldDB, sql))
-		if _  > 200 then break end
+	print(currentDir.."tables.sql")
+	local tableFile = io.open(currentDir.."tables.sql")
+	if tableFile then
+		local sql = tableFile:read("*all")
+		dump(self:exec(oldDB, sql))
 	end
-	
-	for _, sql in ipairs(sqls) do
-		release_print("Running SQL : ["..tostring(sql).."]")
-		release_print("Result :")
-		release_print(_)
-		dump(self:query(oldDB, sql))
-		if _  > 200 then break end
+
+	for file in lfs.dir(currentDir) do
+		release_print(currentDir..file)
+		if string.sub(file, 1, 1) ~= "." and file ~= "tables.sql" then
+			local sql = io.open(currentDir.."/"..file):read("*all")
+			dump(self:exec(oldDB, sql))
+		end
 	end
+	oldDB:close()
 end
 
 return SQLiteCompare:create()
