@@ -66,11 +66,9 @@ public class AppActivity extends Cocos2dxActivity{
     {
         String retString = "";
         String path = getFilesDir().getAbsolutePath() + File.separatorChar + "lastLog.txt";
-        Log.d("testGetAppLogs", "testGetAppLogs 1" + path);
         File logFile = new File(path);
         if (logFile.exists())
         {
-            Log.e("testGetAppLogs", "logFile.exists() ");
             try
             {
                 BufferedReader reader = new BufferedReader(new FileReader(logFile));
@@ -99,7 +97,6 @@ public class AppActivity extends Cocos2dxActivity{
                 Log.e("cocos exception 2", e.toString());
             }
         }
-        Log.d("testGetAppLogs", "testGetAppLogs 999");
         return retString;
     }
 
@@ -127,7 +124,6 @@ public class AppActivity extends Cocos2dxActivity{
 
     private void SendCrashLogEvent(final String pEventName)
     {
-        Log.d("Sentry", "Last Launch Exit With Crash, Sending Extra File!");
         Sentry.withScope(scope -> {
             String FilePath = getFilesDir().getAbsolutePath() + File.separatorChar;
             File currLogFile = new File(FilePath + "persentLog.txt");
@@ -157,15 +153,12 @@ public class AppActivity extends Cocos2dxActivity{
     private void sentryInit()
     {
         //https://docs.sentry.io/platforms/android/configuration/filtering/
-        Log.d("Sentry", "SentryIniting...");
         SentryAndroid.init(this, options -> {
             // Add a callback that will be used before the event is sent to Sentry.
             // With this callback, you can modify the event or, when returning null, also discard the event.
             options.setBeforeSend((event, hint) -> {
-                Log.d("Sentry", "Sentry On BeforeSend");
                 if (!event.isCrashed())
                     return event;
-
                 Log.d("Sentry", "Sentry Sending a crash event : " + event.getEventId().toString());
                 Message msg = new Message();
                 msg.setMessage(testGetAppLogs());
@@ -175,17 +168,11 @@ public class AppActivity extends Cocos2dxActivity{
             });
             options.setDsn("http://e35446a2c63745b18ccbb035130e335e@128.1.38.110:9000/5");
             options.setDebug(true);
-            options.setRelease("io.myTestRelease@1.1.1");
             options.setSessionTrackingIntervalMillis(60000);
             options.setEnableSessionTracking(true);
             options.setMaxAttachmentSize(20 * 1024 * 1024);
         });
-        Log.d("Sentry", "isCrashedLastRun SentryInited...");
         if (!Sentry.isCrashedLastRun())
-        {
-            Log.d("Sentry", "Not Crash, Clear Log");
             resetLogFile();
-        }
-        Log.d("Sentry", "SentryInited...");
     }
 }
