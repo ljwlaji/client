@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -74,6 +74,10 @@
 		72913AB926EF3F75001C6654 /* YZAuthID.mm in Sources */ = {isa = PBXBuildFile; fileRef = 72913AB826EF3F75001C6654 /* YZAuthID.mm */; };
 		72DAFE0D2386E36500B93FAE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE0C2386E36500B93FAE /* SystemConfiguration.framework */; };
 		72DAFE0F2386E36E00B93FAE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DAFE0E2386E36E00B93FAE /* Security.framework */; };
+		873E28DE27564AF8005C347C /* Sentry in Resources */ = {isa = PBXBuildFile; fileRef = 873E28DB27564AF8005C347C /* Sentry */; };
+		873E28E027564B00005C347C /* Pods_framework_mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E28DF27564B00005C347C /* Pods_framework_mobile.framework */; };
+		873E28E227564B0E005C347C /* Sentry.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E28E127564B0E005C347C /* Sentry.framework */; platformFilter = ios; };
+		873E28E327564B0E005C347C /* Sentry.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 873E28E127564B0E005C347C /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */; };
 		9FF504841A5E87B100AFDA55 /* ConsoleWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */; };
 		9FF504851A5E87B100AFDA55 /* ConsoleWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF504831A5E87B100AFDA55 /* ConsoleWindowController.m */; };
@@ -196,6 +200,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		873E28E427564B0E005C347C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				873E28E327564B0E005C347C /* Sentry.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		15A8A4031834BDA200142BE0 /* cocos2d_libs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = cocos2d_libs.xcodeproj; path = "../../cocos2d-x/build/cocos2d_libs.xcodeproj"; sourceTree = "<group>"; };
 		15A8A4871834C90E00142BE0 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
@@ -264,6 +282,9 @@
 		72DAFE0E2386E36E00B93FAE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		72DAFE102386E37D00B93FAE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		72DAFE112386E38900B93FAE /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		873E28DB27564AF8005C347C /* Sentry */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sentry; path = "build/Debug-iphoneos/Sentry"; sourceTree = "<group>"; };
+		873E28DF27564B00005C347C /* Pods_framework_mobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_framework_mobile.framework; path = "build/Debug-iphoneos/Pods_framework_mobile.framework"; sourceTree = "<group>"; };
+		873E28E127564B0E005C347C /* Sentry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sentry.framework; path = "build/Debug-iphoneos/Sentry/Sentry.framework"; sourceTree = "<group>"; };
 		9FA3AE4D1BE9BCC900FC9645 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		9FF504781A5E86D600AFDA55 /* libsimulator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libsimulator.xcodeproj; path = "../../cocos2d-x/tools/simulator/libsimulator/proj.ios_mac/libsimulator.xcodeproj"; sourceTree = "<group>"; };
 		9FF504811A5E87B100AFDA55 /* ConsoleWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConsoleWindow.xib; sourceTree = "<group>"; };
@@ -320,9 +341,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				72DAFE0F2386E36E00B93FAE /* Security.framework in Frameworks */,
+				873E28E227564B0E005C347C /* Sentry.framework in Frameworks */,
 				72DAFE0D2386E36500B93FAE /* SystemConfiguration.framework in Frameworks */,
 				72913AB526EF3B9B001C6654 /* LocalAuthentication.framework in Frameworks */,
 				1AF4C403178663F200122817 /* libz.dylib in Frameworks */,
+				873E28E027564B00005C347C /* Pods_framework_mobile.framework in Frameworks */,
 				294D0D721D0D572600F7F5D4 /* CoreText.framework in Frameworks */,
 				9FA3AE4E1BE9BCC900FC9645 /* CFNetwork.framework in Frameworks */,
 				ED545A891B68A23E00C3958E /* libiconv.dylib in Frameworks */,
@@ -478,6 +501,8 @@
 		F293B3CB15EB7BE500256477 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				873E28DF27564B00005C347C /* Pods_framework_mobile.framework */,
+				873E28DB27564AF8005C347C /* Sentry */,
 				72913AB426EF3B9B001C6654 /* LocalAuthentication.framework */,
 				72DAFE112386E38900B93FAE /* libc++.tbd */,
 				72DAFE102386E37D00B93FAE /* libz.tbd */,
@@ -492,6 +517,7 @@
 				3EEEDB60197107C0006A9FF8 /* MediaPlayer.framework */,
 				15A8A4871834C90E00142BE0 /* libcurl.dylib */,
 				D6B061341803AC000077942B /* CoreMotion.framework */,
+				873E28E127564B0E005C347C /* Sentry.framework */,
 				50D7C96F17EBBEEC005D0B91 /* IOKit.framework */,
 				50D7C96D17EBBEE6005D0B91 /* AppKit.framework */,
 				50D7C96B17EBBEDF005D0B91 /* OpenGL.framework */,
@@ -579,6 +605,7 @@
 				F293B3C515EB7BE500256477 /* Frameworks */,
 				F293B3C615EB7BE500256477 /* Resources */,
 				3EC988201966433500A45E0E /* ShellScript */,
+				873E28E427564B0E005C347C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -726,6 +753,7 @@
 				1A8A4EDC1F6F9AEE0044495E /* src in Resources */,
 				1ACE45A31FC3F2D000F87E53 /* Images.xcassets in Resources */,
 				1A8A4ED91F6F9AEB0044495E /* config.json in Resources */,
+				873E28DE27564AF8005C347C /* Sentry in Resources */,
 				1A8A4EDB1F6F9AEE0044495E /* res in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -889,7 +917,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.firecore.framework;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../cocos2d-x/external/glfw3/include/mac $(_COCOS_HEADER_MAC_BEGIN) $(_COCOS_HEADER_MAC_END)";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../cocos2d-x/external/glfw3/include/mac",
+					"$(_COCOS_HEADER_MAC_BEGIN)",
+					"$(_COCOS_HEADER_MAC_END)",
+				);
 			};
 			name = Debug;
 		};
@@ -932,7 +965,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.firecore.framework;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../cocos2d-x/external/glfw3/include/mac $(_COCOS_HEADER_MAC_BEGIN) $(_COCOS_HEADER_MAC_END)";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../cocos2d-x/external/glfw3/include/mac",
+					"$(_COCOS_HEADER_MAC_BEGIN)",
+					"$(_COCOS_HEADER_MAC_END)",
+				);
 			};
 			name = Release;
 		};
@@ -959,7 +997,19 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../cocos2d-x $(SRCROOT)/../../cocos2d-x/cocos/audio/include $(SRCROOT)/../../cocos2d-x/cocos $(SRCROOT)/../../cocos2d-x/extensions $(SRCROOT)/../../cocos2d-x/external $(SRCROOT)/../../cocos2d-x/external/chipmunk/include/chipmunk $(SRCROOT)/../../cocos2d-x/external/lua/luajit/include $(SRCROOT)/../../cocos2d-x/external/lua/tolua $(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib $(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib/protobuf-lite $(SRCROOT)/../../cocos2d-x/cocos/editor-support";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../cocos2d-x",
+					"$(SRCROOT)/../../cocos2d-x/cocos/audio/include",
+					"$(SRCROOT)/../../cocos2d-x/cocos",
+					"$(SRCROOT)/../../cocos2d-x/extensions",
+					"$(SRCROOT)/../../cocos2d-x/external",
+					"$(SRCROOT)/../../cocos2d-x/external/chipmunk/include/chipmunk",
+					"$(SRCROOT)/../../cocos2d-x/external/lua/luajit/include",
+					"$(SRCROOT)/../../cocos2d-x/external/lua/tolua",
+					"$(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib",
+					"$(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib/protobuf-lite",
+					"$(SRCROOT)/../../cocos2d-x/cocos/editor-support",
+				);
 			};
 			name = Debug;
 		};
@@ -981,7 +1031,19 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../cocos2d-x $(SRCROOT)/../../cocos2d-x/cocos/audio/include $(SRCROOT)/../../cocos2d-x/cocos $(SRCROOT)/../../cocos2d-x/extensions $(SRCROOT)/../../cocos2d-x/external $(SRCROOT)/../../cocos2d-x/external/chipmunk/include/chipmunk $(SRCROOT)/../../cocos2d-x/external/lua/luajit/include $(SRCROOT)/../../cocos2d-x/external/lua/tolua $(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib $(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib/protobuf-lite $(SRCROOT)/../../cocos2d-x/cocos/editor-support";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../cocos2d-x",
+					"$(SRCROOT)/../../cocos2d-x/cocos/audio/include",
+					"$(SRCROOT)/../../cocos2d-x/cocos",
+					"$(SRCROOT)/../../cocos2d-x/extensions",
+					"$(SRCROOT)/../../cocos2d-x/external",
+					"$(SRCROOT)/../../cocos2d-x/external/chipmunk/include/chipmunk",
+					"$(SRCROOT)/../../cocos2d-x/external/lua/luajit/include",
+					"$(SRCROOT)/../../cocos2d-x/external/lua/tolua",
+					"$(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib",
+					"$(SRCROOT)/../../cocos2d-x/tools/simulator/libsimulator/lib/protobuf-lite",
+					"$(SRCROOT)/../../cocos2d-x/cocos/editor-support",
+				);
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -998,6 +1060,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/Sentry",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1010,13 +1074,16 @@
 				);
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../cocos2d-x/external/curl/prebuilt/ios\"",
 					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 1.0;
-				OTHER_LDFLAGS = (
-				);
+				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[sdk=iphonesimulator*][arch=x86_64]" = (
 					"$(_COCOS_LIB_IOS_BEGIN)",
 					"$(_COCOS_LIB_IOS_END)",
@@ -1029,7 +1096,12 @@
 				SDKROOT = iphoneos;
 				STRIP_PNG_TEXT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(_COCOS_HEADER_IOS_BEGIN) $(_COCOS_HEADER_IOS_END) \"$(SRCROOT)/../../cocos2d-x/external/curl/include/ios\"";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(_COCOS_HEADER_IOS_BEGIN)",
+					"$(_COCOS_HEADER_IOS_END)",
+					"\"$(SRCROOT)/../../cocos2d-x/external/curl/include/ios\"",
+				);
 				VALID_ARCHS = "arm64 armv7";
 			};
 			name = Debug;
@@ -1046,6 +1118,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/Sentry",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ios/Prefix.pch;
@@ -1057,13 +1131,16 @@
 				);
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../cocos2d-x/external/curl/prebuilt/ios\"",
 					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 1.0;
-				OTHER_LDFLAGS = (
-				);
+				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[sdk=iphonesimulator*][arch=x86_64]" = (
 					"$(_COCOS_LIB_IOS_BEGIN)",
 					"$(_COCOS_LIB_IOS_END)",
@@ -1076,7 +1153,12 @@
 				SDKROOT = iphoneos;
 				STRIP_PNG_TEXT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(_COCOS_HEADER_IOS_BEGIN) $(_COCOS_HEADER_IOS_END) \"$(SRCROOT)/../../cocos2d-x/external/curl/include/ios\"";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(_COCOS_HEADER_IOS_BEGIN)",
+					"$(_COCOS_HEADER_IOS_END)",
+					"\"$(SRCROOT)/../../cocos2d-x/external/curl/include/ios\"",
+				);
 				VALID_ARCHS = "arm64 armv7";
 			};
 			name = Release;

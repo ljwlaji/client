@@ -29,6 +29,8 @@
 #import "AppDelegate.h"
 #import "RootViewController.h"
 
+#include "../build/Debug-iphoneos/Sentry/Sentry.framework/Headers/Sentry.h"
+
 
 @implementation AppController
 
@@ -41,6 +43,11 @@
 static AppDelegate s_sharedApplication;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    [SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
+        options.dsn = @"http://bf56bdd4dd3b4500ad2e08f1fd4efb59@128.1.38.110:9000/6";
+        options.debug = YES; // Enabled debug when first installing is always helpful
+    }];
     
     cocos2d::Application *app = cocos2d::Application::getInstance();
     
