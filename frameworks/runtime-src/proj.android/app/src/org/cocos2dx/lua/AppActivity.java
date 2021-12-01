@@ -27,12 +27,25 @@ THE SOFTWARE.
 package org.cocos2dx.lua;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+
+import io.sentry.Attachment;
+import io.sentry.Sentry;
+import io.sentry.SentryEvent;
+import io.sentry.android.core.SentryAndroid;
+import io.sentry.protocol.Message;
 
 public class AppActivity extends Cocos2dxActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sentryInit();
         super.setEnableVirtualButton(false);
         super.onCreate(savedInstanceState);
 //        CrashReport.testJavaCrash();
@@ -47,5 +60,132 @@ public class AppActivity extends Cocos2dxActivity{
 
         // DO OTHER INITIALIZATION BELOW
         
+    }
+
+    private String testGetAppLogs()
+    {
+        String retString = "";
+        String path = getFilesDir().getAbsolutePath() + File.separatorChar + "lastLog.txt";
+        Log.d("testGetAppLogs", "testGetAppLogs 1" + path);
+        File logFile = new File(path);
+        if (logFile.exists())
+        {
+            Log.e("testGetAppLogs", "logFile.exists() ");
+            try
+            {
+                BufferedReader reader = new BufferedReader(new FileReader(logFile));
+                String         line   = "";
+                StringBuilder  stringBuilder = new StringBuilder();
+                String         ls = System.getProperty("line.separator");
+                try
+                {
+                    while((line = reader.readLine()) != null)
+                    {
+                        if (!line.contains("cocos2d-x debug info"))
+                            continue;
+                        //Log.d("testGetAppLogs", line);
+                        stringBuilder.append(line.substring(55));
+                        stringBuilder.append(ls);
+                    }
+                    retString = stringBuilder.toString().substring(stringBuilder.length() > 8200 ? stringBuilder.length() - 8200 : 0);
+                }
+                finally
+                {
+                    reader.close();
+                }
+            }
+            catch(Exception e)
+            {
+                Log.e("cocos exception 2", e.toString());
+            }
+        }
+        Log.d("testGetAppLogs", "testGetAppLogs 999");
+        return retString;
+    }
+
+    private void resetLogFile()
+    {
+        try
+        {
+            String path = getFilesDir().getAbsolutePath() + File.separatorChar + "persentLog.txt";
+            File logFile = new File(path);
+            if (logFile.exists())
+            {
+                FileWriter fileWriter = new FileWriter(logFile);
+                fileWriter.write("");
+                fileWriter.flush();
+                fileWriter.close();
+            }
+            Runtime.getRuntime().exec("logcat -c ");
+            Runtime.getRuntime().exec("logcat -f " + path);
+        }
+        catch(Exception e)
+        {
+            Log.d("Sentry", "resetLogFile Exception : " + e.toString());
+        }
+    }
+
+    private void SendCrashLogEvent(final String pEventName)
+    {
+        Log.d("Sentry", "Last Launch Exit With Crash, Sending Extra File!");
+        Sentry.withScope(scope -> {
+            String FilePath = getFilesDir().getAbsolutePath() + File.separatorChar;
+            File currLogFile = new File(FilePath + "persentLog.txt");
+            if (currLogFile.exists())
+            {
+                try {
+                    File savedFile = new File(FilePath + "lastLog.txt");
+                    if (savedFile.exists())
+                        savedFile.delete();
+                    currLogFile.renameTo(new File(FilePath + "lastLog.txt"));
+                    resetLogFile();
+                } catch (Exception e) {
+                    Log.d("Sentry", "SendCrashLogEvent : " + e.toString());
+                }
+            }
+            Attachment attachment = new Attachment(FilePath + "lastLog.txt");
+            scope.addAttachment(attachment);
+            Message msg = new Message();
+            msg.setMessage("Crash Log : " + pEventName);
+            SentryEvent event = new SentryEvent();
+            event.setMessage(msg);
+            event.setLogger("testLogger");
+            Sentry.captureEvent(event);
+        });
+    }
+
+    private void sentryInit()
+    {
+        //https://docs.sentry.io/platforms/android/configuration/filtering/
+        Log.d("Sentry", "SentryIniting...");
+        SentryAndroid.init(this, options -> {
+            // Add a callback that will be used before the event is sent to Sentry.
+            // With this callback, you can modify the event or, when returning null, also discard the event.
+            options.setBeforeSend((event, hint) -> {
+                Log.d("Sentry", "Sentry On BeforeSend");
+                if (!event.isCrashed())
+                    return event;
+
+                Log.d("Sentry", "Sentry Sending a crash event : " + event.getEventId().toString());
+                Message msg = new Message();
+                msg.setMessage(testGetAppLogs());
+                event.setMessage(msg);
+                SendCrashLogEvent(event.getEventId().toString());
+                return event;
+            });
+            options.setDsn("http://e35446a2c63745b18ccbb035130e335e@128.1.38.110:9000/5");
+            options.setDebug(true);
+            options.setRelease("io.myTestRelease@1.1.1");
+            options.setSessionTrackingIntervalMillis(60000);
+            options.setEnableSessionTracking(true);
+            options.setMaxAttachmentSize(20 * 1024 * 1024);
+        });
+        Log.d("Sentry", "isCrashedLastRun SentryInited...");
+        if (!Sentry.isCrashedLastRun())
+        {
+            Log.d("Sentry", "Not Crash, Clear Log");
+            resetLogFile();
+        }
+        Log.d("Sentry", "SentryInited...");
     }
 }

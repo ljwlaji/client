@@ -32,6 +32,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--Sentry-->
+        <meta-data android:name="io.sentry.auto-init" android:value="false" />
+        <!--End Of Sentry-->
     </application>
     
     <uses-permission android:name="android.permission.INTERNET"/>
