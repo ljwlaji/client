@@ -42,12 +42,48 @@
 // cocos2d application instance
 static AppDelegate s_sharedApplication;
 
++ (void)reportLuaError:(NSDictionary *)dic {
+    NSString* string = [dic objectForKey:@"errorMsg"];
+    [SentrySDK captureMessage:string];
+}
+
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    _writeblePath = [paths objectAtIndex:0];
     
     [SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
         options.dsn = @"http://bf56bdd4dd3b4500ad2e08f1fd4efb59@128.1.38.110:9000/6";
         options.debug = YES; // Enabled debug when first installing is always helpful
+        options.beforeSend = ^SentryEvent* _Nullable(SentryEvent* _Nonnull event){
+            if (event.exceptions != nil)
+            {
+                NSString* logPath = [_writeblePath stringByAppendingFormat:@"/lastLog.txt"];
+                // for crash event issus below
+                NSString* content = @"log file not exists";
+                if ([[NSFileManager defaultManager] fileExistsAtPath:logPath])
+                {
+                    // lastLog File existed just upload
+                    content = [NSString stringWithContentsOfFile:logPath];
+                    NSUInteger start = [content length] > 8200 ? 8200 - [content length] > 8200 : 0;
+                    content = [content substringFromIndex:start];
+                }
+                event.message = [[SentryMessage alloc] initWithFormatted:content];
+            }
+            return event;
+        };
     }];
+    
+    if ([SentrySDK crashedLastRun])
+    {
+        // save Last Log For Report
+        NSString* persentLogPath = [_writeblePath stringByAppendingFormat:@"/persentLog.txt"];
+        NSString* saveLogPath = [_writeblePath stringByAppendingFormat:@"/lastLog.txt"];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:persentLogPath])
+            [[NSFileManager defaultManager] moveItemAtPath:persentLogPath toPath:saveLogPath error:nil];
+    }
     
     cocos2d::Application *app = cocos2d::Application::getInstance();
     

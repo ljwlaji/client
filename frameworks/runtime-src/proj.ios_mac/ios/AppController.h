@@ -33,6 +33,7 @@
 }
 
 @property(nonatomic, readonly) RootViewController* viewController;
+@property NSString* writeblePath;
 
 @end
 

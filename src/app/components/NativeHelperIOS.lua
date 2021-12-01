@@ -43,5 +43,12 @@ function NativeHelperIOS:canVerify()
     return true
 end
 
+function NativeHelperIOS:reportLuaError(errorStr)
+    local ok, ret = callOC("AppController", "reportLuaError", {
+        errorMsg = errorStr
+    })
+    release_print(ok and "report Error Successed" or ret)
+end
+
 
 return NativeHelperIOS

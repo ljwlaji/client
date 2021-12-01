@@ -22,4 +22,7 @@ function NativeHelperBase:canVerify()
     return false
 end
 
+function NativeHelperBase:reportLuaError()
+end
+
 return NativeHelperBase
