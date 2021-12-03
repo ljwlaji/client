@@ -176,50 +176,12 @@ function SQLiteCompare:fillSqlData(db, keepAlive)
 	return retDBTempalte
 end
 
-function SQLiteCompare:compareMissingFields(oldTempalte, newTempalte)
-	local retTableNames = {}
-	local ret = nil
-	for name, _ in pairs(oldTempalte.names) do
-		if not newTempalte.names[name] then
-			for name, _ in pairs(newTempalte.names) do
-				table.insert(retTableNames, name)
-			end
-			ret = true
-			break
-		end
-	end
-	return ret and retTableNames or nil
-end
-
-function SQLiteCompare:compareFields(newTempalte, oldTempalte)
-	local modifies = {}
-	local ret = false
-	for name, template in pairs(newTempalte.names) do
-		if not oldTempalte.names[name] then
-			modifies[name] = template
-			ret = true
-		end
-	end
-	return ret and modifies or nil
-end
-
 local function clone(source)
 	local ret = {}
 	for k, v in pairs(source) do
 		ret[k] = type(v) == "table" and clone(v) or v
 	end
 	return ret
-end
-
-function SQLiteCompare:isEqual(new, old)
-	local isEqual = true
-	for key, value in pairs(new) do
-		if value ~= old[key] then
-			isEqual = false
-			break
-		end
-	end
-	return isEqual
 end
 
 function SQLiteCompare:isSamePK(newRecord, oldRecord, pks)
@@ -267,7 +229,7 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 		local newRecord = table.remove(newTableRecords.records, 1)
 		local oldRecord = oldTableRecords.records[1]
 		if oldRecord and self:isSamePK(newRecord, oldRecord, pks) then
-			 if not self:isEqual(newRecord, oldRecord) then
+			 if not self:isSameTable(newRecord, oldRecord) then
 		-- 	 	-- 部分不同 更新条目
 			 	table.insert(modifies, newRecord)
 			 end
@@ -457,21 +419,12 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 	exit("执行完成. 正常退出!")
 end
 
-function SQLiteCompare:readFileLineByLine(path, cb)
-	local f = io.open(path, "rb")
-	if not f then exit("读取文件失败 : "..path) end
-	for line in f:lines() do
-		cb(line)
-	end
-end
-
 function SQLiteCompare:verifySQLChanges()
 	local path = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	path = string.gsub(path, "\n", "")
 	path = string.gsub(path, "/runtime/mac/framework-desktop.app/Contents/Resources", "").."/sqlcompare/"
 	local oldDB = self:openDB(path.."data_old.db")
 
-	print(currentDir.."tables.sql")
 	local tableFile = io.open(currentDir.."tables.sql")
 	if tableFile then
 		local sql = tableFile:read("*all")
