@@ -355,21 +355,21 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 	-- 顺序不能乱
 	-- 删除的表
 	for tableName, _ in pairs(changes.deleted) do
-		table.insert(sql_query_strs, string.format([[DROP TABLE %s;]], tableName))
+		table.insert(sql_query_strs, string.format([[DROP TABLE '%s';]], tableName))
 	end
 
 	-- 增加的表
 	for tableName, _ in pairs(changes.added) do
 		local suffix = {}
 		for fieldName, fieldInfo in pairs(newDB[tableName].names) do
-			table.insert(suffix, string.format([[ "%s" %s%s%s]], fieldName, 
+			table.insert(suffix, string.format([[ '%s' %s%s%s]], fieldName, 
 													   fieldInfo.type, 
 													   fieldInfo.notnull and " NOT NULL" or "", 
 													   fieldInfo.dflt_value and (" DEFAULT".." "..tostring(fieldInfo.dflt_value)) or ""))
 		end
 		local pks = ""
 		if newDB[tableName].pks and #newDB[tableName].pks > 0 then
-			pks = string.format([[,PRIMARY KEY ("%s")]], table.concat( newDB[tableName].pks, [[","]] ))
+			pks = string.format([[,PRIMARY KEY ('%s')]], table.concat( newDB[tableName].pks, [[","]] ))
 		end
 		table.insert(sql_query_strs, string.format([[CREATE TABLE "%s" (%s %s);]], tableName, table.concat(suffix, ","), pks))
 	end
@@ -388,18 +388,9 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		if newDB[tableName].pks and #newDB[tableName].pks > 0 then
 			pks = string.format([[,PRIMARY KEY ('%s')]], table.concat( newDB[tableName].pks, [[',']] ))
 		end
-		table.insert(sql_query_strs, string.format([[CREATE TABLE '%s_temp_swap' (%s %s);]], tableName, table.concat(suffix, ","), pks))
-
-		-- -- 把旧数据导入
-		-- local names = {}
-		-- for key, _ in pairs(newDB[tableName].names) do table.insert(names, key) end
-		-- table.insert(sql_query_strs, string.format("INSERT INTO %s_temp_swap SELECT %s FROM %s;", tableName, table.concat(names, ","), tableName))
-
 		-- 删除旧表
 		table.insert(sql_query_strs, string.format([[DROP TABLE '%s';]], tableName))
-
-		-- 新表更名
-		table.insert(sql_query_strs, string.format([[ALTER TABLE '%s_temp_swap' RENAME TO '%s';]], tableName, tableName))
+		table.insert(sql_query_strs, string.format([[CREATE TABLE '%s' (%s %s);]], tableName, table.concat(suffix, ","), pks))
 	end
 
 	--导出sql文件
