@@ -33,7 +33,11 @@ local function dump_value_(v)
 end
 
 local function release_print(...)
-	table.insert(logs, table.concat({...}, "\t"))
+	local str = ""
+	for _, v in ipairs({...}) do
+		str = str..tostring(v).."\t"
+	end
+	table.insert(logs, str)
 	print(...)
 end
 
@@ -45,7 +49,7 @@ local function dump(value, description, nesting)
     local result = {}
 
     local traceback = string.split(debug.traceback("", 2), "\n")
-    print("dump from: " .. string.trim(traceback[3]))
+    release_print("dump from: " .. string.trim(traceback[3]))
 
     local function dump_(value, description, indent, nest, keylen)
         description = description or "<var>"
@@ -122,7 +126,7 @@ function SQLiteCompare:query(db, sql)
 end
 
 function SQLiteCompare:exec(db, sql)
-	return db:exec(sql)
+	if db:exec(sql) ~= 0 then exit("执行sql语句出错 : "..sql) end
 end
 
 
@@ -234,19 +238,6 @@ end
 
 
 function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, tableName)
-	-- 如果存在已删除的列 这边不用管旧数据库 对比以新数据库的列为准
-	-- 首先进行字段属性差异检查 主要是检查已有的字段属性是否一致
-	for fieldName, fieldInfo in pairs(newTableRecords.names) do
-		local oldInfo = oldTableRecords.names[fieldName]
-		if oldInfo then
-			local compare = clone(oldInfo)
-			for k, v in pairs(fieldInfo) do
-				-- print(k, v, oldInfo[k])
-				if (oldInfo[k] ~= v) then release_print(string.format("检查到[%s]表内[%s]字段属性[%s]变更", tableName, fieldName, k)) end
-				oldInfo[k] = nil
-			end
-		end
-	end
 
 	local pks = newTableRecords.pks
 	local len = #pks
@@ -294,50 +285,81 @@ function SQLiteCompare:compareSqlRecords(newTableRecords, oldTableRecords, table
 	}
 end
 
+function SQLiteCompare:getTableSize(t)
+	local size = 0
+	for _, v in pairs(t) do
+		size = size + 1
+	end
+	return size
+end
+
+function SQLiteCompare:isSameTable(t1, t2)
+	local aSize = self:getTableSize(t1)
+	local bSize = self:getTableSize(t2)
+	if aSize ~= bSize then release_print("size : "..aSize.." "..bSize) return false end
+	for k, v in pairs(t1) do
+		if t2[k] == nil or type(v) ~= type(t2[k]) then release_print("diff : ", k, v, t2[k], type(v), type(t2[k])) return false end
+		if type(v) == "table" then 
+			if not self:isSameTable(v, t2[k]) then 
+				return false 
+			end
+		else
+			if v ~= t2[k] then release_print("diff : ", k, v, t2[k]) return false end
+		end
+	end
+	return true
+end
+
+function SQLiteCompare:getAllStructuralChanges(newTable, oldTable)
+	local newTables = {}
+	local droppedTables = {}
+	local changedTables = {}
+	local unchangedTables = {}
+
+	for tableName, tableTemplate in pairs(newTable) do
+		if not oldTable[tableName] then
+			newTables[tableName] = tableTemplate --新表
+		elseif not self:isSameTable({names = tableTemplate.names,pks = tableTemplate.pks}, {names = oldTable[tableName].names,pks = oldTable[tableName].pks}) then
+			changedTables[tableName] = tableTemplate --结构变化
+		else
+			unchangedTables[tableName] = {
+				new = tableTemplate,
+				old = oldTable[tableName]
+			}
+		end
+	end
+	for name, template in pairs(oldTable) do
+		if not newTable[name] then droppedTables[name] = true end
+	end
+	return {
+		added = newTables,
+		modifies = changedTables,
+		deleted = droppedTables,
+		unchanges = unchangedTables
+	}
+end
+
 function SQLiteCompare:start(pathOrigin, pathNew)
 	local path = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	path = string.gsub(path, "\n", "")
 	path = string.gsub(path, "/runtime/mac/framework-desktop.app/Contents/Resources", "").."/sqlcompare/"
+
 	local oldDB = self:fillSqlData(self:openDB(path.."data_old.db"))
 	local newDB = self:fillSqlData(self:openDB(path.."data_new.db"))
-	local droppedTables = {}
-	local drpopedFields = {}
-	-- 查询删除的表和列
-	for tableName, tableTempalte in pairs(oldDB) do
-		local newTableTemplate = newDB[tableName]
-		if newTableTemplate then
-			drpopedFields[tableName] = self:compareMissingFields(tableTempalte, newTableTemplate)
-		else
-			-- 这个表被删除了
-			table.insert(droppedTables, tableName)
-		end
-	end
 
-	-- 查询新增的表和列
-	-- 用新的对比老的
-	local addedTables = {}
-	local addedFields = {}
-	for tableName, tableTempalte in pairs(newDB) do
-		local oldTempalte = oldDB[tableName]
-		if oldTempalte then
-			addedFields[tableName] = self:compareFields(tableTempalte, oldTempalte)
-		else
-			-- 新增了表
-			addedTables[tableName] = tableTempalte
-		end
-	end
+	local changes = self:getAllStructuralChanges(newDB, oldDB)
 
 	local sql_query_strs = {}
 
 	-- 开始处理差异
 	-- 顺序不能乱
 	-- 删除的表
-	for tableName, tableName in pairs(droppedTables) do
+	for tableName, _ in pairs(changes.deleted) do
 		table.insert(sql_query_strs, string.format([[DROP TABLE %s;]], tableName))
 	end
 
 	-- 增加的表
-	for tableName, tableTempalte in pairs(addedTables) do
+	for tableName, _ in pairs(changes.added) do
 		local suffix = {}
 		for fieldName, fieldInfo in pairs(newDB[tableName].names) do
 			table.insert(suffix, string.format([[ "%s" %s%s%s]], fieldName, 
@@ -352,102 +374,81 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		table.insert(sql_query_strs, string.format([[CREATE TABLE "%s" (%s %s);]], tableName, table.concat(suffix, ","), pks))
 	end
 
-	-- 增加的列
-	for tableName, fields in pairs(addedFields) do
-		if not droppedTables[tableName] then -- 如果整个表都删掉了 那就不管表内变更了
-			for fieldName, fieldInfo in pairs(fields) do
-				local sql = string.format([[ALTER TABLE %s ADD COLUMN ]], tableName)
-				sql = sql..string.format([[ "%s" %s%s%s;]], fieldName, 
-														   fieldInfo.type, 
-														   fieldInfo.notnull and " NOT NULL" or "", 
-														   fieldInfo.dflt_value and (" DEFAULT".." "..tostring(fieldInfo.dflt_value)) or "")
-				table.insert(sql_query_strs, sql)
-			end
+	-- 结构变更的表
+	for tableName, _ in pairs(changes.modifies) do
+		--创建一个新表 只含有新db的列信息
+		local suffix = {}
+		for fieldName, fieldInfo in pairs(newDB[tableName].names) do
+			table.insert(suffix, string.format([[ '%s' %s%s%s]], fieldName, 
+													   fieldInfo.type, 
+													   fieldInfo.notnull and " NOT NULL" or "", 
+													   fieldInfo.dflt_value and (" DEFAULT".." "..tostring(fieldInfo.dflt_value)) or ""))
 		end
-	end
-
-	local fullCopyTables = {}
-	-- 删除的列
-	for tableName, fields in pairs(drpopedFields) do
-		if not droppedTables[tableName] then -- 如果整个表都删掉了 那就不管表内变更了
-			--创建一个新表 只含有新db的列信息
-			local suffix = {}
-			for fieldName, fieldInfo in pairs(newDB[tableName].names) do
-				table.insert(suffix, string.format([[ "%s" %s%s%s]], fieldName, 
-														   fieldInfo.type, 
-														   fieldInfo.notnull and " NOT NULL" or "", 
-														   fieldInfo.dflt_value and (" DEFAULT".." "..tostring(fieldInfo.dflt_value)) or ""))
-			end
-			local pks = ""
-			if newDB[tableName].pks and #newDB[tableName].pks > 0 then
-				pks = string.format([[,PRIMARY KEY ("%s")]], table.concat( newDB[tableName].pks, [[","]] ))
-			end
-			table.insert(sql_query_strs, string.format([[CREATE TABLE "%s_temp_swap" (%s %s);]], tableName, table.concat(suffix, ","), pks))
-
-			-- -- 把旧数据导入
-			-- local names = {}
-			-- for key, _ in pairs(newDB[tableName].names) do table.insert(names, key) end
-			-- table.insert(sql_query_strs, string.format("INSERT INTO %s_temp_swap SELECT %s FROM %s;", tableName, table.concat(names, ","), tableName))
-
-			-- 删除旧表
-			table.insert(sql_query_strs, string.format("DROP TABLE %s;", tableName))
-
-			-- 新表更名
-			table.insert(sql_query_strs, string.format("ALTER TABLE %s_temp_swap RENAME TO %s;", tableName, tableName))
-
-			-- 加入到需要全拷贝的表内
-			table.insert(fullCopyTables, tableName)
+		local pks = ""
+		if newDB[tableName].pks and #newDB[tableName].pks > 0 then
+			pks = string.format([[,PRIMARY KEY ('%s')]], table.concat( newDB[tableName].pks, [[',']] ))
 		end
+		table.insert(sql_query_strs, string.format([[CREATE TABLE '%s_temp_swap' (%s %s);]], tableName, table.concat(suffix, ","), pks))
+
+		-- -- 把旧数据导入
+		-- local names = {}
+		-- for key, _ in pairs(newDB[tableName].names) do table.insert(names, key) end
+		-- table.insert(sql_query_strs, string.format("INSERT INTO %s_temp_swap SELECT %s FROM %s;", tableName, table.concat(names, ","), tableName))
+
+		-- 删除旧表
+		table.insert(sql_query_strs, string.format([[DROP TABLE '%s';]], tableName))
+
+		-- 新表更名
+		table.insert(sql_query_strs, string.format([[ALTER TABLE '%s_temp_swap' RENAME TO '%s';]], tableName, tableName))
 	end
 
 	--导出sql文件
-
-	local date = os.time()
-
 	currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	currentDir = string.gsub(currentDir, "\n", "")
 	LFS.createDir(currentDir.."/Update")
 	LFS.createDir(currentDir.."/Update/sql")
 	currentDir = currentDir.."/Update/sql/"
-
 	local fileWrite = io.open(currentDir.."tables.sql","w")
 	fileWrite:write(table.concat(sql_query_strs, "\n"))
 	fileWrite:close()
 
 
-	local tableModifys = {}
-	for name, info in pairs(newDB) do
-		if oldDB[name] then
-			tableModifys[name] = self:compareSqlRecords(info, oldDB[name], name)
-		end
+	local tableModfies = {}
+	for tableName, info in pairs(changes.unchanges) do
+		tableModfies[tableName] = self:compareSqlRecords(info.new, info.old, tableName)
 	end
 
-	local function replaceDangerStr(str)
-		return string.gsub(str, "%%[a-zA-Z]", "&&")
+	for tableName, template in pairs(changes.added) do
+		tableModfies[tableName] = self:compareSqlRecords(template, {pks = {}}, tableName)
 	end
-	for tableName, modifies in pairs(tableModifys) do
+
+	for tableName, template in pairs(changes.modifies) do
+		tableModfies[tableName] = self:compareSqlRecords(template, {pks = {}}, tableName)
+	end
+
+	for tableName, info in pairs(tableModfies) do
 		local sqls = {}
-		for k, v in ipairs(modifies.adds) do
+		for k, v in ipairs(info.adds) do
 			local sql = [[INSERT INTO ]]..tableName..[[(%s) VALUES(%s);]]
 			for fieldName, fieldValue in pairs(v) do
 				fieldValue = string.upper(newDB[tableName].names[fieldName].type) == "TEXT" and "'"..fieldValue.."'" or fieldValue
-				sql = string.format(sql, (fieldName..",%s"), (fieldValue..",%s"))
+				sql = string.format(sql, ("'"..fieldName.."'"..",%s"), (fieldValue..",%s"))
 			end
 			sql = string.gsub(sql, ",%%s", "")
 			table.insert(sqls, sql)
 		end
-		for k, v in ipairs(modifies.modifies) do
+		for k, v in ipairs(info.modifies) do
 			local sql = [[REPLACE INTO ]]..tableName..[[(%s) VALUES(%s);]] --这边语句要熟悉一下
 			for fieldName, fieldValue in pairs(v) do
 				fieldValue = string.upper(newDB[tableName].names[fieldName].type) == "TEXT" and "'"..fieldValue.."'" or fieldValue
-				sql = string.format(sql, (fieldName..",%s"), (fieldValue..",%s"))
+				sql = string.format(sql, ("'"..fieldName.."'"..",%s"), (fieldValue..",%s"))
 			end
 			sql = string.gsub(sql, ",%%s", "")
 			table.insert(sqls, sql)
 		end
-		for k, v in ipairs(modifies.deletes) do
+		for k, v in ipairs(info.deletes) do
 			local sql = [[DELETE FROM ]]..tableName..[[ WHERE %s;]]
-			for _, pkName in ipairs(modifies.pks) do
+			for _, pkName in ipairs(info.pks) do
 				sql = string.format(sql, pkName.." = "..v[pkName].." AND %s")
 			end
 			sql = string.gsub(sql, "AND %%s", "")
@@ -455,11 +456,11 @@ function SQLiteCompare:start(pathOrigin, pathNew)
 		end
 		if #sqls > 0 then
 			local fileWrite = io.open(currentDir..tableName..".sql","w")
+			release_print(tableName.." "..#sqls)
 			fileWrite:write(table.concat(sqls, "\n"))
 			fileWrite:close()
 		end
 	end
-
 
 	self:verifySQLChanges(oldDB)
 	exit("执行完成. 正常退出!")
@@ -483,14 +484,14 @@ function SQLiteCompare:verifySQLChanges()
 	local tableFile = io.open(currentDir.."tables.sql")
 	if tableFile then
 		local sql = tableFile:read("*all")
-		dump(self:exec(oldDB, sql))
+		self:exec(oldDB, sql)
 	end
 
 	for file in lfs.dir(currentDir) do
 		release_print(currentDir..file)
 		if string.sub(file, 1, 1) ~= "." and file ~= "tables.sql" then
 			local sql = io.open(currentDir.."/"..file):read("*all")
-			dump(self:exec(oldDB, sql))
+			self:exec(oldDB, sql)
 		end
 	end
 	oldDB:close()
