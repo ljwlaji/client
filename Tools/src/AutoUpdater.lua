@@ -38,7 +38,6 @@ end
 
 local function release_print(...)
 	table.insert(logs, table.concat({...}, "\t"))
-	print(...)
 end
 
 
@@ -49,7 +48,7 @@ local function dump(value, description, nesting)
     local result = {}
 
     local traceback = string.split(debug.traceback("", 2), "\n")
-    print("dump from: " .. string.trim(traceback[3]))
+    release_print("dump from: " .. string.trim(traceback[3]))
 
     local function dump_(value, description, indent, nest, keylen)
         description = description or "<var>"
@@ -116,7 +115,7 @@ function AutoUpdater.checkModified(firstCommit, lastCommit)
 	local rsfile = io.popen(string.format( "git diff --diff-filter=AM %s %s --name-only", firstCommit, lastCommit ) )
 	local files = {}
 	for line in rsfile:lines() do
-		print(line)
+		-- print(line)
 		if not line:find("%/%.") and not line:find("res/datas.db") and not line:find("res/version") then
 			local compare = string.sub(line, 1, 4)
 			if compare == "src/" or compare == "res/" then
@@ -124,6 +123,7 @@ function AutoUpdater.checkModified(firstCommit, lastCommit)
 			end
 		end
 	end
+	release_print("total file count : "..#files)
 	return files
 end
 
@@ -174,7 +174,6 @@ function AutoUpdater.run(firstCommit, lastCommit)
 	-- local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "") -- For Win Only
 	local currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	currentDir = string.gsub(currentDir, "\n", "")
-	print(currentDir)
 	local modifiedFiles = AutoUpdater.checkModified(firstCommit, lastCommit)
 
 	-- Create Update Dir
