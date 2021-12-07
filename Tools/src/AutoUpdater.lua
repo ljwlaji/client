@@ -37,11 +37,7 @@ local function dump_value_(v)
 end
 
 local function release_print(...)
-	local str = ""
-	for _, v in ipairs({...}) do
-		str = str..tostring(v).."\t"
-	end
-	table.insert(logs, v)
+	table.insert(logs, table.concat({...}, "\t"))
 	print(...)
 end
 
@@ -53,7 +49,7 @@ local function dump(value, description, nesting)
     local result = {}
 
     local traceback = string.split(debug.traceback("", 2), "\n")
-    release_print("dump from: " .. string.trim(traceback[3]))
+    print("dump from: " .. string.trim(traceback[3]))
 
     local function dump_(value, description, indent, nest, keylen)
         description = description or "<var>"
@@ -116,13 +112,18 @@ local function exit(msg)
     cc.Director:getInstance():endToLua()
 end
 
-function AutoUpdater.checkModified(currentDir)
-	local file = io.open(currentDir.."/Update/changes.txt")
-	local str = {}
-	for line in file:lines() do
-		table.insert(str, line)
+function AutoUpdater.checkModified(firstCommit, lastCommit)
+	local rsfile = io.popen(string.format( "git diff --diff-filter=AM %s %s --name-only", firstCommit, lastCommit ) )
+	local files = {}
+	for line in rsfile:lines() do
+		print(line)
+		if not line:find("%/%.") and not line:find("res/datas.db") and not line:find("res/version") then
+			local compare = string.sub(line, 1, 4)
+			if compare == "src/" or compare == "res/" then
+				table.insert(files, line)
+			end
+		end
 	end
-	print(#str)
 	return files
 end
 
@@ -157,7 +158,7 @@ local function TableToString(table)
 	return data
 end
 
-function AutoUpdater.run()
+function AutoUpdater.run(firstCommit, lastCommit)
 	release_print("")
 	release_print("")
 	release_print("==========================================================")
@@ -170,20 +171,17 @@ function AutoUpdater.run()
 	release_print("======================================================================")
 	release_print("")
 	release_print("")
-	local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "") -- For Win Only
+	-- local currentDir = string.gsub(io.popen("echo %CD%/../"):read("*all"), "\n", "") -- For Win Only
 	local currentDir = string.gsub(io.popen("pwd"):read("*all"), "/runtime/mac/framework%-desktop.app/Contents/Resources", "") -- For MacOS
 	currentDir = string.gsub(currentDir, "\n", "")
-	release_print(currentDir)
-	local modifiedFiles = AutoUpdater.checkModified(currentDir)
+	print(currentDir)
+	local modifiedFiles = AutoUpdater.checkModified(firstCommit, lastCommit)
 
-
-	do return end
 	-- Create Update Dir
 	-- dump(modifiedFiles)
 
 	updateDir = currentDir.."/Update"
 	LFS.createDir(updateDir)
-
 
 	local tasks = {}
 	for k, v in pairs(modifiedFiles) do

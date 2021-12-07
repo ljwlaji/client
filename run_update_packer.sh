@@ -53,18 +53,10 @@ run_packer()
 {
 	clear
 	read -p "自动打包即将开始, 请确认已经提交所有修改项, 输入任意键开始脚本! "
-	# firstCommit="$(get_input_val '请输入初始commit(7位以上) : ' )"
-	# lastCommit="$(get_input_val '请输入目标commit(7位以上) : ' )" 
-	# if [ -d "${project_path}/Update" ]; then
-	# 	rm -r "${project_path}/Update"
-	# fi
-	# mkdir ${project_path}/Update
-	firstCommit=0c5df40
-	lastCommit=6a9c963
-	read -p "初始commit是 : [${firstCommit}] 初始commit是 : [${lastCommit}] 确认无误后输入Y继续: " comfirm
-	# run_sql_compare $firstCommit $lastCommit
+	firstCommit="$(get_input_val '请输入初始commit(7位以上) : ' )"
+	lastCommit="$(get_input_val '请输入目标commit(7位以上) : ' )" 
+	run_sql_compare $firstCommit $lastCommit
 	run_source_packer $firstCommit $lastCommit
-	read -p "按任意键返回 :"
 }
 
 run_sql_compare()
@@ -73,6 +65,7 @@ run_sql_compare()
 	lastCommit=$2
 	# echo "$firstCommit"
 	# read -p "请输入目标commit: " lastCommit
+	read -p "初始commit是 : [${firstCommit}] 初始commit是 : [${lastCommit}] 确认无误后输入Y继续: " comfirm
 
 	if [ "$comfirm" != "Y" -a "$comfirm" != "y" ]; then
 		exit
@@ -114,6 +107,7 @@ run_sql_compare()
 
 	cat $project_path/Update/Log/sql_compare_log.txt
 	echo ""
+	read -p "按任意键返回 :"
 }
 
 run_source_packer()
@@ -132,9 +126,9 @@ run_source_packer()
 	cat "${project_path}/Tools/src/main.lua"
 
 	echo "${fileData}" >> "${project_path}/Tools/src/main.lua"
-
-	# git diff --diff-filter=AM ${lastCommit} ${firstCommit} --name-only >> ${project_path}/Update/changes.txt
-
+	if [ -d "${project_path}/Update" ]; then
+		rm -r "${project_path}/Update"
+	fi
 	$project_path/runtime/mac/framework-desktop.app/Contents/MacOS/framework-desktop -workdir $project_path/Tools
 
 	echo "${project_path}/Update/Log/log.txt"
@@ -148,6 +142,7 @@ run_source_packer()
 	git add res/version AllUpdates
 	git commit -m "auto commit by update_packer"
 	echo '打包脚本运行完成, 打包日志查询: ${project_path}/Update/Logs'
+	read -p "按任意键返回 :"
 }
 
 autoUpload()
